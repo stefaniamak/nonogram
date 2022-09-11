@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:nonogram/utils/nonogram_grid.dart';
 
 class GamePage extends StatelessWidget {
   const GamePage({Key? key}) : super(key: key);
@@ -10,6 +11,7 @@ class GamePage extends StatelessWidget {
       body: Column(
         children: [
           Center(child: Text('Nonogram Game')),
+          NonogramGrid(),
         ],
       ),
     );
