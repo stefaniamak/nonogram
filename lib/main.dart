@@ -2,6 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:nonogram/ui_kit/buttons/nono_button.dart';
 
+import 'pages/game_page.dart';
+
 void main() {
   runApp(MyApp());
 }
@@ -19,14 +21,9 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class HomePage extends StatefulWidget {
+class HomePage extends StatelessWidget {
   HomePage({Key? key}) : super(key: key);
 
-  @override
-  _HomePageState createState() => _HomePageState();
-}
-
-class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -36,6 +33,14 @@ class _HomePageState extends State<HomePage> {
         children: [
           Center(child: Text('Nonogram Thesis')),
           NonoButton(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => GamePage(),
+                ),
+              );
+            },
             label: 'game',
           )
         ],
