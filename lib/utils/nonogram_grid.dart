@@ -7,22 +7,49 @@ class NonogramGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GridView.builder(
-      physics: NeverScrollableScrollPhysics(),
-      itemCount: 20,
-      shrinkWrap: true,
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 5,
-        crossAxisSpacing: 5.0,
-        mainAxisSpacing: 5.0,
+    return Container(
+      width: 200,
+      color: Colors.black,
+      child: GridView.builder(
+        physics: NeverScrollableScrollPhysics(),
+        itemCount: 20,
+        shrinkWrap: true,
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 5,
+          crossAxisSpacing: 2.0,
+          mainAxisSpacing: 2.0,
+        ),
+        itemBuilder: (BuildContext context, int index) {
+          return NonogramTile();
+        },
       ),
-      itemBuilder: (BuildContext context, int index) {
-        return Container(
-            color: Colors.green,
-            height: 5,
-            width: 5,
-            child: Text(index.toString()));
-      },
+    );
+  }
+}
+
+enum NonoTileState {
+  empty,
+  filled,
+  crossed,
+}
+
+class NonogramTile extends StatelessWidget {
+  const NonogramTile({
+    Key? key,
+    this.tileState = NonoTileState.empty,
+  }) : super(key: key);
+
+  final NonoTileState tileState;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color: tileState == NonoTileState.filled ? Colors.black : Colors.white,
+      height: 5,
+      width: 5,
+      child: tileState == NonoTileState.crossed
+          ? Center(child: Icon(Icons.close))
+          : Container(),
     );
   }
 }
