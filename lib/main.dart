@@ -1,4 +1,6 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:nonogram/ui_kit/buttons/nono_button.dart';
 
 void main() {
   runApp(MyApp());
@@ -27,6 +29,17 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold();
+    return Scaffold(
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Center(child: Text('Nonogram Thesis')),
+          NonoButton(
+            label: 'game',
+          )
+        ],
+      ),
+    );
   }
 }
