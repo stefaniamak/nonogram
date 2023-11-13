@@ -1,50 +1,33 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:nonogram/ui_kit/buttons/nono_button.dart';
-
-import 'pages/game_page.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Nonogram app',
+      title: 'Nonogram',
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        useMaterial3: true,
       ),
-      home: HomePage(),
+      home: const MainPage(),
     );
   }
 }
 
-class HomePage extends StatelessWidget {
-  HomePage({Key? key}) : super(key: key);
+class MainPage extends StatelessWidget {
+  const MainPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Center(child: Text('Nonogram Thesis')),
-          NonoButton(
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => GamePage(),
-                ),
-              );
-            },
-            label: 'game',
-          )
-        ],
-      ),
+    return const Scaffold(
+      body: Center(child: Text('nonogram game')),
     );
   }
 }
