@@ -9,7 +9,7 @@ class MyRouter {
   dynamic get router => GoRouter(
         routes: [
           GoRoute(
-            path: '/',
+            path: OnBoardingPage.route,
             builder: (context, state) => OnBoardingPage(),
             routes: [
               GoRoute(
