@@ -52,8 +52,9 @@ class OnBoardingPage extends StatelessWidget {
             top: 0,
             child: Row(
               children: [
+                SizedBox(width: 16),
                 Text('intro'),
-                SizedBox(width: 12),
+                SizedBox(width: 16),
                 InkWell(
                   onTap: () => context.go(HomePage.route),
                   child: Text('game'),
