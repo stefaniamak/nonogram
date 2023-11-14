@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:nonogram/pages/on_boarding/on_boarding_page.dart';
+import 'package:nonogram/router.dart';
 
 void main() {
   runApp(const MyApp());
@@ -10,24 +12,8 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Nonogram',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
-      ),
-      home: const MainPage(),
-    );
-  }
-}
-
-class MainPage extends StatelessWidget {
-  const MainPage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const Scaffold(
-      body: Center(child: Text('nonogram game')),
+    return MaterialApp.router(
+      routerConfig: MyRouter().router,
     );
   }
 }
