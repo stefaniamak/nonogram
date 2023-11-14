@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:nonogram/pages/on_boarding/on_boarding_page.dart';
 import 'package:nonogram/router.dart';
 
 void main() {
@@ -13,6 +12,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
+      debugShowCheckedModeBanner: false,
       routerConfig: MyRouter().router,
     );
   }
