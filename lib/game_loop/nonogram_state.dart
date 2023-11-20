@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'dart:ui';
 
 import 'package:nonogram/backend/models/nonogram.dart';
 import 'package:nonogram/pages/game/home_page.dart';
@@ -7,7 +8,13 @@ class NonogramState {
   final Nonogram nonogram;
   final Map<Point, PointState> activeSolution;
 
-  NonogramState({required this.nonogram, required this.activeSolution});
+  final VoidCallback setFilled;
+
+  NonogramState({
+    required this.nonogram,
+    required this.activeSolution,
+    required this.setFilled,
+  });
 }
 
 NonogramState useNonogramState(Nonogram nonogram) {
@@ -19,5 +26,6 @@ NonogramState useNonogramState(Nonogram nonogram) {
       Point(1, 1): PointState.filled,
       Point(2, 2): PointState.filled,
     },
+    setFilled: () {},
   );
 }
