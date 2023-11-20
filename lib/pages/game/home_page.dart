@@ -8,10 +8,30 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const NonoTabsPage(
-      body: Center(
-        child: Text('game home page'),
-      ),
+    return Scaffold(body: body());
+    return NonoTabsPage(
+      body: body(),
+    );
+  }
+
+  Column body() {
+    return const Column(
+      children: [
+        Text('game home pageeeeeeeeee'),
+        Expanded(
+          child: Text('drowing'),
+          // child: SizedBox(
+          //   width: 200, //double.infinity,
+          //   height: 200, //double.infinity,
+          //   child: GridPaper(
+          //     color: Colors.black,
+          //     interval: 100,
+          //     divisions: 1,
+          //     subdivisions: 5,
+          //   ),
+          // ),
+        ),
+      ],
     );
   }
 }

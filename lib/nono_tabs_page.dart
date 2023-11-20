@@ -13,12 +13,12 @@ class NonoTabsPage extends StatelessWidget {
     return Scaffold(
       body: Stack(
         children: [
-          body,
+          Positioned.fill(child: body),
           // todo: add tab navigator #2 https://github.com/stefaniamak/nonogram/issues/2
           Positioned(
             left: 0,
             right: 0,
-            top: 0,
+            top: MediaQuery.of(context).padding.top,
             child: Row(
               children: [
                 const SizedBox(width: 16),
