@@ -34,6 +34,8 @@ class HomePage extends StatelessWidget {
   }
 }
 
+enum PointState { empty, filled, cross }
+
 class NonogramGrid extends CustomPainter {
   final Nonogram nonogram;
 
@@ -45,9 +47,36 @@ class NonogramGrid extends CustomPainter {
 
     print('side: $side');
 
+    Map<String, PointState> pS1 = {
+      '{0: 0}': PointState.cross,
+      '{0: 2}': PointState.cross,
+      '{1: 1}': PointState.filled,
+      '{2: 2}': PointState.empty,
+    };
+
     for (var r = 0; r < nonogram.rows; r++) {
       for (var c = 0; c < nonogram.columns; c++) {
-        drawEmptyBox(canvas, Size(r * side, c * side), side);
+        // print('pS1: ${pS1}');
+        // print('{r: c}: ${{r: c}}');
+        // print('pS1[{r: c}]: ${pS1[{r: c}.toString()]}');
+        // print('pS1[{0: 0}]: ${pS1[{0: 0}.toString()]}');
+        switch (pS1[{r: c}.toString()] ?? PointState.empty) {
+          case PointState.empty:
+            {
+              drawEmptyBox(canvas, Size(r * side, c * side), side);
+            }
+            break;
+          case PointState.filled:
+            {
+              print('filled');
+              drawFilledBox(canvas, Size(r * side, c * side), side);
+            }
+            break;
+          case PointState.cross:
+            drawCrossBox(canvas, Size(r * side, c * side), side);
+        }
+
+        // drawEmptyBox(canvas, Size(r * side, c * side), side);
       }
     }
   }
@@ -65,6 +94,44 @@ class NonogramGrid extends CustomPainter {
     path.lineTo(s.width + side, s.height + side);
     path.lineTo(s.width, s.height + side);
     path.lineTo(s.width, s.height);
+    canvas.drawPath(path, paint);
+  }
+
+  void drawFilledBox(Canvas canvas, Size s, double side) {
+    var paint = Paint()
+      ..color = Colors.black
+      ..strokeWidth = 1
+      ..style = PaintingStyle.fill
+      ..strokeCap = StrokeCap.round;
+
+    var path = Path();
+    path.moveTo(s.width, s.height);
+    path.lineTo(s.width + side, s.height);
+    path.lineTo(s.width + side, s.height + side);
+    path.lineTo(s.width, s.height + side);
+    path.lineTo(s.width, s.height);
+    canvas.drawPath(path, paint);
+  }
+
+  void drawCrossBox(Canvas canvas, Size s, double side) {
+    var paint = Paint()
+      ..color = Colors.black
+      ..strokeWidth = 1
+      ..style = PaintingStyle.stroke
+      ..strokeCap = StrokeCap.round;
+
+    var path = Path();
+    path.moveTo(s.width, s.height);
+    path.lineTo(s.width + side, s.height + side);
+    path.moveTo(s.width + side, s.height);
+    path.lineTo(s.width, s.height + side);
+
+    path.moveTo(s.width, s.height);
+    path.lineTo(s.width + side, s.height);
+    path.lineTo(s.width + side, s.height + side);
+    path.lineTo(s.width, s.height + side);
+    path.lineTo(s.width, s.height);
+
     canvas.drawPath(path, paint);
   }
 
