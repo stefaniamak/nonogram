@@ -1,0 +1,349 @@
+\author{Stefania Mak}
+\date{December 2023}
+
+%Δομή του έγγραφου και μέγευος γραμματοσειράς (10pt, 11pt, ή 12pt).
+\documentclass[twoside, a4paper, 11pt]{article}
+
+\usepackage{hyperref}
+
+%Περιθώρια σελίδας και ύψος για το header και footer.
+\usepackage[top=2.5cm, left=2.5cm, right=2.5cm, bottom=2.5cm, headheight=1.25cm, footskip=1.25cm]{geometry}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[greek,english]{babel}
+
+\usepackage{fontspec}
+ 
+\setmainfont{Times New Roman}
+
+%Μας επιτρέπει να αλλάζουμε από ελληνικά σε αγγλικά και το αντίθετο.
+\usepackage{alphabeta}
+
+\usepackage{graphicx} % Required for inserting images
+\graphicspath{ {./Images/} }
+%\usepackage{algorithmic}
+%\usepackage{algorithm}
+\usepackage{adjustbox}
+\usepackage{tabularx}
+\usepackage{MnSymbol}
+%\usepackage{amsfonts}
+\usepackage{appendix}
+\usepackage{listings}
+\usepackage{color}
+\usepackage{changepage}
+\usepackage{subfigure}
+\usepackage{setspace}
+\usepackage{fancyhdr} %Κεφαλίδες και υποσέλιδα
+\usepackage{url}
+\usepackage{multirow}
+%\usepackage{indentfirst}
+\usepackage{cite}
+
+\setlength{\parindent}{0em}
+
+\usepackage{caption}
+\captionsetup[figure]{name=Σχήμα}
+\captionsetup[table]{name=Πίνακας}
+
+
+%\floatname{algorithm}{Αλγόριθμος}
+
+% (1) Βάζει τα tables/figures να αριθμίζονται σύμφωνα με το κεφάλαιο (section).
+\usepackage{chngcntr}
+\counterwithin{table}{section}
+\counterwithin{figure}{section}
+
+% Διαφορετική γραμματοσειρά για τους τίτλους των sections/subsections/subsubsections. Δεν χρειάζεται, αλλά τα αφήνω σε σχόλια.
+%\usepackage{titlesec}
+%\titleformat*{\section}{\Large\bfseries\sffamily}
+%\titleformat*{\subsection}{\large\bfseries\sffamily}
+%\titleformat*{\subsubsection}{\large\bfseries\sffamily}
+
+% (2) Settings για την σελίδα αφιερώσεων
+\newenvironment{dedication}
+  {\clearpage            % Νέα σελίδα
+   \thispagestyle{empty} % Χωρίς header/footer
+   \vspace*{\stretch{1}} % Κενό στην αρχή της σελίδας
+   \itshape              % Italics
+   \raggedleft           % Στοίχηση στα δεξιά
+  }
+  {\par % Τέλος παραγράφου
+   \vspace{\stretch{3}} % Κενό στο τέλος της σελίδας, 3 φορές το μέγεθος αυτού στην αρχή.
+   \clearpage           % Τέλος σελίδας
+}
+
+% (3) Κάνει τα abstracts να έχουν τον τίτλο τους στα αριστερά.
+\renewenvironment{abstract}
+{\par\noindent\textbf{\abstractname}\\ [0.4cm] \ignorespaces}
+
+% (4) Αλλάζει την δομή των τίτλων των sections ώστε να λένε π.χ. "Κεφάλαιο 1ο: Εισαγωγή".
+\usepackage{titlesec}
+\titleformat{\section}
+{\normalfont\large\bfseries}{Κεφάλαιο~\thesection ο:}{1em}{}
+
+\begin{document}
+
+% (5) Κάνει τον τίτλο του κεφαλαίου να εμφανίζεται στις μονές σελίδες και τον αριθμό 
+%\setlength{\headheight}{1.25cm}
+\fancypagestyle{custom_page_style}{
+  \fancyhf{} % Clear header/footer
+  
+  \fancyhead[RO]{\nouppercase{\leftmark}} % Τίτλος κεφαλαίου στις μονές σελίδες (γράφει αυτόματα και τον αριθμό)
+  \fancyhead[LE]{Κεφάλαιο \thesection} % Αριθμός κεφαλαίου στις ζυγές σελίδες (π.χ. "Κεφάλαιο 1").
+  \fancyfoot[C]{\thepage}
+  \renewcommand{\headrulewidth}{0pt} % Header rule of .4pt
+}
+
+\begin{titlepage}
+
+\newcommand{\HRule}{\rule{\linewidth}{0.6mm}}
+\center
+\includegraphics[scale=0.6]{Images/ihu-logo-gr.png}\\[1cm]
+
+\textsc{\huge ΣΧΟΛΗ ΜΗΧΑΝΙΚΩΝ}\\
+
+\setstretch{1.5}
+\textsc{\huge ΤΜΗΜΑ ΜΗΧΑΝΙΚΩΝ ΠΛΗΡΟΦΟΡΙΚΗΣ \\ ΚΑΙ ΗΛΕΚΤΡΟΝΙΚΩΝ ΣΥΣΤΗΜΑΤΩΝ}\\[1.5cm] % Όνομα της σχολής.
+
+\textsc{\huge ΔΙΠΛΩΜΑΤΙΚΗ ΕΡΓΑΣΙΑ}\\[0.2cm]
+{\huge <<NONOGRAM SOLVER>>}\\[1cm]
+
+\includegraphics[scale=0.8]{Images/Cover-Image-Placeholder.png}\\[1cm]
+
+\setstretch{1}
+    \begin{minipage}{0.45\textwidth}
+    \begin{flushleft} \large
+    \textbf{Της φοιτήτριας}
+    \\\textbf{Μακρυγιαννάκη Στεφανία Μαρία} % Όνομα φοιτιτή.
+    \\\textbf{Αρ. Μητρώου: 164703}
+    \end{flushleft}
+    \end{minipage}
+    ~
+    \begin{minipage}{0.45\textwidth}
+    \begin{flushright} \large
+    \textbf{Επιβλέπων}
+    \\\textbf{Γουλιάνας Κωνσταντίνος}
+    \\\textbf{Βαθμίδα ...?...}
+    \end{flushright}
+    \end{minipage}\\[5cm]
+
+{\large \selectlanguage{Greek}\today}\\[2cm]
+
+\end{titlepage}
+
+\clearpage
+
+\pagenumbering{roman} 
+\thispagestyle{empty}
+
+\renewcommand{\abstractname}{}
+\begin{abstract}
+    
+\begin{center}
+\begin{minipage}{0.9\textwidth}
+    \centerline{Τίτλος Δ.Ε. ....}
+    \centerline{Κωδικός Δ.Ε. ....}	
+    \centerline{Ονοματεπώνυμο φοιτητή/ών ....}
+    \centerline{Ονοματεπώνυμο εισηγητή ....}
+    \centerline{Ημερομηνία ανάληψης Δ.Ε. ....}
+    \centerline{Ημερομηνία περάτωσης Δ.Ε. ....}
+\end{minipage}
+\end{center}
+\selectlanguage{greek}
+
+\setlength{\parskip}{2em}
+\emph{Βεβαιώνω ότι είμαι ο συγγραφέας αυτής της εργασίας και ότι κάθε βοήθεια την οποία είχα για την προετοιμασία της είναι πλήρως αναγνωρισμένη και αναφέρεται στην εργασία. Επίσης, έχω καταγράψει τις όποιες πηγές από τις οποίες έκανα χρήση δεδομένων, ιδεών, εικόνων και κειμένου, είτε αυτές αναφέρονται ακριβώς είτε παραφρασμένες. Επιπλέον, βεβαιώνω ότι αυτή η εργασία προετοιμάστηκε από εμένα προσωπικά, ειδικά ως διπλωματική εργασία, στο Τμήμα Μηχανικών Πληροφορικής και Ηλεκτρονικών Συστημάτων του ΔΙ.ΠΑ.Ε.}
+
+\setlength{\parskip}{1em}
+
+\emph{Η παρούσα εργασία αποτελεί πνευματική ιδιοκτησία τ...  φοιτητ... ............................................ που την εκπόνησε/αν. Στο πλαίσιο της πολιτικής ανοικτής πρόσβασης, ο συγγραφέας/δημιουργός εκχωρεί στο Διεθνές Πανεπιστήμιο της Ελλάδος άδεια χρήσης του δικαιώματος αναπαραγωγής, δανεισμού, παρουσίασης στο κοινό και ψηφιακής διάχυσης της εργασίας διεθνώς, σε ηλεκτρονική μορφή και σε οποιοδήποτε μέσο, για διδακτικούς και ερευνητικούς σκοπούς, άνευ ανταλλάγματος. Η ανοικτή πρόσβαση στο πλήρες κείμενο της εργασίας, δεν σημαίνει καθ’ οιονδήποτε τρόπο παραχώρηση δικαιωμάτων διανοητικής ιδιοκτησίας του συγγραφέα/δημιουργού, ούτε επιτρέπει την αναπαραγωγή, αναδημοσίευση, αντιγραφή, πώληση, εμπορική χρήση, διανομή, έκδοση, μεταφόρτωση (downloading), ανάρτηση (uploading), μετάφραση, τροποποίηση με οποιονδήποτε τρόπο, τμηματικά ή περιληπτικά της εργασίας, χωρίς τη ρητή προηγούμενη έγγραφη συναίνεση του συγγραφέα/δημιουργού.}
+
+Η έγκριση της διπλωματικής εργασίας από το Τμήμα Μηχανικών Πληροφορικής και Ηλεκτρονικών Συστημάτων του Διεθνούς Πανεπιστημίου της Ελλάδος, δεν υποδηλώνει απαραιτήτως και αποδοχή των απόψεων του συγγραφέα, εκ μέρους του Τμήματος.
+
+\end{abstract}
+
+\clearpage
+
+\begin{dedication}
+<<Αφιέρωση>>
+\end{dedication}
+
+% Κενή σελίδα
+\newpage
+\thispagestyle{empty}
+\mbox{}
+
+\clearpage
+\large 
+\renewcommand{\abstractname}{Πρόλογος}
+\begin{abstract}
+\addcontentsline{toc}{subsection}{Πρόλογος} %Προσθέτει αυτό το abstract στα περιεχόμενα (table of contents).
+\normalsize
+
+Οι λόγοι που επέλεξα αυτή την πτυχιακή είναι επειδή έλυνα από μικρή αυτά τα παιχνίδια, και είχα μια έμπνευση για μια εφαρμογή βασισμένη σε αυτά που θα χρειαζόταν να έχω και έναν λύτη. (μαξ 200λξ)
+
+\end{abstract}
+\normalsize
+\clearpage
+
+
+\large
+\renewcommand{\abstractname}{Περίληψη}
+\selectlanguage{greek}
+\begin{abstract}
+\addcontentsline{toc}{subsection}{Περίληψη} %Πρόσθεση στα περιεχόμενα (table of contents)
+\normalsize
+
+Σε αυτήν την ενότητα ο φοιτητής/φοιτήτρια θα πρέπει να περιγράψει συνοπτικά το θέμα και τα αποτελέσματα της διπλωματικής του εργασίας – δεν περιλαμβάνει βιβλιογραφικές αναφορές. Δεν θα πρέπει να ξεπεράσει τις 300 λέξεις. 
+
+\end{abstract}
+\normalsize
+\clearpage
+
+\begin{minipage}{0.9\textwidth}
+    \center
+    \large 
+    <<Nonogram Solver>> \\ [0.4cm]
+    (στην αγγλική γλώσσα) \\ [0.8cm]
+    <<Stefania Maria Makrygiannaki>> \\ [0.4cm]
+    (στην αγγλική γλώσσα)
+\end{minipage} \\ [1.0cm]
+
+\large
+\renewcommand{\abstractname}{Abstract}
+
+\begin{abstract}
+\addcontentsline{toc}{subsection}{Abstract} %Πρόσθεση στα περιεχόμενα (table of contents)
+\normalsize
+
+Σε αυτήν την ενότητα ο φοιτητής/ φοιτήτρια θα πρέπει να περιγράψει συνοπτικά το θέμα και τα αποτελέσματα της διπλωματικής του εργασίας στα αγγλικά – δεν περιλαμβάνει βιβλιογραφικές αναφορές. Δεν θα πρέπει να ξεπεράσει τις 300 λέξεις.
+\end{abstract}
+
+\normalsize
+\clearpage
+\selectlanguage{greek}
+
+\large
+\renewcommand{\abstractname}{Ευχαριστίες}
+\begin{abstract}
+\addcontentsline{toc}{subsection}{Ευχαριστίες} %Πρόσθεση στα περιεχόμενα (table of contents)
+\normalsize
+
+Σε αυτήν την ενότητα ο φοιτητής/ φοιτήτρια προαιρετικά μπορεί να ευχαριστήσει όσους αισθάνεται ότι συνέβαλαν (επιστημονικά, ηθικά, οικονομικά κτλ) στην ολοκλήρωση της διπλωματικής εργασίας. 
+\end{abstract}
+\normalsize
+
+\clearpage
+\renewcommand{\contentsname}{Περιεχόμενα}
+\addcontentsline{toc}{subsection}{Περιεχόμενα} %Πρόσθεση στα περιεχόμενα (table of contents)
+
+\small %Μικρό μέγεθος γραμματοσειράς για τα περιεχόμενα και τις λίστες σχημάτων/εικόνων.
+\tableofcontents
+
+\clearpage
+\renewcommand{\listfigurename}{Κατάλογος Σχημάτων}
+\addcontentsline{toc}{subsection}{Κατάλογος Σχημάτων} %Πρόσθεση στα περιεχόμενα (table of contents)
+\listoffigures
+
+\renewcommand{\listtablename}{Κατάλογος Πινάκων}
+\addcontentsline{toc}{subsection}{Κατάλογος Πινάκων} %Πρόσθεση στα περιεχόμενα (table of contents)
+\listoftables
+
+\clearpage
+
+\clearpage
+\renewcommand{\abstractname}{Συντομογραφίες}
+\begin{abstract}
+\addcontentsline{toc}{subsection}{Συντομογραφίες} %Πρόσθεση στα περιεχόμενα (table of contents)
+
+    % Αν η στοίχηση των tabs δεν είναι σωστή, αλλάξτε την τιμή του \hspace
+    \begin{tabbing}
+        Δ.Ε. \hspace{2em} \= Διπλωματική Εργασία \\ 
+        ΔΙΠΑΕ \> Διεθνές Πανεπιστήμιο Ελλάδος \\
+        Π.Ε. \> Πτυχιακή Εργασία
+    \end{tabbing}
+\end{abstract}
+
+\clearpage
+\pagenumbering{arabic}
+
+\normalsize % Normalsize μέγεθος γραμματοσειράς για το υπόλοιπο έγγραφο.
+\pagestyle{custom_page_style} % Ξεκίναει το βάζει το custome_page_style στις σελίδες.
+\setstretch{1.2} % 1.2 διάστημα μεταξύ σειρών.
+
+% (6) Ορίζει το κενό δίαστημα μεταξύ διαφορετικών subsections και subsubsections. 
+% Το 14pt για το πρώτο και το 12pt για το δεύτερο είναι επιθυμητό μάκρος.
+% Το 4pt σημαίνει ότι μπορεί να τεντωθεί έως και 4pt.
+% Το 2pt σημαίνει ότι μπορεί να το συρρικνωθεί το πολύ 2pt.
+\titlespacing\subsection{0pt}{14pt plus 4pt minus 2pt}{0pt plus 2pt minus 2pt}
+\titlespacing\subsubsection{0pt}{12pt plus 4pt minus 2pt}{0pt plus 2pt minus 2pt}
+
+\selectlanguage{greek}
+
+\setlength{\parskip}{1em}
+
+\section{Τίτλος Κεφαλαίου}
+
+\subsection{Εισαγωγή}
+..............................
+
+\subsection{Section}
+..............................
+
+\subsection{Επίλογος}
+Ο επίλογος ανακεφαλαιώνει τα κύρια σημεία του κάθε κεφαλαίου.
+
+\clearpage
+\section{Τίτλος Κεφαλαίου}
+
+\subsection{Εισαγωγή}
+..............................
+
+\subsection{Εκπόνηση διπλωματικής εργασίας } \label{subsection:problem-analysis}
+..............................
+
+\subsection{Επίλογος}
+Ο επίλογος ανακεφαλαιώνει τα κύρια σημεία του κάθε κεφαλαίου.
+
+\clearpage
+
+\section{Τίτλος Κεφαλαίου}
+
+\subsection{Εισαγωγή}
+
+........................................
+
+\subsection{Τίτλος υποενότητας}
+\label{subsection:data-split}
+........................................
+
+\subsection{Επίλογος} \label{chapter-3-conclusion}
+Ο επίλογος ανακεφαλαιώνει τα κύρια σημεία του κάθε κεφαλαίου.
+
+\clearpage
+
+\section{Συμπεράσματα ή/και προτάσεις βελτίωσης} \label{chapter-4}
+
+Σε αυτήν την ενότητα αναλύονται τα συμπεράσματα της διπλωματικής εργασίας και παρουσιάζονται προτάσεις βελτίωσης της.
+
+
+\clearpage
+\pagestyle{plain}
+\nocite{*}
+\bibliographystyle{ieeetr}
+
+\renewcommand{\refname}{ΒΙΒΛΙΟΓΡΑΦΙΑ}
+\addcontentsline{toc}{section}{ΒΙΒΛΙΟΓΡΑΦΙΑ}
+\bibliography{bibliography}
+\clearpage
+
+\appendix
+\titleformat{\section}
+% Αλλαγή δομής των τίτλων των sections για τα παραρτήματα.
+{\normalfont\large\bfseries}{ΠΑΡΑΡΤΗΜΑ Α:}{1em}{}
+
+\section{ΤΙΤΛΟΣ ΠΑΡΑΡΤΗΜΑΤΟΣ}
+........................................
+
+\end{document}
