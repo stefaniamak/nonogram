@@ -2,7 +2,8 @@ import 'dart:math';
 import 'dart:ui';
 
 import 'package:nonogram/backend/models/nonogram.dart';
-import 'package:nonogram/pages/game/home_page.dart';
+
+enum PointState { empty, filled, cross }
 
 class NonogramState {
   final Nonogram nonogram;
