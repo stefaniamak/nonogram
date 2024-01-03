@@ -11,12 +11,12 @@ class NonogramGrid extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     var nonogram = nonogramState.nonogram;
-    double side = size.width / nonogram.columns;
+    double side = size.width / nonogram.columns.length;
 
     print('side: $side');
 
-    for (var r = 0; r < nonogram.rows; r++) {
-      for (var c = 0; c < nonogram.columns; c++) {
+    for (var r = 0; r < nonogram.rows.length; r++) {
+      for (var c = 0; c < nonogram.columns.length; c++) {
         switch (nonogramState.activeSolution[Point(r, c)] ?? PointState.empty) {
           case PointState.empty:
             drawEmptyBox(canvas, Size(r * side, c * side), side);

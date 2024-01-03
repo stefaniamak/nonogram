@@ -6,8 +6,15 @@ import 'package:nonogram/backend/serializers.dart';
 part 'nonogram.g.dart';
 
 abstract class Nonogram implements Built<Nonogram, NonogramBuilder> {
-  int get rows;
-  int get columns;
+  BuiltList<int> get rows;
+  BuiltList<int> get columns;
+
+  String get title;
+  String get author;
+  String get copyright;
+  String get description;
+
+  bool get isUnique;
 
   Nonogram._();
   factory Nonogram([void Function(NonogramBuilder) updates]) = _$Nonogram;
