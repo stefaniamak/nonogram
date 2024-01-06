@@ -23,15 +23,15 @@ class NonogramGrid extends CustomPainter {
 
     for (var r = 0; r < nonogram.height; r++) {
       for (var c = 0; c < nonogram.width; c++) {
-        switch (nonogramState.activeSolution[Point(r, c)] ?? PointState.empty) {
+        switch (nonogramState.activeSolution[Point(c, r)] ?? PointState.empty) {
           case PointState.empty:
-            drawEmptyBox(canvas, Size(r * side, c * side), side);
+            drawEmptyBox(canvas, Size(c * side, r * side), side);
             break;
           case PointState.filled:
-            drawFilledBox(canvas, Size(r * side, c * side), side);
+            drawFilledBox(canvas, Size(c * side, r * side), side);
             break;
           case PointState.cross:
-            drawCrossBox(canvas, Size(r * side, c * side), side);
+            drawCrossBox(canvas, Size(c * side, r * side), side);
             break;
         }
       }
