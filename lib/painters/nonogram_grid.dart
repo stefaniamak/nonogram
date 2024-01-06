@@ -12,7 +12,6 @@ class NonogramGrid extends StatelessWidget {
 
   PointState getGridBoxState(int index) {
     var char = nonogramState.activeSolution.characters.characterAt(index);
-    print('char: $char');
     switch (char.toString()) {
       case '?':
         return PointState.unknown;
@@ -33,15 +32,24 @@ class NonogramGrid extends StatelessWidget {
       child: Container(
         width: puzzleWidth,
         child: GridView.builder(
-          itemCount:
-              nonogramState.nonogram.width * nonogramState.nonogram.height,
+          itemCount: nonogramState.activeSolution.length,
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: nonogramState.nonogram.width,
           ),
           itemBuilder: (BuildContext context, int index) {
             return InkWell(
               onTap: () {
-                nonogramState.setFilled(index, index);
+                switch (getGridBoxState(index)) {
+                  case PointState.unknown:
+                    nonogramState.setFilled(index);
+                    break;
+                  case PointState.filled:
+                    nonogramState.setCross(index);
+                    break;
+                  case PointState.cross:
+                    nonogramState.setUnknown(index);
+                    break;
+                }
               },
               child: CustomPaint(
                 painter: GridBox(
