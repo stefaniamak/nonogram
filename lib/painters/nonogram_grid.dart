@@ -15,13 +15,12 @@ class NonogramGrid extends HookWidget {
     Nonogram draftNono = Nonograms().dancer;
     var nonogramState = useNonogramState(draftNono);
 
-    final double puzzleWidth = MediaQuery.of(context).size.width;
-    final double puzzleHeight = MediaQuery.of(context).size.height;
+    // todo: find grid height and width #16 https://github.com/stefaniamak/nonogram/issues/16
+    final double puzzleWidth = MediaQuery.of(context).size.width * 80 / 100;
     final double gridSize = puzzleWidth / nonogramState.nonogram.width;
     return Center(
       child: Container(
         width: puzzleWidth,
-        height: gridSize * nonogramState.nonogram.height,
         child: GridView.builder(
           itemCount:
               nonogramState.nonogram.width * nonogramState.nonogram.height,
@@ -43,6 +42,7 @@ class NonogramGrid extends HookWidget {
           },
           padding: EdgeInsets.zero,
           shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
         ),
       ),
     );
