@@ -4,9 +4,11 @@ import 'package:nonogram/painters/grid_box.dart';
 
 class NonogramGrid extends StatelessWidget {
   final NonogramState nonogramState;
+  final double gridWidth;
 
   const NonogramGrid({
     required this.nonogramState,
+    required this.gridWidth,
     super.key,
   });
 
@@ -26,11 +28,10 @@ class NonogramGrid extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // todo: find grid height and width #16 https://github.com/stefaniamak/nonogram/issues/16
-    final double puzzleWidth = MediaQuery.of(context).size.width * 80 / 100;
-    final double gridSize = puzzleWidth / nonogramState.nonogram.width;
+    final double gridSize = gridWidth / nonogramState.nonogram.width;
     return Center(
       child: Container(
-        width: puzzleWidth,
+        width: gridWidth,
         child: GridView.builder(
           itemCount: nonogramState.activeSolution.length,
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
