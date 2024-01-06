@@ -1,8 +1,8 @@
 import 'dart:math';
 
-import 'package:built_collection/src/list.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:nonogram/backend/database/nonograms.dart';
 import 'package:nonogram/backend/models/nonogram.dart';
 import 'package:nonogram/game_loop/nonogram_state.dart';
 import 'package:nonogram/nono_tabs_page.dart';
@@ -14,9 +14,10 @@ class HomePage extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    Nonogram draftNono = Nonogram((n) => n
-      ..columns = ListBuilder([1, 1, 1, 1, 1, 1, 1, 1, 1, 1])
-      ..rows = ListBuilder([1, 1, 1, 1, 1, 1, 1, 1, 1, 1]));
+    Nonogram draftNono = Nonograms().dancer;
+    print('image:');
+    print('${draftNono.solutions?.first.image}');
+    print('${draftNono.solutions?.first.solutionFromImage}');
     var nonogramState = useNonogramState(draftNono);
     return Scaffold(body: body(context, nonogramState));
     return NonoTabsPage(
@@ -50,12 +51,12 @@ class NonogramGrid extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     var nonogram = nonogramState.nonogram;
-    double side = size.width / nonogram.columns.length;
+    double side = size.width / nonogram.width;
 
     print('side: $side');
 
-    for (var r = 0; r < nonogram.rows.length; r++) {
-      for (var c = 0; c < nonogram.columns.length; c++) {
+    for (var r = 0; r < nonogram.height; r++) {
+      for (var c = 0; c < nonogram.width; c++) {
         switch (nonogramState.activeSolution[Point(r, c)] ?? PointState.empty) {
           case PointState.empty:
             drawEmptyBox(canvas, Size(r * side, c * side), side);

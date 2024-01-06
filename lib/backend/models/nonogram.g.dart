@@ -18,31 +18,39 @@ class _$NonogramSerializer implements StructuredSerializer<Nonogram> {
   Iterable<Object?> serialize(Serializers serializers, Nonogram object,
       {FullType specifiedType = FullType.unspecified}) {
     final result = <Object?>[
-      'rows',
-      serializers.serialize(object.rows,
-          specifiedType:
-              const FullType(BuiltList, const [const FullType(int)])),
-      'columns',
-      serializers.serialize(object.columns,
-          specifiedType:
-              const FullType(BuiltList, const [const FullType(int)])),
-      'title',
-      serializers.serialize(object.title,
-          specifiedType: const FullType(String)),
-      'author',
-      serializers.serialize(object.author,
-          specifiedType: const FullType(String)),
-      'copyright',
-      serializers.serialize(object.copyright,
-          specifiedType: const FullType(String)),
-      'description',
-      serializers.serialize(object.description,
-          specifiedType: const FullType(String)),
-      'isUnique',
-      serializers.serialize(object.isUnique,
-          specifiedType: const FullType(bool)),
+      'id',
+      serializers.serialize(object.id, specifiedType: const FullType(String)),
     ];
-
+    Object? value;
+    value = object.info;
+    if (value != null) {
+      result
+        ..add('info')
+        ..add(serializers.serialize(value,
+            specifiedType: const FullType(NonogramInfo)));
+    }
+    value = object.note;
+    if (value != null) {
+      result
+        ..add('note')
+        ..add(serializers.serialize(value,
+            specifiedType: const FullType(String)));
+    }
+    value = object.clues;
+    if (value != null) {
+      result
+        ..add('clues')
+        ..add(
+            serializers.serialize(value, specifiedType: const FullType(Clues)));
+    }
+    value = object.solutions;
+    if (value != null) {
+      result
+        ..add('solutions')
+        ..add(serializers.serialize(value,
+            specifiedType:
+                const FullType(BuiltList, const [const FullType(Solution)])));
+    }
     return result;
   }
 
@@ -57,37 +65,27 @@ class _$NonogramSerializer implements StructuredSerializer<Nonogram> {
       iterator.moveNext();
       final Object? value = iterator.current;
       switch (key) {
-        case 'rows':
-          result.rows.replace(serializers.deserialize(value,
-                  specifiedType:
-                      const FullType(BuiltList, const [const FullType(int)]))!
+        case 'id':
+          result.id = serializers.deserialize(value,
+              specifiedType: const FullType(String))! as String;
+          break;
+        case 'info':
+          result.info.replace(serializers.deserialize(value,
+              specifiedType: const FullType(NonogramInfo))! as NonogramInfo);
+          break;
+        case 'note':
+          result.note = serializers.deserialize(value,
+              specifiedType: const FullType(String)) as String?;
+          break;
+        case 'clues':
+          result.clues.replace(serializers.deserialize(value,
+              specifiedType: const FullType(Clues))! as Clues);
+          break;
+        case 'solutions':
+          result.solutions.replace(serializers.deserialize(value,
+                  specifiedType: const FullType(
+                      BuiltList, const [const FullType(Solution)]))!
               as BuiltList<Object?>);
-          break;
-        case 'columns':
-          result.columns.replace(serializers.deserialize(value,
-                  specifiedType:
-                      const FullType(BuiltList, const [const FullType(int)]))!
-              as BuiltList<Object?>);
-          break;
-        case 'title':
-          result.title = serializers.deserialize(value,
-              specifiedType: const FullType(String))! as String;
-          break;
-        case 'author':
-          result.author = serializers.deserialize(value,
-              specifiedType: const FullType(String))! as String;
-          break;
-        case 'copyright':
-          result.copyright = serializers.deserialize(value,
-              specifiedType: const FullType(String))! as String;
-          break;
-        case 'description':
-          result.description = serializers.deserialize(value,
-              specifiedType: const FullType(String))! as String;
-          break;
-        case 'isUnique':
-          result.isUnique = serializers.deserialize(value,
-              specifiedType: const FullType(bool))! as bool;
           break;
       }
     }
@@ -98,40 +96,23 @@ class _$NonogramSerializer implements StructuredSerializer<Nonogram> {
 
 class _$Nonogram extends Nonogram {
   @override
-  final BuiltList<int> rows;
+  final String id;
   @override
-  final BuiltList<int> columns;
+  final NonogramInfo? info;
   @override
-  final String title;
+  final String? note;
   @override
-  final String author;
+  final Clues? clues;
   @override
-  final String copyright;
-  @override
-  final String description;
-  @override
-  final bool isUnique;
+  final BuiltList<Solution>? solutions;
 
   factory _$Nonogram([void Function(NonogramBuilder)? updates]) =>
       (new NonogramBuilder()..update(updates))._build();
 
   _$Nonogram._(
-      {required this.rows,
-      required this.columns,
-      required this.title,
-      required this.author,
-      required this.copyright,
-      required this.description,
-      required this.isUnique})
+      {required this.id, this.info, this.note, this.clues, this.solutions})
       : super._() {
-    BuiltValueNullFieldError.checkNotNull(rows, r'Nonogram', 'rows');
-    BuiltValueNullFieldError.checkNotNull(columns, r'Nonogram', 'columns');
-    BuiltValueNullFieldError.checkNotNull(title, r'Nonogram', 'title');
-    BuiltValueNullFieldError.checkNotNull(author, r'Nonogram', 'author');
-    BuiltValueNullFieldError.checkNotNull(copyright, r'Nonogram', 'copyright');
-    BuiltValueNullFieldError.checkNotNull(
-        description, r'Nonogram', 'description');
-    BuiltValueNullFieldError.checkNotNull(isUnique, r'Nonogram', 'isUnique');
+    BuiltValueNullFieldError.checkNotNull(id, r'Nonogram', 'id');
   }
 
   @override
@@ -145,25 +126,21 @@ class _$Nonogram extends Nonogram {
   bool operator ==(Object other) {
     if (identical(other, this)) return true;
     return other is Nonogram &&
-        rows == other.rows &&
-        columns == other.columns &&
-        title == other.title &&
-        author == other.author &&
-        copyright == other.copyright &&
-        description == other.description &&
-        isUnique == other.isUnique;
+        id == other.id &&
+        info == other.info &&
+        note == other.note &&
+        clues == other.clues &&
+        solutions == other.solutions;
   }
 
   @override
   int get hashCode {
     var _$hash = 0;
-    _$hash = $jc(_$hash, rows.hashCode);
-    _$hash = $jc(_$hash, columns.hashCode);
-    _$hash = $jc(_$hash, title.hashCode);
-    _$hash = $jc(_$hash, author.hashCode);
-    _$hash = $jc(_$hash, copyright.hashCode);
-    _$hash = $jc(_$hash, description.hashCode);
-    _$hash = $jc(_$hash, isUnique.hashCode);
+    _$hash = $jc(_$hash, id.hashCode);
+    _$hash = $jc(_$hash, info.hashCode);
+    _$hash = $jc(_$hash, note.hashCode);
+    _$hash = $jc(_$hash, clues.hashCode);
+    _$hash = $jc(_$hash, solutions.hashCode);
     _$hash = $jf(_$hash);
     return _$hash;
   }
@@ -171,13 +148,11 @@ class _$Nonogram extends Nonogram {
   @override
   String toString() {
     return (newBuiltValueToStringHelper(r'Nonogram')
-          ..add('rows', rows)
-          ..add('columns', columns)
-          ..add('title', title)
-          ..add('author', author)
-          ..add('copyright', copyright)
-          ..add('description', description)
-          ..add('isUnique', isUnique))
+          ..add('id', id)
+          ..add('info', info)
+          ..add('note', note)
+          ..add('clues', clues)
+          ..add('solutions', solutions))
         .toString();
   }
 }
@@ -185,46 +160,38 @@ class _$Nonogram extends Nonogram {
 class NonogramBuilder implements Builder<Nonogram, NonogramBuilder> {
   _$Nonogram? _$v;
 
-  ListBuilder<int>? _rows;
-  ListBuilder<int> get rows => _$this._rows ??= new ListBuilder<int>();
-  set rows(ListBuilder<int>? rows) => _$this._rows = rows;
+  String? _id;
+  String? get id => _$this._id;
+  set id(String? id) => _$this._id = id;
 
-  ListBuilder<int>? _columns;
-  ListBuilder<int> get columns => _$this._columns ??= new ListBuilder<int>();
-  set columns(ListBuilder<int>? columns) => _$this._columns = columns;
+  NonogramInfoBuilder? _info;
+  NonogramInfoBuilder get info => _$this._info ??= new NonogramInfoBuilder();
+  set info(NonogramInfoBuilder? info) => _$this._info = info;
 
-  String? _title;
-  String? get title => _$this._title;
-  set title(String? title) => _$this._title = title;
+  String? _note;
+  String? get note => _$this._note;
+  set note(String? note) => _$this._note = note;
 
-  String? _author;
-  String? get author => _$this._author;
-  set author(String? author) => _$this._author = author;
+  CluesBuilder? _clues;
+  CluesBuilder get clues => _$this._clues ??= new CluesBuilder();
+  set clues(CluesBuilder? clues) => _$this._clues = clues;
 
-  String? _copyright;
-  String? get copyright => _$this._copyright;
-  set copyright(String? copyright) => _$this._copyright = copyright;
-
-  String? _description;
-  String? get description => _$this._description;
-  set description(String? description) => _$this._description = description;
-
-  bool? _isUnique;
-  bool? get isUnique => _$this._isUnique;
-  set isUnique(bool? isUnique) => _$this._isUnique = isUnique;
+  ListBuilder<Solution>? _solutions;
+  ListBuilder<Solution> get solutions =>
+      _$this._solutions ??= new ListBuilder<Solution>();
+  set solutions(ListBuilder<Solution>? solutions) =>
+      _$this._solutions = solutions;
 
   NonogramBuilder();
 
   NonogramBuilder get _$this {
     final $v = _$v;
     if ($v != null) {
-      _rows = $v.rows.toBuilder();
-      _columns = $v.columns.toBuilder();
-      _title = $v.title;
-      _author = $v.author;
-      _copyright = $v.copyright;
-      _description = $v.description;
-      _isUnique = $v.isUnique;
+      _id = $v.id;
+      _info = $v.info?.toBuilder();
+      _note = $v.note;
+      _clues = $v.clues?.toBuilder();
+      _solutions = $v.solutions?.toBuilder();
       _$v = null;
     }
     return this;
@@ -249,25 +216,21 @@ class NonogramBuilder implements Builder<Nonogram, NonogramBuilder> {
     try {
       _$result = _$v ??
           new _$Nonogram._(
-              rows: rows.build(),
-              columns: columns.build(),
-              title: BuiltValueNullFieldError.checkNotNull(
-                  title, r'Nonogram', 'title'),
-              author: BuiltValueNullFieldError.checkNotNull(
-                  author, r'Nonogram', 'author'),
-              copyright: BuiltValueNullFieldError.checkNotNull(
-                  copyright, r'Nonogram', 'copyright'),
-              description: BuiltValueNullFieldError.checkNotNull(
-                  description, r'Nonogram', 'description'),
-              isUnique: BuiltValueNullFieldError.checkNotNull(
-                  isUnique, r'Nonogram', 'isUnique'));
+              id: BuiltValueNullFieldError.checkNotNull(id, r'Nonogram', 'id'),
+              info: _info?.build(),
+              note: note,
+              clues: _clues?.build(),
+              solutions: _solutions?.build());
     } catch (_) {
       late String _$failedField;
       try {
-        _$failedField = 'rows';
-        rows.build();
-        _$failedField = 'columns';
-        columns.build();
+        _$failedField = 'info';
+        _info?.build();
+
+        _$failedField = 'clues';
+        _clues?.build();
+        _$failedField = 'solutions';
+        _solutions?.build();
       } catch (e) {
         throw new BuiltValueNestedFieldError(
             r'Nonogram', _$failedField, e.toString());
