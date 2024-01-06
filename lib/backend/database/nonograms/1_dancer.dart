@@ -7,7 +7,7 @@ import 'package:nonogram/backend/models/solution_type.dart';
 
 final Nonogram kDancer = Nonogram(
   (n) => n
-    ..id = "#1 (v.1)"
+    ..id = "#1_(v.1)"
     ..info = NonogramInfo((i) => i
           ..title = "Demo Puzzle from Front Page"
           ..copyright = "(c) Copyright 2004 by Jan Wolter"

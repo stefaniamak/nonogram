@@ -14,6 +14,12 @@ abstract class Solution implements Built<Solution, SolutionBuilder> {
       .replaceAll('.', '0')
       .replaceAll('X', '1');
 
+  void printSolution() {
+    print('Image:');
+    print(image ?? 'No Image');
+    print(solution ?? 'No Solution');
+  }
+
   Solution._();
   factory Solution([void Function(SolutionBuilder) updates]) = _$Solution;
 }

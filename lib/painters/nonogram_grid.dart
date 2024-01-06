@@ -3,6 +3,8 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:nonogram/game_loop/nonogram_state.dart';
 
+enum PointState { empty, filled, cross }
+
 class NonogramGrid extends CustomPainter {
   final NonogramState nonogramState;
 
@@ -11,9 +13,13 @@ class NonogramGrid extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     var nonogram = nonogramState.nonogram;
-    double side = size.width / nonogram.width;
+    double side = nonogram.width > nonogram.height
+        ? size.width / nonogram.width
+        : size.height / nonogram.height;
 
     print('side: $side');
+    print('nonogram.width: ${nonogram.width}');
+    print('nonogram.height: ${nonogram.height}');
 
     for (var r = 0; r < nonogram.height; r++) {
       for (var c = 0; c < nonogram.width; c++) {
