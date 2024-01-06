@@ -1,7 +1,7 @@
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:nonogram/backend/models/nonogram.dart';
 
-enum PointState { empty, filled, cross }
+enum PointState { unknown, filled, cross }
 
 class NonogramState {
   final Nonogram nonogram;

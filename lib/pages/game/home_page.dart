@@ -26,17 +26,7 @@ class HomePage extends HookWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Text('game home pageeeeeeeeee'),
-        Center(
-          child: InkWell(
-            onTap: () {
-              nonogramState.setFilled(1, 1);
-            },
-            child: CustomPaint(
-              size: Size(400, 400),
-              painter: NonogramGrid(nonogramState: nonogramState),
-            ),
-          ),
-        ),
+        NonogramGrid(),
       ],
     );
   }
