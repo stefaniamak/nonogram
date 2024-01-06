@@ -16,8 +16,8 @@ class NonogramGrid extends CustomPainter {
         : size.height / nonogram.height;
 
     print('side: $side');
-    print('nonogram.width: ${nonogram.width}');
-    print('nonogram.height: ${nonogram.height}');
+    // print('nonogram.width: ${nonogram.width}');
+    // print('nonogram.height: ${nonogram.height}');
 
     for (var r = 0; r < nonogram.height; r++) {
       for (var c = 0; c < nonogram.width; c++) {

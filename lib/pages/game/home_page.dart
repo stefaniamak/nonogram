@@ -27,9 +27,14 @@ class HomePage extends HookWidget {
       children: [
         Text('game home pageeeeeeeeee'),
         Center(
-          child: CustomPaint(
-            size: Size(400, 400),
-            painter: NonogramGrid(nonogramState: nonogramState),
+          child: InkWell(
+            onTap: () {
+              nonogramState.setFilled(1, 1);
+            },
+            child: CustomPaint(
+              size: Size(400, 400),
+              painter: NonogramGrid(nonogramState: nonogramState),
+            ),
           ),
         ),
       ],
