@@ -12,28 +12,33 @@ class NonogramGridAndClues extends HookWidget {
   Widget build(BuildContext context) {
     Nonogram draftNono = Nonograms().dancer;
     var nonogramState = useNonogramState(draftNono);
+
+    final gridWidth = MediaQuery.of(context).size.width * 50 / 100;
     return Scaffold(
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text('game home pageeeeeeeeee'),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Text('test 1'),
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Text('test 2'),
-                  NonogramGrid(
-                    nonogramState: nonogramState,
-                    gridWidth: MediaQuery.of(context).size.width * 70 / 100,
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ],
+      body: SizedBox(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text('game home pageeeeeeeeee'),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Text('test 1'),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Text('test 2'),
+                    NonogramGrid(
+                      nonogramState: nonogramState,
+                      gridWidth: gridWidth,
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
