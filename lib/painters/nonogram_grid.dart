@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:nonogram/game_loop/nonogram_state.dart';
 
-enum PointState { empty, filled, cross }
+enum PointState { unknown, filled, cross }
 
 class NonogramGrid extends CustomPainter {
   final NonogramState nonogramState;
@@ -21,9 +21,9 @@ class NonogramGrid extends CustomPainter {
 
     for (var r = 0; r < nonogram.height; r++) {
       for (var c = 0; c < nonogram.width; c++) {
-        switch (PointState.empty) {
+        switch (PointState.unknown) {
           //nonogramState.activeSolution[Point(c, r)] ??
-          case PointState.empty:
+          case PointState.unknown:
             drawEmptyBox(canvas, Size(c * side, r * side), side);
             break;
           case PointState.filled:

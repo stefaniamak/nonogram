@@ -8,15 +8,15 @@ class NonogramState {
   final String activeSolution;
 
   final Function(int row, int col) setFilled;
-  final Function(int row, int col) setBlank;
-  final Function(int row, int col) setEmpty;
+  final Function(int row, int col) setCross;
+  final Function(int row, int col) setUnknown;
 
   NonogramState({
     required this.nonogram,
     required this.activeSolution,
     required this.setFilled,
-    required this.setBlank,
-    required this.setEmpty,
+    required this.setCross,
+    required this.setUnknown,
   });
 }
 
@@ -32,16 +32,16 @@ NonogramState useNonogramState(Nonogram nonogram) {
     activeSolution$.value = activeSolution$.value.replaceRange(1, 2, '1');
     // print('activeSolution\$.value after : ${activeSolution$.value}');
   }, []);
-  final setBlank = useCallback(
+  final setCross = useCallback(
       (int row, int col) => activeSolution$.value.replaceRange(1, 1, '0'));
-  final setEmpty = useCallback(
+  final serUnknown = useCallback(
       (int row, int col) => activeSolution$.value.replaceRange(1, 1, '?'));
 
   return NonogramState(
     nonogram: nonogram,
     activeSolution: activeSolution$.value,
     setFilled: setFilled,
-    setBlank: setBlank,
-    setEmpty: setEmpty,
+    setCross: setCross,
+    setUnknown: serUnknown,
   );
 }
