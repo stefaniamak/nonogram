@@ -29,7 +29,8 @@ NonogramState useNonogramState(Nonogram nonogram) {
 
   final setFilled = useCallback((int row, int col) {
     // print('activeSolution\$.value before: ${activeSolution$.value}');
-    activeSolution$.value = activeSolution$.value.replaceRange(1, 2, '1');
+    activeSolution$.value =
+        activeSolution$.value.replaceRange(row, row + 1, '1');
     // print('activeSolution\$.value after : ${activeSolution$.value}');
   }, []);
   final setCross = useCallback(

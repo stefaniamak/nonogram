@@ -26,7 +26,7 @@ class HomePage extends HookWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Text('game home pageeeeeeeeee'),
-        NonogramGrid(),
+        NonogramGrid(nonogramState: nonogramState),
       ],
     );
   }
