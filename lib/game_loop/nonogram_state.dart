@@ -1,13 +1,13 @@
-import 'dart:math';
 import 'dart:ui';
 
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:nonogram/backend/models/nonogram.dart';
 
 enum PointState { empty, filled, cross }
 
 class NonogramState {
   final Nonogram nonogram;
-  final Map<Point, PointState> activeSolution;
+  final String activeSolution;
 
   final VoidCallback setFilled;
 
@@ -19,14 +19,14 @@ class NonogramState {
 }
 
 NonogramState useNonogramState(Nonogram nonogram) {
+  final activeSolution$ = useState(
+    // Initialization code made inspired from https://stackoverflow.com/a/61929967
+    Iterable.generate(nonogram.height * nonogram.width, (_) => '?').join(),
+  );
+
   return NonogramState(
     nonogram: nonogram,
-    activeSolution: {
-      Point(0, 0): PointState.cross,
-      Point(0, 2): PointState.cross,
-      Point(1, 1): PointState.filled,
-      Point(2, 2): PointState.filled,
-    },
+    activeSolution: activeSolution$.value,
     setFilled: () {},
   );
 }

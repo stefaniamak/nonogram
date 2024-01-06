@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:nonogram/game_loop/nonogram_state.dart';
 
@@ -23,7 +21,8 @@ class NonogramGrid extends CustomPainter {
 
     for (var r = 0; r < nonogram.height; r++) {
       for (var c = 0; c < nonogram.width; c++) {
-        switch (nonogramState.activeSolution[Point(c, r)] ?? PointState.empty) {
+        switch (PointState.empty) {
+          //nonogramState.activeSolution[Point(c, r)] ??
           case PointState.empty:
             drawEmptyBox(canvas, Size(c * side, r * side), side);
             break;
