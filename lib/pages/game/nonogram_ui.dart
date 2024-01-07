@@ -1,26 +1,24 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:nonogram/backend/models/nonogram.dart';
 
 class NonogramUi {
   final Size size;
+  final Size cluesSize;
   final Size gridSize;
   final double gridItemSide;
 
   const NonogramUi({
     required this.size,
+    required this.cluesSize,
     required this.gridSize,
     required this.gridItemSide,
   });
 }
 
-NonogramUi useNonogramUi(Nonogram nonogram,
+NonogramUi useNonogramUi(Nonogram nonogram, Size size,
     [EdgeInsets padding = EdgeInsets.zero]) {
-  var context = useContext();
-  var md = MediaQuery.of(context).size;
-
-  double width = md.width - padding.left - padding.right;
-  double height = md.height - padding.top - padding.bottom;
+  double width = size.width - padding.horizontal;
+  double height = size.height - padding.vertical;
 
   double gridItemSide = width / (nonogram.width + nonogram.clues!.maxRowNumbs);
 
@@ -28,13 +26,23 @@ NonogramUi useNonogramUi(Nonogram nonogram,
     gridItemSide = height / (nonogram.height + nonogram.clues!.maxColNumbs);
   }
 
-  // double get
+  Size cluesSize = Size(
+    nonogram.clues!.maxRowNumbs * gridItemSide,
+    nonogram.clues!.maxColNumbs * gridItemSide,
+  );
+
+  Size gridSize = Size(
+    nonogram.width * gridItemSide,
+    nonogram.height * gridItemSide,
+  );
+
+  width = gridSize.width + cluesSize.width + padding.horizontal;
+  height = gridSize.height + cluesSize.height + padding.vertical;
+
   return NonogramUi(
     size: Size(width, height),
-    gridSize: Size(
-      nonogram.width * gridItemSide,
-      nonogram.height * gridItemSide,
-    ),
+    cluesSize: cluesSize,
+    gridSize: gridSize,
     gridItemSide: gridItemSide,
   );
 }
