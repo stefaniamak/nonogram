@@ -52,40 +52,7 @@ class NonogramGridAndClues extends HookWidget {
                     ),
                   ],
                 ),
-                SizedBox(width: 2),
-                // Text('test 2'),
-                // error is here aaaa
-                // SizedBox(
-                //   height: nonoHeight,
-                //   child: ListView.builder(
-                //     itemCount: nonogramState.nonogram.clues!.rows.length,
-                //     itemBuilder: (BuildContext context, int row) {
-                //       return SizedBox(
-                //         height: gridWidth / nonogramState.nonogram.width,
-                //         child: ListView.builder(
-                //           scrollDirection: Axis.horizontal,
-                //           itemCount: nonogramState.nonogram.clues!.rows
-                //               .elementAt(row)
-                //               .length,
-                //           itemBuilder: (BuildContext context, int item) {
-                //             return SizedBox(
-                //               width: 6,
-                //               child: Text(
-                //                 nonogramState.nonogram.clues!.rows
-                //                     .elementAt(row)
-                //                     .elementAt(item)
-                //                     .toString(),
-                //               ),
-                //             );
-                //           },
-                //         ),
-                //       );
-                //     },
-                //     // child: Row(
-                //     //   children: nonogramState.nonogram.,
-                //     // ),
-                //   ),
-                // ),
+                const SizedBox(width: 2),
                 NonogramGrid(
                   nonogramState: nonogramState,
                   // todo: find *number based on dekades as well
