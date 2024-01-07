@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:nonogram/backend/database/nonograms.dart';
 import 'package:nonogram/pages/game/nonogram_grid_and_clues.dart';
 
 class HomePage extends StatelessWidget {
@@ -9,10 +10,9 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey,
-      body: Padding(
-        padding: const EdgeInsets.all(32.0),
-        child: const NonogramGridAndClues(),
+      body: NonogramGridAndClues(
+        nonogram: Nonograms().dancer,
+        // padding: EdgeInsets.all(32),
       ),
     );
   }

@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:built_collection/built_collection.dart';
 import 'package:built_value/built_value.dart';
 import 'package:built_value/serializer.dart';
@@ -8,6 +10,9 @@ part 'clues.g.dart';
 abstract class Clues implements Built<Clues, CluesBuilder> {
   BuiltList<List<int>> get rows;
   BuiltList<List<int>> get columns;
+
+  int get maxRowNumbs => rows.map((r) => r.length).reduce(max);
+  int get maxColNumbs => columns.map((c) => c.length).reduce(max);
 
   Clues._();
   factory Clues([void Function(CluesBuilder) updates]) = _$Clues;

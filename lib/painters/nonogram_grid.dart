@@ -1,16 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:nonogram/game_loop/nonogram_state.dart';
+import 'package:nonogram/pages/game/nonogram_ui.dart';
 import 'package:nonogram/painters/grid_box.dart';
 
 class NonogramGrid extends StatelessWidget {
   final NonogramState nonogramState;
-  final double gridWidth;
-  final double gridItemWidth;
+  final NonogramUi nonogramUi;
 
   const NonogramGrid({
     required this.nonogramState,
-    required this.gridWidth,
-    required this.gridItemWidth,
+    required this.nonogramUi,
     super.key,
   });
 
@@ -29,43 +28,40 @@ class NonogramGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // todo: find grid height and width #16 https://github.com/stefaniamak/nonogram/issues/16
-    final double gridSize = gridWidth / nonogramState.nonogram.width;
-    return Center(
-      child: Container(
-        width: gridWidth,
-        child: GridView.builder(
-          itemCount: nonogramState.activeSolution.length,
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: nonogramState.nonogram.width,
-          ),
-          itemBuilder: (BuildContext context, int index) {
-            return InkWell(
-              onTap: () {
-                switch (getGridBoxState(index)) {
-                  case PointState.unknown:
-                    nonogramState.setFilled(index);
-                    break;
-                  case PointState.filled:
-                    nonogramState.setCross(index);
-                    break;
-                  case PointState.cross:
-                    nonogramState.setUnknown(index);
-                    break;
-                }
-              },
-              child: CustomPaint(
-                painter: GridBox(
-                  pointState: getGridBoxState(index),
-                  side: gridItemWidth,
-                ),
-              ),
-            );
-          },
-          padding: EdgeInsets.zero,
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
+    return SizedBox(
+      width: nonogramUi.gridSize.width,
+      height: nonogramUi.gridSize.height,
+      child: GridView.builder(
+        itemCount: nonogramState.activeSolution.length,
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: nonogramState.nonogram.width,
         ),
+        itemBuilder: (BuildContext context, int index) {
+          return InkWell(
+            onTap: () {
+              switch (getGridBoxState(index)) {
+                case PointState.unknown:
+                  nonogramState.setFilled(index);
+                  break;
+                case PointState.filled:
+                  nonogramState.setCross(index);
+                  break;
+                case PointState.cross:
+                  nonogramState.setUnknown(index);
+                  break;
+              }
+            },
+            child: CustomPaint(
+              painter: GridBox(
+                pointState: getGridBoxState(index),
+                side: nonogramUi.gridItemSide,
+              ),
+            ),
+          );
+        },
+        padding: EdgeInsets.zero,
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
       ),
     );
   }

@@ -1,83 +1,76 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:nonogram/backend/database/nonograms.dart';
 import 'package:nonogram/backend/models/nonogram.dart';
 import 'package:nonogram/game_loop/nonogram_state.dart';
+import 'package:nonogram/pages/game/nonogram_ui.dart';
 import 'package:nonogram/painters/nonogram_grid.dart';
 
 class NonogramGridAndClues extends HookWidget {
-  const NonogramGridAndClues({super.key});
+  final Nonogram nonogram;
+  final EdgeInsets padding;
+
+  const NonogramGridAndClues({
+    required this.nonogram,
+    this.padding = EdgeInsets.zero,
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
-    Nonogram draftNono = Nonograms().dancer;
-    var nonogramState = useNonogramState(draftNono);
+    var nonogramState = useNonogramState(nonogram);
+    var nonogramUi = useNonogramUi(nonogram);
 
-    final numbsWidth = draftNono.clues!.rows.map((r) => r.length).reduce(max);
-    final numbsHeight =
-        draftNono.clues!.columns.map((c) => c.length).reduce(max);
-
-    print('numbsWidth: $numbsWidth');
-
-    final nonoWidth = MediaQuery.of(context).size.width - 64;
-    final nonoHeight = MediaQuery.of(context).size.height - 64;
-    final gridWidth = nonoWidth - numbsWidth * 12;
-    final gridItemWidth =
-        (gridWidth + numbsWidth) / nonogramState.nonogram.width;
-    final gridItemHeight =
-        nonoWidth / (nonogramState.nonogram.width + numbsWidth);
-    return Scaffold(
-      body: SizedBox(
-        width: MediaQuery.of(context).size.width,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                ...nonogramState.nonogram.clues!.columns.map(
-                  (c) => SizedBox(
-                    width: gridItemWidth,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [...c.map((i) => Text('$i'))],
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
+    return SizedBox(
+      width: nonogramUi.size.width,
+      height: nonogramUi.size.height,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              ...nonogramState.nonogram.clues!.columns.map(
+                (c) => Column(
+                  mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    ...nonogramState.nonogram.clues!.rows.map(
-                      (r) => SizedBox(
-                        height: gridItemWidth,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [...r.map((i) => Text('$i'))],
-                        ),
-                      ),
-                    ),
+                    ...c.map((i) => SizedBox(
+                        width: nonogramUi.gridItemSide,
+                        height: nonogramUi.gridItemSide,
+                        child: Text('$i')))
                   ],
                 ),
-                const SizedBox(width: 2),
-                NonogramGrid(
-                  nonogramState: nonogramState,
-                  // todo: find *number based on dekades as well
-                  gridWidth: gridWidth,
-                  gridItemWidth: gridItemWidth,
-                ),
-              ],
-            ),
-          ],
-        ),
+              ),
+            ],
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  ...nonogramState.nonogram.clues!.rows.map(
+                    (r) => Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        ...r.map((i) => SizedBox(
+                            width: nonogramUi.gridItemSide,
+                            height: nonogramUi.gridItemSide,
+                            child: Text('$i')))
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(width: 2),
+              NonogramGrid(
+                nonogramState: nonogramState,
+                nonogramUi: nonogramUi,
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }
