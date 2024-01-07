@@ -17,10 +17,14 @@ class ClueBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
+    return Container(
       width: side,
       height: side,
-      child: Text(numb.toString()),
+      padding: const EdgeInsets.all(4),
+      child: FittedBox(
+        fit: BoxFit.contain,
+        child: Text(numb.toString()),
+      ),
     );
   }
 }

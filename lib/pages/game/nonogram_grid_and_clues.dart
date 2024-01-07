@@ -60,10 +60,10 @@ class NonogramGridAndClues extends HookWidget {
                     (r) => Row(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
-                        ...r.map((i) => SizedBox(
-                            width: nonogramUi.gridItemSide,
-                            height: nonogramUi.gridItemSide,
-                            child: Text('$i')))
+                        ...r.map(
+                          (i) =>
+                              ClueBox(side: nonogramUi.gridItemSide, numb: i),
+                        )
                       ],
                     ),
                   ),
