@@ -15,7 +15,6 @@ class NonogramGridAndClues extends HookWidget {
     Nonogram draftNono = Nonograms().dancer;
     var nonogramState = useNonogramState(draftNono);
 
-    // todo: na vrw auto me ta perissotera chars, oxi perissoterous arithmous apla
     final numbsWidth = draftNono.clues!.rows.map((r) => r.length).reduce(max);
     final numbsHeight =
         draftNono.clues!.columns.map((c) => c.length).reduce(max);
@@ -23,17 +22,33 @@ class NonogramGridAndClues extends HookWidget {
     print('numbsWidth: $numbsWidth');
 
     final nonoWidth = MediaQuery.of(context).size.width - 64;
-    final nonoHeight =
-        (MediaQuery.of(context).size.height * 0.8) - numbsHeight * 6;
+    final nonoHeight = MediaQuery.of(context).size.height - 64;
     final gridWidth = nonoWidth - numbsWidth * 12;
-    final gridItemWidth = gridWidth / nonogramState.nonogram.width;
+    final gridItemWidth =
+        (gridWidth + numbsWidth) / nonogramState.nonogram.width;
+    final gridItemHeight =
+        nonoWidth / (nonogramState.nonogram.width + numbsWidth);
     return Scaffold(
       body: SizedBox(
         width: MediaQuery.of(context).size.width,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
-            Text('test 1'),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                ...nonogramState.nonogram.clues!.columns.map(
+                  (c) => SizedBox(
+                    width: gridItemWidth,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [...c.map((i) => Text('$i'))],
+                    ),
+                  ),
+                ),
+              ],
+            ),
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               crossAxisAlignment: CrossAxisAlignment.end,
@@ -57,6 +72,7 @@ class NonogramGridAndClues extends HookWidget {
                   nonogramState: nonogramState,
                   // todo: find *number based on dekades as well
                   gridWidth: gridWidth,
+                  gridItemWidth: gridItemWidth,
                 ),
               ],
             ),

@@ -5,10 +5,12 @@ import 'package:nonogram/painters/grid_box.dart';
 class NonogramGrid extends StatelessWidget {
   final NonogramState nonogramState;
   final double gridWidth;
+  final double gridItemWidth;
 
   const NonogramGrid({
     required this.nonogramState,
     required this.gridWidth,
+    required this.gridItemWidth,
     super.key,
   });
 
@@ -55,7 +57,7 @@ class NonogramGrid extends StatelessWidget {
               child: CustomPaint(
                 painter: GridBox(
                   pointState: getGridBoxState(index),
-                  side: gridSize,
+                  side: gridItemWidth,
                 ),
               ),
             );
