@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:nonogram/backend/models/nonogram.dart';
 import 'package:nonogram/game_loop/nonogram_state.dart';
+import 'package:nonogram/pages/game/nono_clues.dart';
 import 'package:nonogram/pages/game/nonogram_ui.dart';
 import 'package:nonogram/painters/nonogram_grid.dart';
 
@@ -18,7 +19,7 @@ class NonogramGridAndClues extends HookWidget {
   @override
   Widget build(BuildContext context) {
     var nonogramState = useNonogramState(nonogram);
-    var nonogramUi = useNonogramUi(nonogram);
+    var nonogramUi = useNonogramUi(nonogram, padding);
 
     return SizedBox(
       width: nonogramUi.size.width,
@@ -34,10 +35,9 @@ class NonogramGridAndClues extends HookWidget {
                 (c) => Column(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    ...c.map((i) => SizedBox(
-                        width: nonogramUi.gridItemSide,
-                        height: nonogramUi.gridItemSide,
-                        child: Text('$i')))
+                    ...c.map(
+                      (i) => ClueBox(side: nonogramUi.gridItemSide, numb: i),
+                    )
                   ],
                 ),
               ),
@@ -63,7 +63,6 @@ class NonogramGridAndClues extends HookWidget {
                   ),
                 ],
               ),
-              const SizedBox(width: 2),
               NonogramGrid(
                 nonogramState: nonogramState,
                 nonogramUi: nonogramUi,

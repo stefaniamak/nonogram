@@ -12,7 +12,7 @@ class HomePage extends StatelessWidget {
     return Scaffold(
       body: NonogramGridAndClues(
         nonogram: Nonograms().dancer,
-        // padding: EdgeInsets.all(32),
+        padding: const EdgeInsets.all(32),
       ),
     );
   }
