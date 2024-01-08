@@ -1,11 +1,53 @@
 import 'package:flutter/material.dart';
+import 'package:nonogram/backend/models/clues.dart';
 
-class NonoClues extends StatelessWidget {
-  const NonoClues({super.key});
+class CluesUi extends StatelessWidget {
+  final Clues clues;
+  final double boxSize;
+  final Axis axis;
+
+  const CluesUi({
+    super.key,
+    required this.clues,
+    required this.boxSize,
+    required this.axis,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    if (axis == Axis.horizontal) {
+      return Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          ...clues.columns.map(
+            (c) => Column(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                ...c.map(
+                  (i) => ClueBox(side: boxSize, numb: i),
+                )
+              ],
+            ),
+          ),
+        ],
+      );
+    }
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.end,
+      children: [
+        ...clues.rows.map(
+          (r) => Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              ...r.map(
+                (i) => ClueBox(side: boxSize, numb: i),
+              )
+            ],
+          ),
+        ),
+      ],
+    );
   }
 }
 

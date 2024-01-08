@@ -33,41 +33,19 @@ class NonogramGridAndClues extends HookWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              ...nonogramState.nonogram.clues!.columns.map(
-                (c) => Column(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    ...c.map(
-                      (i) => ClueBox(side: nonogramUi.gridItemSide, numb: i),
-                    )
-                  ],
-                ),
-              ),
-            ],
+          CluesUi(
+            clues: nonogramState.nonogram.clues!,
+            boxSize: nonogramUi.gridItemSide,
+            axis: Axis.horizontal,
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  ...nonogramState.nonogram.clues!.rows.map(
-                    (r) => Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        ...r.map(
-                          (i) =>
-                              ClueBox(side: nonogramUi.gridItemSide, numb: i),
-                        )
-                      ],
-                    ),
-                  ),
-                ],
+              CluesUi(
+                clues: nonogramState.nonogram.clues!,
+                boxSize: nonogramUi.gridItemSide,
+                axis: Axis.vertical,
               ),
               NonogramGrid(
                 nonogramState: nonogramState,
