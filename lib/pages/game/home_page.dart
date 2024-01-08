@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:nonogram/nono_tabs_page.dart';
+import 'package:nonogram/backend/database/nonograms.dart';
+import 'package:nonogram/pages/game/nonogram_grid_and_clues.dart';
 
 class HomePage extends StatelessWidget {
   static const String route = '/home';
@@ -8,9 +9,10 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const NonoTabsPage(
-      body: Center(
-        child: Text('game home page'),
+    return Scaffold(
+      body: NonogramGridAndClues(
+        nonogram: Nonograms().dancer,
+        padding: const EdgeInsets.all(32),
       ),
     );
   }

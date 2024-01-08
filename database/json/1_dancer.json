@@ -1,0 +1,115 @@
+{
+  "puzzleset": {
+    "source": "webpbn.com",
+    "puzzle": {
+      "id": "#1 (v.1)",
+      "info": {
+        "title": "Demo Puzzle from Front Page",
+        "author": "Jan Wolter",
+        "authorid": "jan",
+        "copyright": "(c) Copyright 2004 by Jan Wolter",
+        "description": "A stick figure man, dancing his stickly little heart out."
+      },
+      "note": "published,definitely unique,definitely line/color solvable",
+      "color": [
+        "FFFFFF",
+        0
+      ],
+      "columns": [
+        [
+          2,
+          1
+        ]
+      ],
+      "clues": [
+        {
+          "line": [
+            {
+              "count": [
+                2,
+                1
+              ]
+            },
+            {
+              "count": [
+                2,
+                1,
+                3
+              ]
+            },
+            {
+              "count": 7
+            },
+            {
+              "count": [
+                1,
+                3
+              ]
+            },
+            {
+              "count": [
+                2,
+                1
+              ]
+            }
+          ]
+        },
+        {
+          "line": [
+            {
+              "count": 2
+            },
+            {
+              "count": [
+                2,
+                1
+              ]
+            },
+            {
+              "count": [
+                1,
+                1
+              ]
+            },
+            {
+              "count": 3
+            },
+            {
+              "count": [
+                1,
+                1
+              ]
+            },
+            {
+              "count": [
+                1,
+                1
+              ]
+            },
+            {
+              "count": 2
+            },
+            {
+              "count": [
+                1,
+                1
+              ]
+            },
+            {
+              "count": [
+                1,
+                2
+              ]
+            },
+            {
+              "count": 2
+            }
+          ]
+        }
+      ],
+      "solution": {
+        "image": "|.XX..|\n|.XX.X|\n|..X.X|\n|.XXX.|\n|X.X..|\n|X.X..|\n|..XX.|\n|.X.X.|\n|.X.XX|\n|XX...|"
+      }
+    }
+  }
+}
