@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:nonogram/backend/models/nonogram.dart';
+import 'package:nonogram/pages/game/nonogram_grid_and_clues.dart';
 
 class NonogramPage extends StatelessWidget {
   final Nonogram nonogram;
