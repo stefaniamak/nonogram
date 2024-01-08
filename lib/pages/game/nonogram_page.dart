@@ -18,7 +18,9 @@ class NonogramPage extends StatelessWidget {
           padding: const EdgeInsets.all(32),
         ),
         InkWell(
-          onTap: () {},
+          onTap: () {
+            // todo: build draft/empty solver structure #17 https://github.com/stefaniamak/nonogram/issues/17
+          },
           child: const SizedBox(
             height: 50,
             width: 80,
