@@ -67,10 +67,26 @@ class Solver {
   String lineSolver(NonogramState state) {
     // left most solution
     for (var i = 0; i < state.nonogram.clues!.rows.length; i++) {
-      // for (List<int> rs in state.nonogram.clues!.rows) {
-      var row = state.activeSolution.characters
-          .getRange(i * state.nonogram.width, state.nonogram.width * (i + 1));
+      // gets [i] row
+      List<int> rowClue = state.nonogram.clues!.rows.elementAt(i);
+      String row = state.activeSolution.characters
+          .getRange(i * state.nonogram.width, state.nonogram.width * (i + 1))
+          .string;
       print('row: $row');
+
+      // find leftmost solution
+      for (int i = 0; i < rowClue.length; i++) {
+        String leftSolution = row;
+        int clue = rowClue.elementAt(i);
+        print('gen ? : ${Iterable.generate(clue, (_) => '?').join()}');
+        print('gen 1 : ${Iterable.generate(clue, (_) => '1').join()}');
+        String n = leftSolution.replaceFirstMapped(
+          Iterable.generate(clue, (_) => '?').join(),
+          (m) => Iterable.generate(clue, (_) => '1').join(),
+        );
+        print('leftSolution: $n');
+      }
+
       // for(int r in rs){
       //
       // }
