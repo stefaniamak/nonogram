@@ -65,6 +65,7 @@ class Solver {
   }
 
   String lineSolver(NonogramState state) {
+    print('I re-run?');
     // left most solution
     for (var i = 0; i < state.nonogram.clues!.rows.length; i++) {
       // gets [i] row
@@ -74,17 +75,45 @@ class Solver {
           .string;
       print('row: $row');
 
+      String n = '';
+      String n2 = '';
       // find leftmost solution
-      for (int i = 0; i < rowClue.length; i++) {
+      for (int a = 0; a < rowClue.length; a++) {
         String leftSolution = row;
-        int clue = rowClue.elementAt(i);
-        print('gen ? : ${Iterable.generate(clue, (_) => '?').join()}');
-        print('gen 1 : ${Iterable.generate(clue, (_) => '1').join()}');
-        String n = leftSolution.replaceFirstMapped(
+        int clue = rowClue.elementAt(a);
+        // print('gen ? : ${Iterable.generate(clue, (_) => '?').join()}');
+        // print('gen 1 : ${Iterable.generate(clue, (_) => '1').join()}');
+        n = leftSolution.replaceFirstMapped(
           Iterable.generate(clue, (_) => '?').join(),
           (m) => Iterable.generate(clue, (_) => '1').join(),
         );
-        print('leftSolution: $n');
+        // print('leftSolution: $n');
+      }
+
+      for (int b = rowClue.length - 1; b >= 0; b--) {
+        String leftSolution = row;
+        int clue = rowClue.elementAt(b);
+        // print('gen ? : ${Iterable.generate(clue, (_) => '?').join()}');
+        // print('gen 1 : ${Iterable.generate(clue, (_) => '1').join()}');
+        n2 = leftSolution.replaceFirstMapped(
+          Iterable.generate(clue, (_) => '?').join(),
+          (m) => Iterable.generate(clue, (_) => '1').join(),
+        );
+
+        n2 = n2.split('').reversed.join();
+        // print('rightSolution: $n2');
+      }
+
+      for (int j = 0; j < row.length; j++) {
+        print('n: $n');
+        print('n.split(' ').elementAt(j): ${n.split('').elementAt(j)}');
+        print('n2: $n2');
+        print('n2.split(' ').elementAt(j): ${n2.split('').elementAt(j)}');
+        print('i * j ${i * state.nonogram.width + j}');
+        if (n.split('').elementAt(j) == '1' &&
+            n2.split('').elementAt(j) == '1') {
+          state.setFilled(i * state.nonogram.width + j);
+        }
       }
 
       // for(int r in rs){
