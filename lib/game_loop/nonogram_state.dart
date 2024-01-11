@@ -27,7 +27,7 @@ NonogramState useNonogramState(Nonogram nonogram) {
   final activeSolution$ = useState(
     // Initialization code made inspired from https://stackoverflow.com/a/61929967
     Iterable.generate(nonogram.height * nonogram.width, (_) => '?').join(),
-    // '123456789',
+    // '123456789zxcvbnmasdfghjklqwertyuiop1234567890qwert',
   );
 
   final setFilled = useCallback((int index) => activeSolution$.value =

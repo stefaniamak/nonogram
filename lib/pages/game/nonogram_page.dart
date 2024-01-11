@@ -26,15 +26,15 @@ class NonogramPage extends HookWidget {
           onTap: () {
             // todo: build draft/empty solver structure #17 https://github.com/stefaniamak/nonogram/issues/17
             var solution = Solver().solve(nonogramState);
-            int i = 0;
-            for (String s in solution.solution.characters) {
-              if (s == "0") {
-                nonogramState.setCross(i);
-              } else if (s == "1") {
-                nonogramState.setFilled(i);
-              }
-              i++;
-            }
+            // int i = 0;
+            // for (String s in solution.solution.characters) {
+            //   if (s == "0") {
+            //     nonogramState.setCross(i);
+            //   } else if (s == "1") {
+            //     nonogramState.setFilled(i);
+            //   }
+            //   i++;
+            // }
           },
           child: const SizedBox(
             height: 50,
@@ -66,7 +66,15 @@ class Solver {
 
   String lineSolver(NonogramState state) {
     // left most solution
-    for (List<int> rs in state.nonogram.clues!.rows) {}
+    for (var i = 0; i < state.nonogram.clues!.rows.length; i++) {
+      // for (List<int> rs in state.nonogram.clues!.rows) {
+      var row = state.activeSolution.characters
+          .getRange(i * state.nonogram.width, state.nonogram.width * (i + 1));
+      print('row: $row');
+      // for(int r in rs){
+      //
+      // }
+    }
 
     return state.activeSolution;
   }
