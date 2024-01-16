@@ -74,35 +74,45 @@ class Solver {
           .getRange(i * state.nonogram.width, state.nonogram.width * (i + 1))
           .string;
       print('row: $row');
+      print('rowClue: $rowClue');
 
       String n = '';
       String n2 = '';
       // find leftmost solution
+      String leftSolution = row;
       for (int a = 0; a < rowClue.length; a++) {
-        String leftSolution = row;
         int clue = rowClue.elementAt(a);
         // print('gen ? : ${Iterable.generate(clue, (_) => '?').join()}');
         // print('gen 1 : ${Iterable.generate(clue, (_) => '1').join()}');
         n = leftSolution.replaceFirstMapped(
           Iterable.generate(clue, (_) => '?').join(),
-          (m) => Iterable.generate(clue, (_) => '1').join(),
+          (m) => Iterable.generate(clue, (_) => (a + 1).toString()).join(),
         );
-        // print('leftSolution: $n');
+        leftSolution = n.replaceFirstMapped(
+          Iterable.generate(1, (_) => '?').join(),
+          (m) => Iterable.generate(1, (_) => '0').join(),
+        );
+        n = leftSolution;
       }
+      print('leftSolution:  $n');
 
+      String rightSolution = row;
       for (int b = rowClue.length - 1; b >= 0; b--) {
-        String leftSolution = row;
         int clue = rowClue.elementAt(b);
         // print('gen ? : ${Iterable.generate(clue, (_) => '?').join()}');
         // print('gen 1 : ${Iterable.generate(clue, (_) => '1').join()}');
-        n2 = leftSolution.replaceFirstMapped(
+        n2 = rightSolution.replaceFirstMapped(
           Iterable.generate(clue, (_) => '?').join(),
-          (m) => Iterable.generate(clue, (_) => '1').join(),
+          (m) => Iterable.generate(clue, (_) => (b + 1).toString()).join(),
         );
-
-        n2 = n2.split('').reversed.join();
-        // print('rightSolution: $n2');
+        rightSolution = n2.replaceFirstMapped(
+          Iterable.generate(1, (_) => '?').join(),
+          (m) => Iterable.generate(1, (_) => '0').join(),
+        );
+        n2 = rightSolution;
       }
+      n2 = n2.split('').reversed.join();
+      print('rightSolution: $n2');
 
       for (int j = 0; j < row.length; j++) {
         print('n: $n');
@@ -110,8 +120,14 @@ class Solver {
         print('n2: $n2');
         print('n2.split(' ').elementAt(j): ${n2.split('').elementAt(j)}');
         print('i * j ${i * state.nonogram.width + j}');
-        if (n.split('').elementAt(j) == '1' &&
-            n2.split('').elementAt(j) == '1') {
+
+        var leftSolutionElement = n.split('').elementAt(j);
+        var rightSolutionElement = n2.split('').elementAt(j);
+        if ((leftSolutionElement == rightSolutionElement) &&
+            leftSolutionElement != '?' &&
+            leftSolutionElement != '0' &&
+            rightSolutionElement != '?' &&
+            rightSolutionElement != '0') {
           state.setFilled(i * state.nonogram.width + j);
         }
       }
