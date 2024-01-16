@@ -65,64 +65,76 @@ class Solver {
   }
 
   String lineSolver(NonogramState state) {
-    print('I re-run?');
     // left most solution
+
+    /// Loop all puzzle rows.
     for (var i = 0; i < state.nonogram.clues!.rows.length; i++) {
-      // gets [i] row
+      /// Gets [i] row's clues.
       List<int> rowClue = state.nonogram.clues!.rows.elementAt(i);
+
+      /// Gets current active solution of that [i] row.
       String row = state.activeSolution.characters
           .getRange(i * state.nonogram.width, state.nonogram.width * (i + 1))
           .string;
+
       print('row: $row');
       print('rowClue: $rowClue');
 
-      String n = '';
-      String n2 = '';
-      // find leftmost solution
+      /// Finds leftmost solution.
       String leftSolution = row;
       for (int a = 0; a < rowClue.length; a++) {
         int clue = rowClue.elementAt(a);
-        // print('gen ? : ${Iterable.generate(clue, (_) => '?').join()}');
-        // print('gen 1 : ${Iterable.generate(clue, (_) => '1').join()}');
-        n = leftSolution.replaceFirstMapped(
+
+        /// Replaces all next "?" clue times with the clue's index.
+        leftSolution = leftSolution.replaceFirstMapped(
           Iterable.generate(clue, (_) => '?').join(),
           (m) => Iterable.generate(clue, (_) => (a + 1).toString()).join(),
         );
-        leftSolution = n.replaceFirstMapped(
+
+        /// Adds an "0" as the next character after the clue solution.
+        leftSolution = leftSolution.replaceFirstMapped(
           Iterable.generate(1, (_) => '?').join(),
           (m) => Iterable.generate(1, (_) => '0').join(),
         );
-        n = leftSolution;
       }
-      print('leftSolution:  $n');
+      print('leftSolution:  $leftSolution');
 
+      /// Finds rightMost solution.
       String rightSolution = row;
       for (int b = rowClue.length - 1; b >= 0; b--) {
         int clue = rowClue.elementAt(b);
-        // print('gen ? : ${Iterable.generate(clue, (_) => '?').join()}');
-        // print('gen 1 : ${Iterable.generate(clue, (_) => '1').join()}');
-        n2 = rightSolution.replaceFirstMapped(
+
+        /// Replaces all next "?" clue times with the clue's index.
+        rightSolution = rightSolution.replaceFirstMapped(
           Iterable.generate(clue, (_) => '?').join(),
           (m) => Iterable.generate(clue, (_) => (b + 1).toString()).join(),
         );
-        rightSolution = n2.replaceFirstMapped(
+
+        /// Adds an "0" as the next character after the clue solution.
+        rightSolution = rightSolution.replaceFirstMapped(
           Iterable.generate(1, (_) => '?').join(),
           (m) => Iterable.generate(1, (_) => '0').join(),
         );
-        n2 = rightSolution;
+        rightSolution = rightSolution;
       }
-      n2 = n2.split('').reversed.join();
-      print('rightSolution: $n2');
 
+      /// Reverses the solution to be accurate.
+      rightSolution = rightSolution.split('').reversed.join();
+      print('rightSolution: $rightSolution');
+
+      /// Loop [i] row's fields, and find matches in between the leftMost
+      /// and rightMost solutions.
       for (int j = 0; j < row.length; j++) {
-        print('n: $n');
-        print('n.split(' ').elementAt(j): ${n.split('').elementAt(j)}');
-        print('n2: $n2');
-        print('n2.split(' ').elementAt(j): ${n2.split('').elementAt(j)}');
+        print('n: $leftSolution');
+        print('n.split('
+            ').elementAt(j): ${leftSolution.split('').elementAt(j)}');
+        print('n2: $rightSolution');
+        print('n2.split('
+            ').elementAt(j): ${rightSolution.split('').elementAt(j)}');
         print('i * j ${i * state.nonogram.width + j}');
 
-        var leftSolutionElement = n.split('').elementAt(j);
-        var rightSolutionElement = n2.split('').elementAt(j);
+        var leftSolutionElement = leftSolution.split('').elementAt(j);
+        var rightSolutionElement = rightSolution.split('').elementAt(j);
         if ((leftSolutionElement == rightSolutionElement) &&
             leftSolutionElement != '?' &&
             leftSolutionElement != '0' &&
