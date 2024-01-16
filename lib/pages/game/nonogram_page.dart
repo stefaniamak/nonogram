@@ -143,10 +143,88 @@ class Solver {
           state.setFilled(i * state.nonogram.width + j);
         }
       }
+    }
 
-      // for(int r in rs){
-      //
-      // }
+    /// Loop all puzzle columns.
+    for (var c = 0; c < state.nonogram.clues!.columns.length; c++) {
+      /// Gets [i] column's clues.
+      List<int> columnClue = state.nonogram.clues!.columns.elementAt(c);
+
+      /// Gets current active solution of that [i] column.
+      String columnSol = '';
+      for (var solChar = 0;
+          solChar < state.nonogram.width * state.nonogram.height;
+          solChar = solChar + state.nonogram.width) {
+        columnSol =
+            '${columnSol}${state.activeSolution.characters.characterAt(solChar)}';
+      }
+
+      print('columnSols: $columnSol');
+      print('columnClue: $columnClue');
+
+      /// Finds leftmost solution.
+      String leftSolution = columnSol;
+      for (int a = 0; a < columnClue.length; a++) {
+        int clue = columnClue.elementAt(a);
+
+        /// Replaces all next "?" clue times with the clue's index.
+        leftSolution = leftSolution.replaceFirstMapped(
+          Iterable.generate(clue, (_) => '?').join(),
+          (m) => Iterable.generate(clue, (_) => (a + 1).toString()).join(),
+        );
+
+        /// Adds an "0" as the next character after the clue solution.
+        leftSolution = leftSolution.replaceFirstMapped(
+          Iterable.generate(1, (_) => '?').join(),
+          (m) => Iterable.generate(1, (_) => '0').join(),
+        );
+      }
+      print('leftSolution:  $leftSolution');
+
+      /// Finds rightMost solution.
+      String rightSolution = columnSol;
+      for (int b = columnClue.length - 1; b >= 0; b--) {
+        int clue = columnClue.elementAt(b);
+
+        /// Replaces all next "?" clue times with the clue's index.
+        rightSolution = rightSolution.replaceFirstMapped(
+          Iterable.generate(clue, (_) => '?').join(),
+          (m) => Iterable.generate(clue, (_) => (b + 1).toString()).join(),
+        );
+
+        /// Adds an "0" as the next character after the clue solution.
+        rightSolution = rightSolution.replaceFirstMapped(
+          Iterable.generate(1, (_) => '?').join(),
+          (m) => Iterable.generate(1, (_) => '0').join(),
+        );
+        rightSolution = rightSolution;
+      }
+
+      /// Reverses the solution to be accurate.
+      rightSolution = rightSolution.split('').reversed.join();
+      print('rightSolution: $rightSolution');
+
+      /// Loop [i] column's fields, and find matches in between the leftMost
+      /// and rightMost solutions.
+      for (int j = 0; j < columnSol.length; j++) {
+        print('n: $leftSolution');
+        print('n.split('
+            ').elementAt(j): ${leftSolution.split('').elementAt(j)}');
+        print('n2: $rightSolution');
+        print('n2.split('
+            ').elementAt(j): ${rightSolution.split('').elementAt(j)}');
+        print('i * j ${c * state.nonogram.width + j}');
+
+        var leftSolutionElement = leftSolution.split('').elementAt(j);
+        var rightSolutionElement = rightSolution.split('').elementAt(j);
+        if ((leftSolutionElement == rightSolutionElement) &&
+            leftSolutionElement != '?' &&
+            leftSolutionElement != '0' &&
+            rightSolutionElement != '?' &&
+            rightSolutionElement != '0') {
+          state.setFilled(c + j * state.nonogram.width);
+        }
+      }
     }
 
     return state.activeSolution;
