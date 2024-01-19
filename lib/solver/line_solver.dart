@@ -17,9 +17,8 @@ class LineSolver {
       List<int> rowClue = state.nonogram.clues!.rows.elementAt(i);
 
       /// Gets current active solution of that [i] row.
-      String row = state.activeSolution.characters
-          .getRange(i * state.nonogram.width, state.nonogram.width * (i + 1))
-          .string;
+      String row =
+          state.activeSolution.characters.getRange(i * state.nonogram.width, state.nonogram.width * (i + 1)).string;
 
       String sol = findOverlaps(rowClue, row);
 
@@ -41,8 +40,7 @@ class LineSolver {
       for (var solChar = 0;
           solChar < state.activeSolution.characters.length;
           solChar = solChar + state.nonogram.width) {
-        columnSol =
-            '$columnSol${state.activeSolution.characters.characterAt(solChar)}';
+        columnSol = '$columnSol${state.activeSolution.characters.characterAt(solChar)}';
       }
 
       String sol = findOverlaps(columnClue, columnSol);
@@ -86,8 +84,7 @@ class LineSolver {
   }
 
   /// Call revers=true for rightmost sol.
-  String findSideMostSolution(String currentSol, List<int> clues,
-      [bool reverse = false]) {
+  String findSideMostSolution(String currentSol, List<int> clues, [bool reverse = false]) {
     /// Finds leftmost solution.
     String sideMostSolution = currentSol;
     List<int> cluesT = clues;
@@ -106,8 +103,7 @@ class LineSolver {
       /// Replaces all next "?" clue times with the clue's index.
       sideMostSolution = sideMostSolution.replaceFirstMapped(
         Iterable.generate(clue, (_) => '?').join(),
-        (m) => Iterable.generate(
-            clue, (_) => (solNumbs.elementAt(a) + 1).toString()).join(),
+        (m) => Iterable.generate(clue, (_) => (solNumbs.elementAt(a) + 1).toString()).join(),
       );
 
       /// Adds an "0" as the next character after the clue solution.

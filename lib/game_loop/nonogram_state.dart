@@ -30,12 +30,12 @@ NonogramState useNonogramState(Nonogram nonogram) {
     // '123456789zxcvbnmasdfghjklqwertyuiop1234567890qwert',
   );
 
-  final setFilled = useCallback((int index) => activeSolution$.value =
-      getUpdatedActiveSolution(activeSolution$.value, index, '1'));
-  final setCross = useCallback((int index) => activeSolution$.value =
-      getUpdatedActiveSolution(activeSolution$.value, index, '0'));
-  final serUnknown = useCallback((int index) => activeSolution$.value =
-      getUpdatedActiveSolution(activeSolution$.value, index, '?'));
+  final setFilled =
+      useCallback((int index) => activeSolution$.value = getUpdatedActiveSolution(activeSolution$.value, index, '1'));
+  final setCross =
+      useCallback((int index) => activeSolution$.value = getUpdatedActiveSolution(activeSolution$.value, index, '0'));
+  final serUnknown =
+      useCallback((int index) => activeSolution$.value = getUpdatedActiveSolution(activeSolution$.value, index, '?'));
 
   return NonogramState(
     nonogram: nonogram,
