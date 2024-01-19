@@ -5,7 +5,13 @@ class LineSolver {
   String lineSolver(NonogramState state) {
     // left most solution
 
-    // overlapping(state);
+    overlapping(state);
+
+    return state.activeSolution;
+  }
+
+  void overlapping(NonogramState state) {
+    print('leeeeeft');
     for (var i = 0; i < state.nonogram.clues!.rows.length; i++) {
       /// Gets [i] row's clues.
       List<int> rowClue = state.nonogram.clues!.rows.elementAt(i);
@@ -25,6 +31,7 @@ class LineSolver {
         }
       }
     }
+    print('riiiiight');
     for (var c = 0; c < state.nonogram.clues!.columns.length; c++) {
       /// Gets [i] column's clues.
       List<int> columnClue = state.nonogram.clues!.columns.elementAt(c);
@@ -32,10 +39,10 @@ class LineSolver {
       /// Gets current active solution of that [i] column.
       String columnSol = '';
       for (var solChar = 0;
-          solChar < state.nonogram.width * state.nonogram.height;
+          solChar < state.activeSolution.characters.length;
           solChar = solChar + state.nonogram.width) {
         columnSol =
-            '${columnSol}${state.activeSolution.characters.characterAt(solChar)}';
+            '$columnSol${state.activeSolution.characters.characterAt(solChar)}';
       }
 
       String sol = findOverlaps(columnClue, columnSol);
@@ -48,50 +55,18 @@ class LineSolver {
         }
       }
     }
-
-    return state.activeSolution;
   }
 
   String findOverlaps(List<int> clues, String currentSol) {
+    print('---');
+
     /// Finds leftmost solution.
-    String leftSolution = currentSol;
-    for (int a = 0; a < clues.length; a++) {
-      int clue = clues.elementAt(a);
-
-      /// Replaces all next "?" clue times with the clue's index.
-      leftSolution = leftSolution.replaceFirstMapped(
-        Iterable.generate(clue, (_) => '?').join(),
-        (m) => Iterable.generate(clue, (_) => (a + 1).toString()).join(),
-      );
-
-      /// Adds an "0" as the next character after the clue solution.
-      leftSolution = leftSolution.replaceFirstMapped(
-        Iterable.generate(1, (_) => '?').join(),
-        (m) => Iterable.generate(1, (_) => '0').join(),
-      );
-    }
+    String leftSolution = findSideMostSolution(currentSol, clues);
+    print('leftSolution:  $leftSolution');
 
     /// Finds rightMost solution.
-    String rightSolution = currentSol;
-    for (int b = clues.length - 1; b >= 0; b--) {
-      int clue = clues.elementAt(b);
-
-      /// Replaces all next "?" clue times with the clue's index.
-      rightSolution = rightSolution.replaceFirstMapped(
-        Iterable.generate(clue, (_) => '?').join(),
-        (m) => Iterable.generate(clue, (_) => (b + 1).toString()).join(),
-      );
-
-      /// Adds an "0" as the next character after the clue solution.
-      rightSolution = rightSolution.replaceFirstMapped(
-        Iterable.generate(1, (_) => '?').join(),
-        (m) => Iterable.generate(1, (_) => '0').join(),
-      );
-      rightSolution = rightSolution;
-    }
-
-    /// Reverses the solution to be accurate.
-    rightSolution = rightSolution.split('').reversed.join();
+    String rightSolution = findSideMostSolution(currentSol, clues, true);
+    print('rightSolution: $rightSolution');
 
     /// Loop [i] row's fields, and find matches in between the leftMost
     /// and rightMost solutions.
@@ -108,5 +83,45 @@ class LineSolver {
       }
     }
     return updatedSol;
+  }
+
+  /// Call revers=true for rightmost sol.
+  String findSideMostSolution(String currentSol, List<int> clues,
+      [bool reverse = false]) {
+    /// Finds leftmost solution.
+    String sideMostSolution = currentSol;
+    List<int> cluesT = clues;
+    // print('reverse: $reverse');
+    print('cluesT before: $cluesT');
+    if (reverse) cluesT = clues.reversed.toList();
+    print('cluesluesT after: $cluesT}');
+
+    // todo: change solNumb with letters then
+    var solNumbs = List<int>.generate(cluesT.length, (i) => i + 1);
+    if (reverse) solNumbs = solNumbs.reversed.toList();
+
+    for (int a = 0; a < cluesT.length; a++) {
+      int clue = cluesT.elementAt(a);
+
+      /// Replaces all next "?" clue times with the clue's index.
+      sideMostSolution = sideMostSolution.replaceFirstMapped(
+        Iterable.generate(clue, (_) => '?').join(),
+        (m) => Iterable.generate(
+            clue, (_) => (solNumbs.elementAt(a) + 1).toString()).join(),
+      );
+
+      /// Adds an "0" as the next character after the clue solution.
+      sideMostSolution = sideMostSolution.replaceFirstMapped(
+        Iterable.generate(1, (_) => '?').join(),
+        (m) => Iterable.generate(1, (_) => '0').join(),
+      );
+    }
+
+    /// Reverses the solution to be accurate.
+    if (reverse) sideMostSolution = sideMostSolution.split('').reversed.join();
+    // print('reverse: $reverse');
+    // print('sideMostSolution: $sideMostSolution');
+
+    return sideMostSolution;
   }
 }
