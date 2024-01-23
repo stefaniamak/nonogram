@@ -14,7 +14,7 @@ class NonogramGrid extends StatelessWidget {
   });
 
   PointState getGridBoxState(int index) {
-    var char = nonogramState.activeSolution.characters.characterAt(index);
+    var char = nonogramState.activeSolution.solution!.characters.characterAt(index);
     switch (char.toString()) {
       case '?':
         return PointState.unknown;
@@ -32,7 +32,7 @@ class NonogramGrid extends StatelessWidget {
       width: nonogramUi.gridSize.width,
       height: nonogramUi.gridSize.height,
       child: GridView.builder(
-        itemCount: nonogramState.activeSolution.length,
+        itemCount: nonogramState.activeSolution.solution!.length,
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: nonogramState.nonogram.width,
         ),

@@ -1,11 +1,13 @@
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:nonogram/backend/models/nonogram.dart';
+import 'package:nonogram/backend/models/solution.dart';
+import 'package:nonogram/backend/models/solution_type.dart';
 
 enum PointState { unknown, filled, cross }
 
 class NonogramState {
   final Nonogram nonogram;
-  final String activeSolution;
+  final Solution activeSolution;
 
   final Function(int index) setFilled;
   final Function(int index) setCross;
@@ -39,7 +41,9 @@ NonogramState useNonogramState(Nonogram nonogram) {
 
   return NonogramState(
     nonogram: nonogram,
-    activeSolution: activeSolution$.value,
+    activeSolution: Solution((s) => s
+      ..type = SolutionType.saved
+      ..solution = activeSolution$.value),
     setFilled: setFilled,
     setCross: setCross,
     setUnknown: serUnknown,

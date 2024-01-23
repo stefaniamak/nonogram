@@ -7,18 +7,18 @@ class LineSolver {
 
     overlapping(state);
 
-    return state.activeSolution;
+    return state.activeSolution.solution!;
   }
 
   void overlapping(NonogramState state) {
-    print('leeeeeft');
     for (var i = 0; i < state.nonogram.clues!.rows.length; i++) {
       /// Gets [i] row's clues.
       List<int> rowClue = state.nonogram.clues!.rows.elementAt(i);
 
       /// Gets current active solution of that [i] row.
-      String row =
-          state.activeSolution.characters.getRange(i * state.nonogram.width, state.nonogram.width * (i + 1)).string;
+      String row = state.activeSolution.solution!.characters
+          .getRange(i * state.nonogram.width, state.nonogram.width * (i + 1))
+          .string;
 
       String sol = findOverlaps(rowClue, row);
 
@@ -30,7 +30,7 @@ class LineSolver {
         }
       }
     }
-    print('riiiiight');
+
     for (var c = 0; c < state.nonogram.clues!.columns.length; c++) {
       /// Gets [i] column's clues.
       List<int> columnClue = state.nonogram.clues!.columns.elementAt(c);
@@ -38,9 +38,9 @@ class LineSolver {
       /// Gets current active solution of that [i] column.
       String columnSol = '';
       for (var solChar = 0;
-          solChar < state.activeSolution.characters.length;
+          solChar < state.activeSolution.solution!.characters.length;
           solChar = solChar + state.nonogram.width) {
-        columnSol = '$columnSol${state.activeSolution.characters.characterAt(solChar)}';
+        columnSol = '$columnSol${state.activeSolution.solution!.characters.characterAt(solChar)}';
       }
 
       String sol = findOverlaps(columnClue, columnSol);
