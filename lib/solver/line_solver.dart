@@ -1,30 +1,30 @@
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/widgets.dart';
 import 'package:nonogram/game_loop/nonogram_state.dart';
 
 class LineSolver {
-  String lineSolver(NonogramState state) {
+  void lineSolver(NonogramState state) async {
     // left most solution
 
     overlapping(state);
 
-    return state.activeSolution.solution!;
+    // return state.activeSolution.solution!;
   }
+
+  // overlapping
 
   void overlapping(NonogramState state) {
     for (var i = 0; i < state.nonogram.clues!.rows.length; i++) {
       /// Gets [i] row's clues.
-      List<int> rowClue = state.nonogram.clues!.rows.elementAt(i);
+      List<int> rowClues = state.nonogram.clues!.rows.elementAt(i);
 
       /// Gets current active solution of that [i] row.
-      String row = state.activeSolution.solution!.characters
-          .getRange(i * state.nonogram.width, state.nonogram.width * (i + 1))
-          .string;
+      String rowActiveSol = state.activeSolution.getRow(i, state.nonogram);
 
-      String sol = findOverlaps(rowClue, row);
+      String sol = findOverlaps(rowClues, rowActiveSol);
 
       for (int j = 0; j < sol.length; j++) {
         var newSol = sol.split('').elementAt(j);
-        var activeSol = row.split('').elementAt(j);
+        var activeSol = rowActiveSol.split('').elementAt(j);
         if ((newSol != activeSol) && newSol == '1') {
           state.setFilled(i * state.nonogram.width + j);
         }
@@ -33,21 +33,16 @@ class LineSolver {
 
     for (var c = 0; c < state.nonogram.clues!.columns.length; c++) {
       /// Gets [i] column's clues.
-      List<int> columnClue = state.nonogram.clues!.columns.elementAt(c);
+      List<int> columnClues = state.nonogram.clues!.columns.elementAt(c);
 
       /// Gets current active solution of that [i] column.
-      String columnSol = '';
-      for (var solChar = 0;
-          solChar < state.activeSolution.solution!.characters.length;
-          solChar = solChar + state.nonogram.width) {
-        columnSol = '$columnSol${state.activeSolution.solution!.characters.characterAt(solChar)}';
-      }
+      String columnActiveSol = state.activeSolution.getColumn(c, state.nonogram);
 
-      String sol = findOverlaps(columnClue, columnSol);
+      String sol = findOverlaps(columnClues, columnActiveSol);
 
       for (int j = 0; j < sol.length; j++) {
         var newSol = sol.split('').elementAt(j);
-        var activeSol = columnSol.split('').elementAt(j);
+        var activeSol = columnActiveSol.split('').elementAt(j);
         if ((newSol != activeSol) && newSol == '1') {
           state.setFilled(c + j * state.nonogram.width);
         }
@@ -119,5 +114,45 @@ class LineSolver {
     // print('sideMostSolution: $sideMostSolution');
 
     return sideMostSolution;
+  }
+
+  // cross out
+
+  void crossOut(NonogramState state) {
+    print('active soooool: ${state.activeSolution}');
+    for (var i = 0; i < state.nonogram.clues!.rows.length; i++) {
+      List<int> clues = state.nonogram.clues!.rows.elementAt(i);
+      String activeSol = state.activeSolution.getRow(i, state.nonogram);
+
+      // find if clue is completed
+      for (int clueIndex = 0; clueIndex < clues.length; clueIndex++) {
+        CharacterRange? charRange = activeSol.characters.findFirst('1'.characters);
+        print('charRange: ${charRange}');
+
+        // can it be clue[clueIndex]'s black box?
+
+        // check if previous clues fit before that clue
+
+        // check if next clues fit after that clue
+
+        // if both above true, then yes can be that clue's box
+      }
+
+      // I now know a list of clues (or clue indexes) that this '1' can be
+
+      // if that list has just one clue in, or same number clue, then
+
+      // is that clue done? see chars after findFirst chat position
+
+      // yes it is? put '0' before and after the '1's
+
+      // is that clue first?
+
+      // check how much left does it extend, and put '0' to boxes that wont be filled
+
+      // is that clue last?
+
+      // do same as for first
+    }
   }
 }
