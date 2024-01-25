@@ -128,14 +128,57 @@ class LineSolver {
       for (int clueIndex = 0; clueIndex < clues.length; clueIndex++) {
         CharacterRange? charRange = activeSol.characters.findFirst('1'.characters);
         print('charRange: ${charRange}');
+        print('charRange.charactersBefore.length: ${charRange?.charactersBefore.length}');
 
-        // can it be clue[clueIndex]'s black box?
+        if (charRange != null) {
+          // can it be clue[clueIndex]'s black box?
 
-        // check if previous clues fit before that clue
+          // check if previous clues fit before that clue
 
-        // check if next clues fit after that clue
+          int numberOfQBefore = 0;
+          int numberOfOnesBefore = 0;
 
-        // if both above true, then yes can be that clue's box
+          for (int i = charRange.charactersBefore.length - 1; i >= 0; i--) {
+            final String char = charRange.charactersBefore.elementAt(i);
+            if (char == '?') {
+              if (numberOfOnesBefore > 0) break;
+              numberOfQBefore++;
+            } else if (char == '1') {
+              if (numberOfQBefore > 0) break;
+              numberOfOnesBefore++;
+            } else {
+              break;
+            }
+          }
+
+          print('numberOfQBefore: $numberOfQBefore');
+          print('numberOfOnesBefore: $numberOfOnesBefore');
+
+          // check if next clues fit after that clue
+
+          int numberOfQAfter = 0;
+          int numberOfOnesAfter = 0;
+
+          for (int i = 0; i < charRange.charactersAfter.length; i++) {
+            final String char = charRange.charactersAfter.elementAt(i);
+            if (char == '?') {
+              numberOfQAfter++;
+            } else if (char == '1') {
+              if (numberOfQAfter > 0) break;
+              numberOfOnesAfter++;
+            } else {
+              break;
+            }
+          }
+
+          print('numberOfQAfter: $numberOfQAfter');
+          print('numberOfOnesAfter: $numberOfOnesAfter');
+
+          // Above code finds the free spaces next to the found block.
+          // We should then check
+
+          // if both above true, then yes can be that clue's box
+        }
       }
 
       // I now know a list of clues (or clue indexes) that this '1' can be
