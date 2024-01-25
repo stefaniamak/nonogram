@@ -22,6 +22,10 @@ class NonogramPage extends HookWidget {
           nonogram: nonogram,
           nonogramState: nonogramState,
           padding: const EdgeInsets.all(32),
+          maxSize: Size(
+            MediaQuery.of(context).size.width,
+            MediaQuery.of(context).size.height * 0.8,
+          ),
         ),
         InkWell(
           onTap: () {
