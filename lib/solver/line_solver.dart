@@ -87,25 +87,72 @@ class LineSolver {
     print('cluesT before: $cluesT');
     if (reverse) cluesT = clues.reversed.toList();
     print('cluesluesT after: $cluesT}');
+    if (reverse) sideMostSolution = sideMostSolution.split('').reversed.join();
+
+    List<String> sideMostSolutionList = sideMostSolution.split('');
+
+    print('sideMostSolution $sideMostSolution reverse $reverse and $sideMostSolutionList');
 
     // todo: change solNumb with letters then
     var solNumbs = List<int>.generate(cluesT.length, (i) => i + 1);
     if (reverse) solNumbs = solNumbs.reversed.toList();
 
-    for (int a = 0; a < cluesT.length; a++) {
-      int clue = cluesT.elementAt(a);
+    if (sideMostSolutionList.contains('1')) {
+      print('Line has at least one solved box! --------------');
+      List<List<String>> pos = Iterable.generate(sideMostSolutionList.length, (_) => <String>[]).toList();
+      for (int s = 0; s < sideMostSolutionList.length; s++) {
+        print('sideMostSolutionList before = $sideMostSolutionList');
+        List<String> tempSol = sideMostSolutionList.join().split('');
 
-      /// Replaces all next "?" clue times with the clue's index.
-      sideMostSolution = sideMostSolution.replaceFirstMapped(
-        Iterable.generate(clue, (_) => '?').join(),
-        (m) => Iterable.generate(clue, (_) => (solNumbs.elementAt(a) + 1).toString()).join(),
-      );
+        for (int cl = 0; cl < cluesT.length; cl++) {
+          print('Can box at pos $s be of clue ${cluesT.elementAt(cl)}?');
 
-      /// Adds an "0" as the next character after the clue solution.
-      sideMostSolution = sideMostSolution.replaceFirstMapped(
-        Iterable.generate(1, (_) => '?').join(),
-        (m) => Iterable.generate(1, (_) => '0').join(),
-      );
+          // tempSol[s] = '${cl + 2}';
+          print('Simple replacement from $sideMostSolutionList to $tempSol');
+
+          bool canFit;
+
+          if (s + cluesT.elementAt(cl) > tempSol.length) {
+            canFit = false;
+          } else {
+            List<String> fit = tempSol.getRange(s, s + cluesT.elementAt(cl)).toList();
+            String valueAfter =
+                s + cluesT.elementAt(cl) > tempSol.length ? '0' : tempSol.elementAtOrNull(s + cluesT.elementAt(cl)) ?? '0';
+            String valueBefore = s - 1 < 0 ? '0' : tempSol.elementAtOrNull(s - 1) ?? '0';
+            canFit = !fit.contains('0') && valueAfter != '1' && valueBefore != '1';
+            print('valueAfter: $valueAfter');
+            print('valueBefore: $valueBefore');
+
+            print('Can clue fit here? :$valueBefore $fit $valueAfter, answer: ${canFit}');
+          }
+
+          if (canFit) {
+            List<String> tempSol2 = tempSol.join().split('');
+            tempSol2.fillRange(s, s + cluesT.elementAt(cl), '${cl + 2}');
+            print('Solution with fit: $tempSol2');
+
+            // print('')
+          } else {
+            pos[s].add('0');
+          }
+        }
+      }
+    } else {
+      for (int a = 0; a < cluesT.length; a++) {
+        int clue = cluesT.elementAt(a);
+
+        /// Replaces all next "?" clue times with the clue's index.
+        sideMostSolution = sideMostSolution.replaceFirstMapped(
+          Iterable.generate(clue, (_) => '?').join(),
+          (m) => Iterable.generate(clue, (_) => (solNumbs.elementAt(a) + 1).toString()).join(),
+        );
+
+        /// Adds an "0" as the next character after the clue solution.
+        sideMostSolution = sideMostSolution.replaceFirstMapped(
+          Iterable.generate(1, (_) => '?').join(),
+          (m) => Iterable.generate(1, (_) => '0').join(),
+        );
+      }
     }
 
     /// Reverses the solution to be accurate.
