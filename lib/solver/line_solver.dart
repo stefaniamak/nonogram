@@ -26,12 +26,29 @@ class LineSolver {
         print('Line has at least one solved box! --------------');
         List<List<String>> pos = Iterable.generate(rowActiveSol.length, (_) => <String>[]).toList();
         for (int cl = 0; cl < rowClues.length; cl++) {
-          for (int s = 0; s < rowActiveSol.length; s++) {
+          int s = 0;
+          while (s < rowActiveSol.length) {
+            print('started!');
+            String solNumb = canCluesFit(rowClues, rowActiveSol, s, cl) ? '${cl + 2}' : '0';
             print('finished!');
-            pos.elementAt(s).add(canCluesFit(rowClues, rowActiveSol, s, cl) ? '${cl + 2}' : '0');
+
+            if (solNumb == '0') {
+              pos.elementAt(s).add(solNumb);
+              s++;
+            } else {
+              int clueNumb = rowClues[cl];
+              for (int l = s; l < s + clueNumb; l++) {
+                pos.elementAt(l).add(solNumb);
+              }
+              s++;
+            }
+
             // pos[s][cl] = canCluesFit(rowClues, rowActiveSol, s, cl) ? '${cl + 2}' : '0';
             print('pos till now: $pos');
           }
+          // for (int s = 0; s < rowActiveSol.length; s++) {
+          //
+          // }
         }
         print('pos: $pos');
       }
@@ -313,34 +330,58 @@ class LineSolver {
       bool hasCluesBefore = cl > 0;
       print('Does clue have clues before? $hasCluesBefore');
 
+      bool cluesBeforeGood;
+
       if (hasCluesBefore) {
         print('Do clues before can fit?');
 
-        bool hasBoxesLeftLeft = s + clues.elementAt(cl) + 1 >= tempSol.length;
+        // bool hasBoxesLeftLeft = cl > 0;
+        bool hasBoxesLeftLeft = s - 1 >= 0;
 
-        print('Does clue have boxes left after? $hasBoxesLeftLeft');
+        print('Does clue have boxes left before? $hasBoxesLeftLeft');
         if (hasBoxesLeftLeft) {
-          // return canCluesFit(clues.sublist(1), solution.split('').sublist(s + clues.elementAt(cl) + 1).join(),0,0);
+          print('we at box $s');
+          print('clues $clues and range ${clues.getRange(0, cl)}');
+          print('solution $solution and range ...');
+          print('                             ... ${solution.split('').sublist(0, s - 1).join()}0');
+          // cluesBeforeGood = canCluesFit(clues.reversed.toList(), solution.split('').reversed.join(), s, cl + 1);
+
+          cluesBeforeGood = false;
+          String solSub = '${solution.split('').sublist(0, s - 1).join()}0';
+          // for (int p = 0; p < solSub.length; p++) {
+          //   if (canCluesFit(clues, solution, p, cl)) {
+          cluesBeforeGood = canCluesFit(clues.getRange(0, cl).toList(), solSub, 0, 0);
+          //   }
+          // }
         } else {
-          return false;
+          cluesBeforeGood = false;
         }
+      } else {
+        print('we at box $s');
+        print('clues $clues and range ${clues.getRange(0, cl)}');
+        cluesBeforeGood = true;
       }
 
       bool hasCluesAfter = cl < clues.length - 1;
       print('Does clue have clues after? $hasCluesAfter');
+
+      bool cluesAfterGood;
 
       if (hasCluesAfter) {
         bool hasBoxesLeft = s + clues.elementAt(cl) + 1 < tempSol.length;
 
         print('Does clue have boxes left after? $hasBoxesLeft');
         if (hasBoxesLeft) {
-          return canCluesFit(clues.sublist(1), solution.split('').sublist(s + clues.elementAt(cl) + 1).join(), 0, 0);
+          // cluesAfterGood = canCluesFit(clues, solution, s, cl + 1);
+          cluesAfterGood = canCluesFit(clues.sublist(1), solution.split('').sublist(s + clues.elementAt(cl) + 1).join(), 0, 0);
         } else {
-          return false;
+          cluesAfterGood = false;
         }
       } else {
-        return true;
+        cluesAfterGood = true;
       }
+
+      return cluesBeforeGood && cluesAfterGood;
     } else {
       return false;
     }
