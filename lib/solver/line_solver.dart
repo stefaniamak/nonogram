@@ -22,6 +22,20 @@ class LineSolver {
 
       String sol = findOverlaps(rowClues, rowActiveSol);
 
+      if (rowActiveSol.contains('1')) {
+        print('Line has at least one solved box! --------------');
+        List<List<String>> pos = Iterable.generate(rowActiveSol.length, (_) => <String>[]).toList();
+        for (int cl = 0; cl < rowClues.length; cl++) {
+          for (int s = 0; s < rowActiveSol.length; s++) {
+            print('finished!');
+            pos.elementAt(s).add(canCluesFit(rowClues, rowActiveSol, s, cl) ? '${cl + 2}' : '0');
+            // pos[s][cl] = canCluesFit(rowClues, rowActiveSol, s, cl) ? '${cl + 2}' : '0';
+            print('pos till now: $pos');
+          }
+        }
+        print('pos: $pos');
+      }
+
       for (int j = 0; j < sol.length; j++) {
         var newSol = sol.split('').elementAt(j);
         var activeSol = rowActiveSol.split('').elementAt(j);
@@ -98,45 +112,61 @@ class LineSolver {
     if (reverse) solNumbs = solNumbs.reversed.toList();
 
     if (sideMostSolutionList.contains('1')) {
-      print('Line has at least one solved box! --------------');
-      List<List<String>> pos = Iterable.generate(sideMostSolutionList.length, (_) => <String>[]).toList();
-      for (int s = 0; s < sideMostSolutionList.length; s++) {
-        print('sideMostSolutionList before = $sideMostSolutionList');
-        List<String> tempSol = sideMostSolutionList.join().split('');
+      // print('Line has at least one solved box! --------------');
+      // List<List<String>> pos = Iterable.generate(sideMostSolutionList.length, (_) => <String>[]).toList();
 
-        for (int cl = 0; cl < cluesT.length; cl++) {
-          print('Can box at pos $s be of clue ${cluesT.elementAt(cl)}?');
-
-          // tempSol[s] = '${cl + 2}';
-          print('Simple replacement from $sideMostSolutionList to $tempSol');
-
-          bool canFit;
-
-          if (s + cluesT.elementAt(cl) > tempSol.length) {
-            canFit = false;
-          } else {
-            List<String> fit = tempSol.getRange(s, s + cluesT.elementAt(cl)).toList();
-            String valueAfter =
-                s + cluesT.elementAt(cl) > tempSol.length ? '0' : tempSol.elementAtOrNull(s + cluesT.elementAt(cl)) ?? '0';
-            String valueBefore = s - 1 < 0 ? '0' : tempSol.elementAtOrNull(s - 1) ?? '0';
-            canFit = !fit.contains('0') && valueAfter != '1' && valueBefore != '1';
-            print('valueAfter: $valueAfter');
-            print('valueBefore: $valueBefore');
-
-            print('Can clue fit here? :$valueBefore $fit $valueAfter, answer: ${canFit}');
-          }
-
-          if (canFit) {
-            List<String> tempSol2 = tempSol.join().split('');
-            tempSol2.fillRange(s, s + cluesT.elementAt(cl), '${cl + 2}');
-            print('Solution with fit: $tempSol2');
-
-            // print('')
-          } else {
-            pos[s].add('0');
-          }
-        }
-      }
+      // for (int s = 0; s < sideMostSolutionList.length; s++) {
+      //   print('sideMostSolutionList before = $sideMostSolutionList');
+      //   List<String> tempSol = sideMostSolutionList.join().split('');
+      //
+      //   for (int cl = 0; cl < cluesT.length; cl++) {
+      //     print('Can box at pos $s be of clue ${cluesT.elementAt(cl)}?');
+      //
+      //     // tempSol[s] = '${cl + 2}';
+      //     print('Simple replacement from $sideMostSolutionList to $tempSol');
+      //
+      //     bool canFit;
+      //
+      //     if (s + cluesT.elementAt(cl) > tempSol.length) {
+      //       canFit = false;
+      //     } else {
+      //       List<String> fit = tempSol.getRange(s, s + cluesT.elementAt(cl)).toList();
+      //       String valueAfter =
+      //           s + cluesT.elementAt(cl) > tempSol.length ? '0' : tempSol.elementAtOrNull(s + cluesT.elementAt(cl)) ?? '0';
+      //       String valueBefore = s - 1 < 0 ? '0' : tempSol.elementAtOrNull(s - 1) ?? '0';
+      //       canFit = !fit.contains('0') && valueAfter != '1' && valueBefore != '1';
+      //       print('valueAfter: $valueAfter');
+      //       print('valueBefore: $valueBefore');
+      //
+      //       print('Can clue fit here? :$valueBefore $fit $valueAfter, answer: ${canFit}');
+      //     }
+      //
+      //     if (canFit) {
+      //       List<String> tempSol2 = tempSol.join().split('');
+      //       tempSol2.fillRange(s, s + cluesT.elementAt(cl), '${cl + 2}');
+      //       if (s + cluesT.elementAt(cl) < tempSol.length) {
+      //         tempSol2[s + cluesT.elementAt(cl)] = '0';
+      //       }
+      //       print('Solution with fit: $tempSol2');
+      //
+      //       // bool hasCluesBefore = cl > 0;
+      //       // print('Does clue have clues before? $hasCluesBefore');
+      //       //
+      //       // if (hasCluesBefore) {
+      //       //   print('Do clues before can fit?');
+      //       // }
+      //
+      //       bool hasCluesAfter = cl == cluesT.length - 1;
+      //       print('Does clue have clues after? $hasCluesAfter');
+      //
+      //       if (hasCluesAfter) {}
+      //
+      //       // print('')
+      //     } else {
+      //       pos[s].add('0');
+      //     }
+      //   }
+      // }
     } else {
       for (int a = 0; a < cluesT.length; a++) {
         int clue = cluesT.elementAt(a);
@@ -244,5 +274,77 @@ class LineSolver {
 
       // do same as for first
     }
+  }
+
+  bool canCluesFit(List<int> clues, String solution, int s, int cl) {
+    print('sideMostSolutionList before = $solution');
+    List<String> tempSol = solution.split('');
+
+    print('Can box at pos $s be of clue ${clues.elementAt(cl)}?');
+
+    // tempSol[s] = '${cl + 2}';
+    print('Simple replacement from $solution to $tempSol');
+
+    bool canFit;
+
+    if (s + clues.elementAt(cl) > tempSol.length) {
+      canFit = false;
+      return false;
+    } else {
+      List<String> fit = tempSol.getRange(s, s + clues.elementAt(cl)).toList();
+      String valueAfter =
+          s + clues.elementAt(cl) > tempSol.length ? '0' : tempSol.elementAtOrNull(s + clues.elementAt(cl)) ?? '0';
+      String valueBefore = s - 1 < 0 ? '0' : tempSol.elementAtOrNull(s - 1) ?? '0';
+      canFit = !fit.contains('0') && valueAfter != '1' && valueBefore != '1';
+      print('valueAfter: $valueAfter');
+      print('valueBefore: $valueBefore');
+
+      print('Can clue fit here? :$valueBefore $fit $valueAfter, answer: ${canFit}');
+    }
+
+    if (canFit) {
+      List<String> tempSol2 = tempSol.join().split('');
+      tempSol2.fillRange(s, s + clues.elementAt(cl), '${cl + 2}');
+      if (s + clues.elementAt(cl) < tempSol.length) {
+        tempSol2[s + clues.elementAt(cl)] = '0';
+      }
+      print('Solution with fit: $tempSol2');
+
+      bool hasCluesBefore = cl > 0;
+      print('Does clue have clues before? $hasCluesBefore');
+
+      if (hasCluesBefore) {
+        print('Do clues before can fit?');
+
+        bool hasBoxesLeftLeft = s + clues.elementAt(cl) + 1 >= tempSol.length;
+
+        print('Does clue have boxes left after? $hasBoxesLeftLeft');
+        if (hasBoxesLeftLeft) {
+          // return canCluesFit(clues.sublist(1), solution.split('').sublist(s + clues.elementAt(cl) + 1).join(),0,0);
+        } else {
+          return false;
+        }
+      }
+
+      bool hasCluesAfter = cl < clues.length - 1;
+      print('Does clue have clues after? $hasCluesAfter');
+
+      if (hasCluesAfter) {
+        bool hasBoxesLeft = s + clues.elementAt(cl) + 1 < tempSol.length;
+
+        print('Does clue have boxes left after? $hasBoxesLeft');
+        if (hasBoxesLeft) {
+          return canCluesFit(clues.sublist(1), solution.split('').sublist(s + clues.elementAt(cl) + 1).join(), 0, 0);
+        } else {
+          return false;
+        }
+      } else {
+        return true;
+      }
+    } else {
+      return false;
+    }
+
+    return false;
   }
 }
