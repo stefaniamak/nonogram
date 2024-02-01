@@ -22,6 +22,14 @@ class LineSolver {
 
       String sol = findOverlaps(rowClues, rowActiveSol);
 
+      for (int j = 0; j < sol.length; j++) {
+        var newSol = sol.split('').elementAt(j);
+        var activeSol = rowActiveSol.split('').elementAt(j);
+        if ((newSol != activeSol) && newSol == '1') {
+          state.setFilled(i * state.nonogram.width + j);
+        }
+      }
+
       if (rowActiveSol.contains('1')) {
         print('Line has at least one solved box! --------------');
         List<List<String>> pos = Iterable.generate(rowActiveSol.length, (_) => <String>[]).toList();
@@ -50,14 +58,14 @@ class LineSolver {
           //
           // }
         }
-        print('pos: $pos');
-      }
+        print('pos: ${pos}');
 
-      for (int j = 0; j < sol.length; j++) {
-        var newSol = sol.split('').elementAt(j);
-        var activeSol = rowActiveSol.split('').elementAt(j);
-        if ((newSol != activeSol) && newSol == '1') {
-          state.setFilled(i * state.nonogram.width + j);
+        for (int j = 0; j < sol.length; j++) {
+          print('pos $pos');
+          print('pos.elementAt(sInt): ${pos.elementAt(j)}');
+          if (pos.elementAt(j).every((e) => e == '0')) {
+            state.setCross(i * state.nonogram.width + j);
+          }
         }
       }
     }
