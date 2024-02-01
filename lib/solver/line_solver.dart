@@ -345,14 +345,16 @@ class LineSolver {
           print('solution $solution and range ...');
           print('                             ... ${solution.split('').sublist(0, s - 1).join()}0');
           // cluesBeforeGood = canCluesFit(clues.reversed.toList(), solution.split('').reversed.join(), s, cl + 1);
-
+          // pos till now: [[0, 0], [2, 0], [0, 0], [0, 0], [0]]
           cluesBeforeGood = false;
           String solSub = '${solution.split('').sublist(0, s - 1).join()}0';
-          // for (int p = 0; p < solSub.length; p++) {
-          //   if (canCluesFit(clues, solution, p, cl)) {
-          cluesBeforeGood = canCluesFit(clues.getRange(0, cl).toList(), solSub, 0, 0);
-          //   }
-          // }
+          var clll = clues.getRange(0, cl).toList();
+          for (int p = 0; p < solSub.length; p++) {
+            if (canCluesFit(clll, solSub, p, 0)) {
+              cluesBeforeGood = true;
+              break;
+            }
+          }
         } else {
           cluesBeforeGood = false;
         }
@@ -372,8 +374,16 @@ class LineSolver {
 
         print('Does clue have boxes left after? $hasBoxesLeft');
         if (hasBoxesLeft) {
-          // cluesAfterGood = canCluesFit(clues, solution, s, cl + 1);
-          cluesAfterGood = canCluesFit(clues.sublist(1), solution.split('').sublist(s + clues.elementAt(cl) + 1).join(), 0, 0);
+          // cluesAfterGood = canCluesFit(clues.sublist(1), solution.split('').sublist(s + clues.elementAt(cl) + 1).join(), 0, 0);
+          var ccl = clues.sublist(1);
+          String solSub = solution.split('').sublist(s + clues.elementAt(cl) + 1).join();
+          cluesAfterGood = false;
+          for (int p = 0; p < solSub.length; p++) {
+            if (canCluesFit(ccl, solSub, p, 0)) {
+              cluesAfterGood = true;
+              break;
+            }
+          }
         } else {
           cluesAfterGood = false;
         }
