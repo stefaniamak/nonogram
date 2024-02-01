@@ -50,13 +50,8 @@ class LineSolver {
               }
               s++;
             }
-
-            // pos[s][cl] = canCluesFit(rowClues, rowActiveSol, s, cl) ? '${cl + 2}' : '0';
             print('pos till now: $pos');
           }
-          // for (int s = 0; s < rowActiveSol.length; s++) {
-          //
-          // }
         }
         print('pos: ${pos}');
 
