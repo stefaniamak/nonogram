@@ -39,16 +39,6 @@ class NonogramPage extends HookWidget {
             child: Center(child: Text('Overlapping')),
           ),
         ),
-        InkWell(
-          onTap: () {
-            LineSolver().crossOut(nonogramState);
-          },
-          child: const SizedBox(
-            height: 50,
-            width: 80,
-            child: Center(child: Text('Cross Out')),
-          ),
-        ),
       ],
     );
   }
