@@ -70,14 +70,47 @@ class LineSolver {
 
       /// Gets current active solution of that [i] column.
       String columnActiveSol = state.activeSolution.getColumn(c, state.nonogram);
+      if (columnActiveSol.contains('1')) {
+        print('Line has at least one solved box! --------------');
+        List<List<String>> pos = Iterable.generate(columnActiveSol.length, (_) => <String>[]).toList();
+        for (int cl = 0; cl < columnClues.length; cl++) {
+          int s = 0;
+          while (s < columnActiveSol.length) {
+            print('started!');
+            String solNumb = canCluesFit(columnClues, columnActiveSol, s, cl) ? '${cl + 2}' : '0';
+            print('finished!');
 
-      String sol = findOverlaps(columnClues, columnActiveSol);
+            if (solNumb == '0') {
+              pos.elementAt(s).add(solNumb);
+              s++;
+            } else {
+              int clueNumb = columnClues[cl];
+              for (int l = s; l < s + clueNumb; l++) {
+                pos.elementAt(l).add(solNumb);
+              }
+              s++;
+            }
+            print('pos till now: $pos');
+          }
+        }
+        print('pos: ${pos}');
 
-      for (int j = 0; j < sol.length; j++) {
-        var newSol = sol.split('').elementAt(j);
-        var activeSol = columnActiveSol.split('').elementAt(j);
-        if ((newSol != activeSol) && newSol == '1') {
-          state.setFilled(c + j * state.nonogram.width);
+        for (int j = 0; j < columnActiveSol.length; j++) {
+          print('pos $pos');
+          print('pos.elementAt(sInt): ${pos.elementAt(j)}');
+          if (pos.elementAt(j).every((e) => e == '0')) {
+            state.setCross(c + j * state.nonogram.width);
+          }
+        }
+      } else {
+        String sol = findOverlaps(columnClues, columnActiveSol);
+
+        for (int j = 0; j < sol.length; j++) {
+          var newSol = sol.split('').elementAt(j);
+          var activeSol = columnActiveSol.split('').elementAt(j);
+          if ((newSol != activeSol) && newSol == '1') {
+            state.setFilled(c + j * state.nonogram.width);
+          }
         }
       }
     }
@@ -236,7 +269,7 @@ class LineSolver {
         print('Does clue have boxes left after? $hasBoxesLeft');
         if (hasBoxesLeft) {
           // cluesAfterGood = canCluesFit(clues.sublist(1), solution.split('').sublist(s + clues.elementAt(cl) + 1).join(), 0, 0);
-          var ccl = clues.sublist(1);
+          var ccl = clues.sublist(1 + cl);
           String solSub = solution.split('').sublist(s + clues.elementAt(cl) + 1).join();
           cluesAfterGood = false;
           for (int p = 0; p < solSub.length; p++) {
