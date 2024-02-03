@@ -20,29 +20,7 @@ class LineSolver {
       String rowActiveSol = state.activeSolution.getRow(i, state.nonogram);
 
       if (rowActiveSol.contains('1')) {
-        print('Line has at least one solved box! --------------');
-        List<List<String>> pos = Iterable.generate(rowActiveSol.length, (_) => <String>[]).toList();
-        for (int cl = 0; cl < rowClues.length; cl++) {
-          int s = 0;
-          while (s < rowActiveSol.length) {
-            print('started!');
-            String solNumb = canCluesFit(rowClues, rowActiveSol, s, cl) ? '${cl + 2}' : '0';
-            print('finished!');
-
-            if (solNumb == '0') {
-              pos.elementAt(s).add(solNumb);
-              s++;
-            } else {
-              int clueNumb = rowClues[cl];
-              for (int l = s; l < s + clueNumb; l++) {
-                pos.elementAt(l).add(solNumb);
-              }
-              s++;
-            }
-            print('pos till now: $pos');
-          }
-        }
-        print('pos: ${pos}');
+        List<List<String>> pos = getAllLinePossibleSolutions(rowClues, rowActiveSol);
 
         for (int j = 0; j < rowActiveSol.length; j++) {
           print('pos $pos');
@@ -71,29 +49,7 @@ class LineSolver {
       /// Gets current active solution of that [i] column.
       String columnActiveSol = state.activeSolution.getColumn(c, state.nonogram);
       if (columnActiveSol.contains('1')) {
-        print('Line has at least one solved box! --------------');
-        List<List<String>> pos = Iterable.generate(columnActiveSol.length, (_) => <String>[]).toList();
-        for (int cl = 0; cl < columnClues.length; cl++) {
-          int s = 0;
-          while (s < columnActiveSol.length) {
-            print('started!');
-            String solNumb = canCluesFit(columnClues, columnActiveSol, s, cl) ? '${cl + 2}' : '0';
-            print('finished!');
-
-            if (solNumb == '0') {
-              pos.elementAt(s).add(solNumb);
-              s++;
-            } else {
-              int clueNumb = columnClues[cl];
-              for (int l = s; l < s + clueNumb; l++) {
-                pos.elementAt(l).add(solNumb);
-              }
-              s++;
-            }
-            print('pos till now: $pos');
-          }
-        }
-        print('pos: ${pos}');
+        List<List<String>> pos = getAllLinePossibleSolutions(columnClues, columnActiveSol);
 
         for (int j = 0; j < columnActiveSol.length; j++) {
           print('pos $pos');
@@ -185,6 +141,35 @@ class LineSolver {
     // print('sideMostSolution: $sideMostSolution');
 
     return sideMostSolution;
+  }
+
+  /// Second Algorithm.
+
+  List<List<String>> getAllLinePossibleSolutions(List<int> clues, String line) {
+    print('Line has at least one solved box! --------------');
+    List<List<String>> pos = Iterable.generate(line.length, (_) => <String>[]).toList();
+    for (int cl = 0; cl < clues.length; cl++) {
+      int s = 0;
+      while (s < line.length) {
+        print('started!');
+        String solNumb = canCluesFit(clues, line, s, cl) ? '${cl + 2}' : '0';
+        print('finished!');
+
+        if (solNumb == '0') {
+          pos.elementAt(s).add(solNumb);
+          s++;
+        } else {
+          int clueNumb = clues[cl];
+          for (int l = s; l < s + clueNumb; l++) {
+            pos.elementAt(l).add(solNumb);
+          }
+          s++;
+        }
+        print('pos till now: $pos');
+      }
+    }
+    print('pos: ${pos}');
+    return pos;
   }
 
   bool canCluesFit(List<int> clues, String solution, int s, int cl) {
