@@ -22,6 +22,7 @@ class LineSolver {
       if (rowActiveSol.contains('1')) {
         List<List<String>> pos = getAllLinePossibleSolutions(rowClues, rowActiveSol);
 
+        /// Crosses out '0's
         for (int j = 0; j < rowActiveSol.length; j++) {
           print('pos $pos');
           print('pos.elementAt(sInt): ${pos.elementAt(j)}');
@@ -29,6 +30,9 @@ class LineSolver {
             state.setCross(i * state.nonogram.width + j);
           }
         }
+
+        /// Find overlaps
+        getNewSideMostSol(pos, rowClues);
       } else {
         String sol = findOverlaps(rowClues, rowActiveSol);
 
@@ -70,6 +74,37 @@ class LineSolver {
         }
       }
     }
+  }
+
+  List<List<String>> getNewSideMostSol(List<List<String>> solution, List<int> clues) {
+    print('///// getNewSideMostSol starts');
+    print('solution: $solution , clues: $clues');
+
+    List<List<String>> sideMostSol = [];
+    List<List<String>> remainingSolution = solution;
+    print('starting remainingSolution: $remainingSolution');
+    print('starting sideMostSol: $sideMostSol');
+
+    for (int i = 0; i < clues.length; i++) {
+      int clue = clues[i];
+      int cluePos = remainingSolution.indexWhere((list) => list.contains('${i + 2}'));
+      print('- pos $i , clue $clue , cluePos $cluePos');
+      print('remainingSolution before: $remainingSolution');
+      print('sideMostSol before: $sideMostSol');
+
+      if (cluePos > 0) sideMostSol.addAll(Iterable.generate(cluePos, (_) => ['0']).toList());
+      sideMostSol.addAll(Iterable.generate(clue, (_) => ['${i + 2}']).toList());
+      if (sideMostSol.length < solution.length) {
+        sideMostSol.add(['0']);
+        remainingSolution = remainingSolution.sublist(cluePos + clue + 1);
+      }
+
+      print('remainingSolution after: $remainingSolution');
+      print('sideMostSol after: $sideMostSol');
+    }
+    sideMostSol.addAll(Iterable.generate(remainingSolution.length, (_) => ['0']).toList());
+    print('final sidemost solution: $sideMostSol');
+    return sideMostSol;
   }
 
   String findOverlaps(List<int> clues, String currentSol) {
