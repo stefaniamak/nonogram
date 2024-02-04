@@ -19,31 +19,68 @@ class LineSolver {
       /// Gets current active solution of that [i] row.
       String rowActiveSol = state.activeSolution.getRow(i, state.nonogram);
 
-      if (rowActiveSol.contains('1')) {
-        List<List<String>> pos = getAllLinePossibleSolutions(rowClues, rowActiveSol);
+      // if (rowActiveSol.contains('1')) {
+      List<List<String>> pos = getAllLinePossibleSolutions(rowClues, rowActiveSol);
 
-        /// Crosses out '0's
-        for (int j = 0; j < rowActiveSol.length; j++) {
-          print('pos $pos');
-          print('pos.elementAt(sInt): ${pos.elementAt(j)}');
-          if (pos.elementAt(j).every((e) => e == '0')) {
-            state.setCross(i * state.nonogram.width + j);
-          }
-        }
-
-        /// Find overlaps
-        getNewSideMostSol(pos, rowClues);
-      } else {
-        String sol = findOverlaps(rowClues, rowActiveSol);
-
-        for (int j = 0; j < sol.length; j++) {
-          var newSol = sol.split('').elementAt(j);
-          var activeSol = rowActiveSol.split('').elementAt(j);
-          if ((newSol != activeSol) && newSol == '1') {
-            state.setFilled(i * state.nonogram.width + j);
-          }
+      /// Crosses out '0's
+      for (int j = 0; j < rowActiveSol.length; j++) {
+        print('pos $pos');
+        print('pos.elementAt(sInt): ${pos.elementAt(j)}');
+        if (pos.elementAt(j).every((e) => e == '0')) {
+          state.setCross(i * state.nonogram.width + j);
         }
       }
+
+      print('most solution -: $pos');
+
+      /// Find overlaps
+      var leftMostSol = getNewSideMostSol(pos, rowClues);
+      print('most solution LEFT: $leftMostSol');
+
+      /// Find overlaps
+      var posRev = pos.reversed.toList();
+      var rowCluesRev = rowClues.reversed.toList();
+      var rightMostSol = getNewSideMostSol(posRev, rowCluesRev).reversed;
+
+      print('most solution RIGHT: $rightMostSol');
+
+      String updatedSol = rowActiveSol;
+      for (int j = 0; j < pos.length; j++) {
+        var leftSolutionElement = leftMostSol.elementAt(j);
+        print('leftSolutionElement: $leftSolutionElement');
+        var rightSolutionElement = rightMostSol.elementAt(j);
+        print('rightSolutionElement: $rightSolutionElement');
+        // most solution RIGHT: ([0], [0], [2], [2], [2])
+        print(
+            'leftSolutionElement == rightSolutionElement: ${leftSolutionElement.first == rightSolutionElement.first}');
+        if ((leftSolutionElement.first.toString() == rightSolutionElement.first.toString()) &&
+            leftSolutionElement.first != '?' &&
+            leftSolutionElement.first != '0' &&
+            rightSolutionElement.first != '?' &&
+            rightSolutionElement.first != '0') {
+          updatedSol = updatedSol.replaceRange(j, j + 1, '1');
+        }
+      }
+      print('updatedSol: $updatedSol');
+
+      for (int j = 0; j < pos.length; j++) {
+        var newSol = updatedSol.split('').elementAt(j);
+        var activeSol = rowActiveSol.split('').elementAt(j);
+        if ((newSol != activeSol) && newSol == '1') {
+          state.setFilled(i * state.nonogram.width + j);
+        }
+      }
+      // } else {
+      //   String sol = findOverlaps(rowClues, rowActiveSol);
+      //
+      //   for (int j = 0; j < sol.length; j++) {
+      //     var newSol = sol.split('').elementAt(j);
+      //     var activeSol = rowActiveSol.split('').elementAt(j);
+      //     if ((newSol != activeSol) && newSol == '1') {
+      //       state.setFilled(i * state.nonogram.width + j);
+      //     }
+      //   }
+      // }
     }
 
     for (var c = 0; c < state.nonogram.clues!.columns.length; c++) {
@@ -52,33 +89,74 @@ class LineSolver {
 
       /// Gets current active solution of that [i] column.
       String columnActiveSol = state.activeSolution.getColumn(c, state.nonogram);
-      if (columnActiveSol.contains('1')) {
-        List<List<String>> pos = getAllLinePossibleSolutions(columnClues, columnActiveSol);
+      // if (columnActiveSol.contains('1')) {
+      List<List<String>> pos = getAllLinePossibleSolutions(columnClues, columnActiveSol);
 
-        for (int j = 0; j < columnActiveSol.length; j++) {
-          print('pos $pos');
-          print('pos.elementAt(sInt): ${pos.elementAt(j)}');
-          if (pos.elementAt(j).every((e) => e == '0')) {
-            state.setCross(c + j * state.nonogram.width);
-          }
-        }
-      } else {
-        String sol = findOverlaps(columnClues, columnActiveSol);
-
-        for (int j = 0; j < sol.length; j++) {
-          var newSol = sol.split('').elementAt(j);
-          var activeSol = columnActiveSol.split('').elementAt(j);
-          if ((newSol != activeSol) && newSol == '1') {
-            state.setFilled(c + j * state.nonogram.width);
-          }
+      for (int j = 0; j < columnActiveSol.length; j++) {
+        print('pos $pos');
+        print('pos.elementAt(sInt): ${pos.elementAt(j)}');
+        if (pos.elementAt(j).every((e) => e == '0')) {
+          state.setCross(c + j * state.nonogram.width);
         }
       }
+
+      print('most solution -: $pos');
+
+      /// Find overlaps
+      var leftMostSol = getNewSideMostSol(pos, columnClues);
+      print('most solution LEFT: $leftMostSol');
+
+      /// Find overlaps
+      var posRev = pos.reversed.toList();
+      var columnCluesRev = columnClues.reversed.toList();
+      var rightMostSol = getNewSideMostSol(posRev, columnCluesRev).reversed;
+      print('most solution RIGHT: $rightMostSol');
+
+      String updatedSol = columnActiveSol;
+      for (int j = 0; j < pos.length; j++) {
+        var leftSolutionElement = leftMostSol.elementAt(j);
+        var rightSolutionElement = rightMostSol.elementAt(j);
+        if ((leftSolutionElement.first.toString() == rightSolutionElement.first.toString()) &&
+            leftSolutionElement.first != '?' &&
+            leftSolutionElement.first != '0' &&
+            rightSolutionElement.first != '?' &&
+            rightSolutionElement.first != '0') {
+          updatedSol = updatedSol.replaceRange(j, j + 1, '1');
+        }
+      }
+
+      for (int j = 0; j < leftMostSol.length; j++) {
+        var newSol = updatedSol.split('').elementAt(j);
+        var activeSol = columnActiveSol.split('').elementAt(j);
+        if ((newSol != activeSol) && newSol == '1') {
+          state.setFilled(c + j * state.nonogram.width);
+        }
+      }
+      // } else {
+      //   String sol = findOverlaps(columnClues, columnActiveSol);
+      //
+      //   for (int j = 0; j < sol.length; j++) {
+      //     var newSol = sol.split('').elementAt(j);
+      //     var activeSol = columnActiveSol.split('').elementAt(j);
+      //     if ((newSol != activeSol) && newSol == '1') {
+      //       state.setFilled(c + j * state.nonogram.width);
+      //     }
+      //   }
+      // }
     }
   }
 
   List<List<String>> getNewSideMostSol(List<List<String>> solution, List<int> clues) {
     print('///// getNewSideMostSol starts');
     print('solution: $solution , clues: $clues');
+    List<int> clueIndexes = Iterable<int>.generate(clues.length, (c) => c + 2).toList();
+    String firstClueIndex = solution
+        .firstWhere((list) => list.contains('2') || list.contains('${clues.length + 1}'))
+        .firstWhere((item) => item != '0' && item != '1' && item != '?');
+    print('clueIndexes: $clueIndexes');
+    print('firstClueIndex: $firstClueIndex');
+    if (firstClueIndex != '2') clueIndexes = clueIndexes.reversed.toList();
+    print('clueIndexes AFTER: $clueIndexes');
 
     List<List<String>> sideMostSol = [];
     List<List<String>> remainingSolution = solution;
@@ -87,13 +165,14 @@ class LineSolver {
 
     for (int i = 0; i < clues.length; i++) {
       int clue = clues[i];
-      int cluePos = remainingSolution.indexWhere((list) => list.contains('${i + 2}'));
+      int clueIndex = clueIndexes.elementAt(i);
+      int cluePos = remainingSolution.indexWhere((list) => list.contains('$clueIndex'));
       print('- pos $i , clue $clue , cluePos $cluePos');
       print('remainingSolution before: $remainingSolution');
       print('sideMostSol before: $sideMostSol');
 
       if (cluePos > 0) sideMostSol.addAll(Iterable.generate(cluePos, (_) => ['0']).toList());
-      sideMostSol.addAll(Iterable.generate(clue, (_) => ['${i + 2}']).toList());
+      sideMostSol.addAll(Iterable.generate(clue, (_) => ['$clueIndex']).toList());
       if (sideMostSol.length < solution.length) {
         sideMostSol.add(['0']);
         remainingSolution = remainingSolution.sublist(cluePos + clue + 1);
@@ -102,7 +181,9 @@ class LineSolver {
       print('remainingSolution after: $remainingSolution');
       print('sideMostSol after: $sideMostSol');
     }
-    sideMostSol.addAll(Iterable.generate(remainingSolution.length, (_) => ['0']).toList());
+    if (sideMostSol.length < solution.length) {
+      sideMostSol.addAll(Iterable.generate(remainingSolution.length, (_) => ['0']).toList());
+    }
     print('final sidemost solution: $sideMostSol');
     return sideMostSol;
   }
