@@ -21,9 +21,8 @@ class LineSolver {
       String rowActiveSol = state.activeSolution.getRow(i, state.nonogram);
 
       /// Is row completed? Shall cross out it then and move on.
-      int filledBoxes = rowActiveSol
-          .split('')
-          .fold(0, (previousValue, element) => previousValue + (element != '?' ? int.parse(element) : 0));
+      int filledBoxes =
+          rowActiveSol.split('').fold(0, (previousValue, element) => previousValue + (element != '?' ? int.parse(element) : 0));
       bool isRowCompleted = filledBoxes == rowClues.fold(0, (previousValue, clue) => previousValue + clue);
 
       if (isRowCompleted) {
@@ -33,7 +32,6 @@ class LineSolver {
           }
         }
       } else {
-        // if (rowActiveSol.contains('1')) {
         List<List<String>> pos = getAllLinePossibleSolutions(rowClues, rowActiveSol);
 
         /// Crosses out '0's
@@ -61,12 +59,8 @@ class LineSolver {
         String updatedSol = rowActiveSol;
         for (int j = 0; j < pos.length; j++) {
           var leftSolutionElement = leftMostSol.elementAt(j);
-          print('leftSolutionElement: $leftSolutionElement');
           var rightSolutionElement = rightMostSol.elementAt(j);
-          print('rightSolutionElement: $rightSolutionElement');
-          // most solution RIGHT: ([0], [0], [2], [2], [2])
-          print(
-              'leftSolutionElement == rightSolutionElement: ${leftSolutionElement.first == rightSolutionElement.first}');
+
           if ((leftSolutionElement.first.toString() == rightSolutionElement.first.toString()) &&
               leftSolutionElement.first != '?' &&
               leftSolutionElement.first != '0' &&
@@ -75,7 +69,6 @@ class LineSolver {
             updatedSol = updatedSol.replaceRange(j, j + 1, '1');
           }
         }
-        print('updatedSol: $updatedSol');
 
         for (int j = 0; j < pos.length; j++) {
           var newSol = updatedSol.split('').elementAt(j);
@@ -85,17 +78,6 @@ class LineSolver {
           }
         }
       }
-      // } else {
-      //   String sol = findOverlaps(rowClues, rowActiveSol);
-      //
-      //   for (int j = 0; j < sol.length; j++) {
-      //     var newSol = sol.split('').elementAt(j);
-      //     var activeSol = rowActiveSol.split('').elementAt(j);
-      //     if ((newSol != activeSol) && newSol == '1') {
-      //       state.setFilled(i * state.nonogram.width + j);
-      //     }
-      //   }
-      // }
     }
 
     for (var c = 0; c < state.nonogram.clues!.columns.length; c++) {
@@ -118,7 +100,6 @@ class LineSolver {
           }
         }
       } else {
-        // if (columnActiveSol.contains('1')) {
         List<List<String>> pos = getAllLinePossibleSolutions(columnClues, columnActiveSol);
 
         for (int j = 0; j < columnActiveSol.length; j++) {
@@ -162,17 +143,6 @@ class LineSolver {
           }
         }
       }
-      // } else {
-      //   String sol = findOverlaps(columnClues, columnActiveSol);
-      //
-      //   for (int j = 0; j < sol.length; j++) {
-      //     var newSol = sol.split('').elementAt(j);
-      //     var activeSol = columnActiveSol.split('').elementAt(j);
-      //     if ((newSol != activeSol) && newSol == '1') {
-      //       state.setFilled(c + j * state.nonogram.width);
-      //     }
-      //   }
-      // }
     }
   }
 
@@ -218,77 +188,6 @@ class LineSolver {
     return sideMostSol;
   }
 
-  String findOverlaps(List<int> clues, String currentSol) {
-    print('---');
-
-    /// Finds leftmost solution.
-    String leftSolution = findSideMostSolution(currentSol, clues);
-    print('leftSolution:  $leftSolution');
-
-    /// Finds rightMost solution.
-    String rightSolution = findSideMostSolution(currentSol, clues, true);
-    print('rightSolution: $rightSolution');
-
-    /// Loop [i] row's fields, and find matches in between the leftMost
-    /// and rightMost solutions.
-    String updatedSol = currentSol;
-    for (int j = 0; j < currentSol.length; j++) {
-      var leftSolutionElement = leftSolution.split('').elementAt(j);
-      var rightSolutionElement = rightSolution.split('').elementAt(j);
-      if ((leftSolutionElement == rightSolutionElement) &&
-          leftSolutionElement != '?' &&
-          leftSolutionElement != '0' &&
-          rightSolutionElement != '?' &&
-          rightSolutionElement != '0') {
-        updatedSol = updatedSol.replaceRange(j, j + 1, '1');
-      }
-    }
-    return updatedSol;
-  }
-
-  /// Call revers=true for rightmost sol.
-  String findSideMostSolution(String currentSol, List<int> clues, [bool reverse = false]) {
-    /// Finds leftmost solution.
-    String sideMostSolution = currentSol;
-    List<int> cluesT = clues;
-    // print('reverse: $reverse');
-    print('cluesT before: $cluesT');
-    if (reverse) cluesT = clues.reversed.toList();
-    print('cluesluesT after: $cluesT}');
-    if (reverse) sideMostSolution = sideMostSolution.split('').reversed.join();
-
-    List<String> sideMostSolutionList = sideMostSolution.split('');
-
-    print('sideMostSolution $sideMostSolution reverse $reverse and $sideMostSolutionList');
-
-    // todo: change solNumb with letters then
-    var solNumbs = List<int>.generate(cluesT.length, (i) => i + 1);
-    if (reverse) solNumbs = solNumbs.reversed.toList();
-
-    for (int a = 0; a < cluesT.length; a++) {
-      int clue = cluesT.elementAt(a);
-
-      /// Replaces all next "?" clue times with the clue's index.
-      sideMostSolution = sideMostSolution.replaceFirstMapped(
-        Iterable.generate(clue, (_) => '?').join(),
-        (m) => Iterable.generate(clue, (_) => (solNumbs.elementAt(a) + 1).toString()).join(),
-      );
-
-      /// Adds an "0" as the next character after the clue solution.
-      sideMostSolution = sideMostSolution.replaceFirstMapped(
-        Iterable.generate(1, (_) => '?').join(),
-        (m) => Iterable.generate(1, (_) => '0').join(),
-      );
-    }
-
-    /// Reverses the solution to be accurate.
-    if (reverse) sideMostSolution = sideMostSolution.split('').reversed.join();
-    // print('reverse: $reverse');
-    // print('sideMostSolution: $sideMostSolution');
-
-    return sideMostSolution;
-  }
-
   /// Second Algorithm.
 
   List<List<String>> getAllLinePossibleSolutions(List<int> clues, String line) {
@@ -324,7 +223,6 @@ class LineSolver {
 
     print('Can box at pos $s be of clue ${clues.elementAt(cl)}?');
 
-    // tempSol[s] = '${cl + 2}';
     print('Simple replacement from $solution to $tempSol');
 
     bool canFit;
@@ -360,7 +258,6 @@ class LineSolver {
       if (hasCluesBefore) {
         print('Do clues before can fit?');
 
-        // bool hasBoxesLeftLeft = cl > 0;
         bool hasBoxesLeftLeft = s - 1 >= 0;
 
         print('Does clue have boxes left before? $hasBoxesLeftLeft');
@@ -369,8 +266,7 @@ class LineSolver {
           print('clues $clues and range ${clues.getRange(0, cl)}');
           print('solution $solution and range ...');
           print('                             ... ${solution.split('').sublist(0, s - 1).join()}0');
-          // cluesBeforeGood = canCluesFit(clues.reversed.toList(), solution.split('').reversed.join(), s, cl + 1);
-          // pos till now: [[0, 0], [2, 0], [0, 0], [0, 0], [0]]
+
           cluesBeforeGood = false;
           String solSub = '${solution.split('').sublist(0, s - 1).join()}0';
           var clll = clues.getRange(0, cl).toList();
@@ -399,7 +295,6 @@ class LineSolver {
 
         print('Does clue have boxes left after? $hasBoxesLeft');
         if (hasBoxesLeft) {
-          // cluesAfterGood = canCluesFit(clues.sublist(1), solution.split('').sublist(s + clues.elementAt(cl) + 1).join(), 0, 0);
           var ccl = clues.sublist(1 + cl);
           String solSub = solution.split('').sublist(s + clues.elementAt(cl) + 1).join();
           cluesAfterGood = false;
@@ -420,7 +315,5 @@ class LineSolver {
     } else {
       return false;
     }
-
-    return false;
   }
 }
