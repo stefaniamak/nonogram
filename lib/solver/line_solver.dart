@@ -1,8 +1,7 @@
 import 'package:built_collection/built_collection.dart';
 import 'package:flutter/widgets.dart';
+import 'package:nonogram/backend/enum/nono_line_type.dart';
 import 'package:nonogram/game_loop/nonogram_state.dart';
-
-enum NonoLineType { row, column }
 
 class LineSolver {
   void lineSolver(NonogramState state) async {
@@ -61,8 +60,6 @@ class LineSolver {
     print('final sidemost solution: $sideMostSol');
     return sideMostSol;
   }
-
-  /// Second Algorithm.
 
   List<List<String>> getAllLinePossibleSolutions(List<int> clues, String line) {
     print('Line has at least one solved box! --------------');
@@ -192,19 +189,12 @@ class LineSolver {
   }
 
   void loopSides(NonogramState state, BuiltList<List<int>> lines, NonoLineType lineType) {
-    for (var i = 0; i < lines.length; i++) {
-      /// Gets [i] row's clues.
-      List<int> clues = lines.elementAt(i);
+    for (var l = 0; l < lines.length; l++) {
+      /// Gets [l] row's clues.
+      List<int> clues = lines.elementAt(l);
 
-      /// Gets current active solution of that [i] row.
-      String activeSolLine;
-      switch (lineType) {
-        case NonoLineType.row:
-          activeSolLine = state.activeSolution.getRow(i, state.nonogram);
-          break;
-        case NonoLineType.column:
-          activeSolLine = state.activeSolution.getColumn(i, state.nonogram);
-      }
+      /// Gets current active solution of that [l] row.
+      String activeSolLine = state.activeSolution.getLine(l, state.nonogram, lineType);
 
       /// Is row completed? Shall cross out it then and move on.
       int filledBoxes = activeSolLine
@@ -215,13 +205,7 @@ class LineSolver {
       if (isLineCompleted) {
         for (int j = 0; j < activeSolLine.length; j++) {
           if (activeSolLine.characters.elementAt(j) == '?') {
-            switch (lineType) {
-              case NonoLineType.row:
-                state.setCross(i * state.nonogram.width + j);
-                break;
-              case NonoLineType.column:
-                state.setCross(i + j * state.nonogram.width);
-            }
+            state.setCross(lineType.getSolutionPosition(l, j, state.nonogram.width));
           }
         }
       } else {
@@ -232,13 +216,7 @@ class LineSolver {
           print('pos:: $pos');
           print('pos.elementAt(sInt): ${pos.elementAt(j)}');
           if (pos.elementAt(j).every((e) => e == '0')) {
-            switch (lineType) {
-              case NonoLineType.row:
-                state.setCross(i * state.nonogram.width + j);
-                break;
-              case NonoLineType.column:
-                state.setCross(i + j * state.nonogram.width);
-            }
+            state.setCross(lineType.getSolutionPosition(l, j, state.nonogram.width));
           }
         }
 
@@ -268,13 +246,7 @@ class LineSolver {
               leftSolutionElement.first != '0' &&
               rightSolutionElement.first != '?' &&
               rightSolutionElement.first != '0') {
-            switch (lineType) {
-              case NonoLineType.row:
-                updatedSol = updatedSol.replaceRange(j, j + 1, '1');
-                break;
-              case NonoLineType.column:
-                updatedSol = updatedSol.replaceRange(j, j + 1, '1');
-            }
+            updatedSol = updatedSol.replaceRange(j, j + 1, '1');
           }
         }
         print('updatedSol: $updatedSol');
@@ -283,13 +255,7 @@ class LineSolver {
           var newSol = updatedSol.split('').elementAt(j);
           var asctiveSol = activeSolLine.split('').elementAt(j);
           if ((newSol != asctiveSol) && newSol == '1') {
-            switch (lineType) {
-              case NonoLineType.row:
-                state.setFilled(i * state.nonogram.width + j);
-                break;
-              case NonoLineType.column:
-                state.setFilled(i + j * state.nonogram.width);
-            }
+            state.setFilled(lineType.getSolutionPosition(l, j, state.nonogram.width));
           }
         }
       }

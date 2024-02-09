@@ -1,5 +1,6 @@
 import 'package:built_value/built_value.dart';
 import 'package:flutter/material.dart' as m;
+import 'package:nonogram/backend/enum/nono_line_type.dart';
 import 'package:nonogram/backend/models/solution_type.dart';
 
 import 'nonogram.dart';
@@ -18,6 +19,15 @@ abstract class Solution implements Built<Solution, SolutionBuilder> {
     print('Image:');
     print(image ?? 'No Image');
     print(solution ?? 'No Solution');
+  }
+
+  String getLine(int index, Nonogram nonogram, NonoLineType lineType) {
+    switch (lineType) {
+      case NonoLineType.row:
+        return getRow(index, nonogram);
+      case NonoLineType.column:
+        return getColumn(index, nonogram);
+    }
   }
 
   String getRow(int index, Nonogram nonogram) =>
