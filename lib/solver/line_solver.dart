@@ -1,5 +1,8 @@
+import 'package:built_collection/built_collection.dart';
 import 'package:flutter/widgets.dart';
 import 'package:nonogram/game_loop/nonogram_state.dart';
+
+enum NonoLineType { row, column }
 
 class LineSolver {
   void lineSolver(NonogramState state) async {
@@ -13,137 +16,8 @@ class LineSolver {
   // overlapping
 
   void overlapping(NonogramState state) {
-    for (var i = 0; i < state.nonogram.clues!.rows.length; i++) {
-      /// Gets [i] row's clues.
-      List<int> rowClues = state.nonogram.clues!.rows.elementAt(i);
-
-      /// Gets current active solution of that [i] row.
-      String rowActiveSol = state.activeSolution.getRow(i, state.nonogram);
-
-      /// Is row completed? Shall cross out it then and move on.
-      int filledBoxes =
-          rowActiveSol.split('').fold(0, (previousValue, element) => previousValue + (element != '?' ? int.parse(element) : 0));
-      bool isRowCompleted = filledBoxes == rowClues.fold(0, (previousValue, clue) => previousValue + clue);
-
-      if (isRowCompleted) {
-        for (int j = 0; j < rowActiveSol.length; j++) {
-          if (rowActiveSol.characters.elementAt(j) == '?') {
-            state.setCross(i * state.nonogram.width + j);
-          }
-        }
-      } else {
-        List<List<String>> pos = getAllLinePossibleSolutions(rowClues, rowActiveSol);
-
-        /// Crosses out '0's
-        for (int j = 0; j < rowActiveSol.length; j++) {
-          print('pos:: $pos');
-          print('pos.elementAt(sInt): ${pos.elementAt(j)}');
-          if (pos.elementAt(j).every((e) => e == '0')) {
-            state.setCross(i * state.nonogram.width + j);
-          }
-        }
-
-        print('most solution -: $pos');
-
-        /// Find overlaps
-        var leftMostSol = getNewSideMostSol(pos, rowClues);
-        print('most solution LEFT: $leftMostSol');
-
-        /// Find overlaps
-        var posRev = pos.reversed.toList();
-        var rowCluesRev = rowClues.reversed.toList();
-        var rightMostSol = getNewSideMostSol(posRev, rowCluesRev).reversed;
-
-        print('most solution RIGHT: $rightMostSol');
-
-        String updatedSol = rowActiveSol;
-        for (int j = 0; j < pos.length; j++) {
-          var leftSolutionElement = leftMostSol.elementAt(j);
-          var rightSolutionElement = rightMostSol.elementAt(j);
-
-          if ((leftSolutionElement.first.toString() == rightSolutionElement.first.toString()) &&
-              leftSolutionElement.first != '?' &&
-              leftSolutionElement.first != '0' &&
-              rightSolutionElement.first != '?' &&
-              rightSolutionElement.first != '0') {
-            updatedSol = updatedSol.replaceRange(j, j + 1, '1');
-          }
-        }
-
-        for (int j = 0; j < pos.length; j++) {
-          var newSol = updatedSol.split('').elementAt(j);
-          var activeSol = rowActiveSol.split('').elementAt(j);
-          if ((newSol != activeSol) && newSol == '1') {
-            state.setFilled(i * state.nonogram.width + j);
-          }
-        }
-      }
-    }
-
-    for (var c = 0; c < state.nonogram.clues!.columns.length; c++) {
-      /// Gets [i] column's clues.
-      List<int> columnClues = state.nonogram.clues!.columns.elementAt(c);
-
-      /// Gets current active solution of that [i] column.
-      String columnActiveSol = state.activeSolution.getColumn(c, state.nonogram);
-
-      /// Is row completed? Shall cross out it then and move on.
-      int filledBoxes = columnActiveSol
-          .split('')
-          .fold(0, (previousValue, element) => previousValue + (element != '?' ? int.parse(element) : 0));
-      bool isRowCompleted = filledBoxes == columnClues.fold(0, (previousValue, clue) => previousValue + clue);
-
-      if (isRowCompleted) {
-        for (int j = 0; j < columnActiveSol.length; j++) {
-          if (columnActiveSol.characters.elementAt(j) == '?') {
-            state.setCross(c + j * state.nonogram.width);
-          }
-        }
-      } else {
-        List<List<String>> pos = getAllLinePossibleSolutions(columnClues, columnActiveSol);
-
-        for (int j = 0; j < columnActiveSol.length; j++) {
-          print('pos $pos');
-          print('pos.elementAt(sInt): ${pos.elementAt(j)}');
-          if (pos.elementAt(j).every((e) => e == '0')) {
-            state.setCross(c + j * state.nonogram.width);
-          }
-        }
-
-        print('most solution -: $pos');
-
-        /// Find overlaps
-        var leftMostSol = getNewSideMostSol(pos, columnClues);
-        print('most solution LEFT: $leftMostSol');
-
-        /// Find overlaps
-        var posRev = pos.reversed.toList();
-        var columnCluesRev = columnClues.reversed.toList();
-        var rightMostSol = getNewSideMostSol(posRev, columnCluesRev).reversed;
-        print('most solution RIGHT: $rightMostSol');
-
-        String updatedSol = columnActiveSol;
-        for (int j = 0; j < pos.length; j++) {
-          var leftSolutionElement = leftMostSol.elementAt(j);
-          var rightSolutionElement = rightMostSol.elementAt(j);
-          if ((leftSolutionElement.first.toString() == rightSolutionElement.first.toString()) &&
-              leftSolutionElement.first != '?' &&
-              leftSolutionElement.first != '0' &&
-              rightSolutionElement.first != '?' &&
-              rightSolutionElement.first != '0') {
-            updatedSol = updatedSol.replaceRange(j, j + 1, '1');
-          }
-        }
-
-        for (int j = 0; j < leftMostSol.length; j++) {
-          var newSol = updatedSol.split('').elementAt(j);
-          var activeSol = columnActiveSol.split('').elementAt(j);
-          if ((newSol != activeSol) && newSol == '1') {
-            state.setFilled(c + j * state.nonogram.width);
-          }
-        }
-      }
-    }
+    loopSides(state, state.nonogram.clues!.rows, NonoLineType.row);
+    loopSides(state, state.nonogram.clues!.columns, NonoLineType.column);
   }
 
   List<List<String>> getNewSideMostSol(List<List<String>> solution, List<int> clues) {
@@ -314,6 +188,111 @@ class LineSolver {
       return cluesBeforeGood && cluesAfterGood;
     } else {
       return false;
+    }
+  }
+
+  void loopSides(NonogramState state, BuiltList<List<int>> lines, NonoLineType lineType) {
+    for (var i = 0; i < lines.length; i++) {
+      /// Gets [i] row's clues.
+      List<int> clues = lines.elementAt(i);
+
+      /// Gets current active solution of that [i] row.
+      String activeSolLine;
+      switch (lineType) {
+        case NonoLineType.row:
+          activeSolLine = state.activeSolution.getRow(i, state.nonogram);
+          break;
+        case NonoLineType.column:
+          activeSolLine = state.activeSolution.getColumn(i, state.nonogram);
+      }
+
+      /// Is row completed? Shall cross out it then and move on.
+      int filledBoxes = activeSolLine
+          .split('')
+          .fold(0, (previousValue, element) => previousValue + (element != '?' ? int.parse(element) : 0));
+      bool isLineCompleted = filledBoxes == clues.fold(0, (previousValue, clue) => previousValue + clue);
+
+      if (isLineCompleted) {
+        for (int j = 0; j < activeSolLine.length; j++) {
+          if (activeSolLine.characters.elementAt(j) == '?') {
+            switch (lineType) {
+              case NonoLineType.row:
+                state.setCross(i * state.nonogram.width + j);
+                break;
+              case NonoLineType.column:
+                state.setCross(i + j * state.nonogram.width);
+            }
+          }
+        }
+      } else {
+        List<List<String>> pos = getAllLinePossibleSolutions(clues, activeSolLine);
+
+        /// Crosses out '0's
+        for (int j = 0; j < activeSolLine.length; j++) {
+          print('pos:: $pos');
+          print('pos.elementAt(sInt): ${pos.elementAt(j)}');
+          if (pos.elementAt(j).every((e) => e == '0')) {
+            switch (lineType) {
+              case NonoLineType.row:
+                state.setCross(i * state.nonogram.width + j);
+                break;
+              case NonoLineType.column:
+                state.setCross(i + j * state.nonogram.width);
+            }
+          }
+        }
+
+        print('most solution -: $pos');
+
+        /// Find overlaps
+        var leftMostSol = getNewSideMostSol(pos, clues);
+        print('most solution LEFT: $leftMostSol');
+
+        /// Find overlaps
+        var posRev = pos.reversed.toList();
+        var cluesRev = clues.reversed.toList();
+        var rightMostSol = getNewSideMostSol(posRev, cluesRev).reversed;
+
+        print('most solution RIGHT: $rightMostSol');
+
+        String updatedSol = activeSolLine;
+        for (int j = 0; j < pos.length; j++) {
+          var leftSolutionElement = leftMostSol.elementAt(j);
+          print('leftSolutionElement: $leftSolutionElement');
+          var rightSolutionElement = rightMostSol.elementAt(j);
+          print('rightSolutionElement: $rightSolutionElement');
+          print(
+              'leftSolutionElement == rightSolutionElement: ${leftSolutionElement.first == rightSolutionElement.first}');
+          if ((leftSolutionElement.first.toString() == rightSolutionElement.first.toString()) &&
+              leftSolutionElement.first != '?' &&
+              leftSolutionElement.first != '0' &&
+              rightSolutionElement.first != '?' &&
+              rightSolutionElement.first != '0') {
+            switch (lineType) {
+              case NonoLineType.row:
+                updatedSol = updatedSol.replaceRange(j, j + 1, '1');
+                break;
+              case NonoLineType.column:
+                updatedSol = updatedSol.replaceRange(j, j + 1, '1');
+            }
+          }
+        }
+        print('updatedSol: $updatedSol');
+
+        for (int j = 0; j < pos.length; j++) {
+          var newSol = updatedSol.split('').elementAt(j);
+          var asctiveSol = activeSolLine.split('').elementAt(j);
+          if ((newSol != asctiveSol) && newSol == '1') {
+            switch (lineType) {
+              case NonoLineType.row:
+                state.setFilled(i * state.nonogram.width + j);
+                break;
+              case NonoLineType.column:
+                state.setFilled(i + j * state.nonogram.width);
+            }
+          }
+        }
+      }
     }
   }
 }
