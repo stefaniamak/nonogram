@@ -1,38 +1,38 @@
-enum NonoSolutionSide { before, after }
+enum NonoDirection { before, after }
 
-extension NonoSolutionSideExtension on NonoSolutionSide {
+extension NonoSolutionSideExtension on NonoDirection {
   bool hasOtherClues(int clueIndex, int clueListLength) {
     switch (this) {
-      case NonoSolutionSide.before:
+      case NonoDirection.before:
         return clueIndex > 0;
-      case NonoSolutionSide.after:
+      case NonoDirection.after:
         return clueIndex < clueListLength - 1;
     }
   }
 
   bool hasBoxesLeft(int charIndex, int clue, int solutionListLength) {
     switch (this) {
-      case NonoSolutionSide.before:
+      case NonoDirection.before:
         return charIndex - 1 >= 0;
-      case NonoSolutionSide.after:
+      case NonoDirection.after:
         return charIndex + clue + 1 < solutionListLength;
     }
   }
 
   String getSolutionSublist(String solution, int charIndex, int clue) {
     switch (this) {
-      case NonoSolutionSide.before:
+      case NonoDirection.before:
         return '${solution.split('').sublist(0, charIndex - 1).join()}0';
-      case NonoSolutionSide.after:
+      case NonoDirection.after:
         return solution.split('').sublist(charIndex + clue + 1).join();
     }
   }
 
   List<int> getCluesSublist(int clueIndex, List<int> clues) {
     switch (this) {
-      case NonoSolutionSide.before:
+      case NonoDirection.before:
         return clues.getRange(0, clueIndex).toList();
-      case NonoSolutionSide.after:
+      case NonoDirection.after:
         return clues.sublist(1 + clueIndex);
     }
   }

@@ -46,9 +46,11 @@ class LineSolver {
         List<List<String>> allLineSolutions = getAllLinePossibleSolutions(clues, initialSolution);
         print('All line solutions: $allLineSolutions');
 
+        print('Find starting solution of $allLineSolutions with clues $clues.');
         var startingMostSolution = getSideMostSolution(allLineSolutions, clues);
         print('Starting most solution: $startingMostSolution');
 
+        print('Find ending solution of $allLineSolutions with clues $clues.');
         var allLineSolutionsReversed = allLineSolutions.reversed.toList();
         var cluesReversed = clues.reversed.toList();
         var endingMostSolution = getSideMostSolution(allLineSolutionsReversed, cluesReversed).reversed;
@@ -104,8 +106,7 @@ class LineSolver {
     return possibleSolutions;
   }
 
-  bool doOtherCluesFit(
-      NonoSolutionSide solutionSide, List<int> clues, int clueIndex, String solution, int solutionIndex) {
+  bool doOtherCluesFit(NonoDirection solutionSide, List<int> clues, int clueIndex, String solution, int solutionIndex) {
     int clue = clues.elementAt(clueIndex);
 
     print('Does clue have clues ${solutionSide.name}?');
@@ -159,15 +160,13 @@ class LineSolver {
     }
     print('true');
 
-    bool cluesBeforeGood = doOtherCluesFit(NonoSolutionSide.before, clues, cl, solution, s);
-    bool cluesAfterGood = doOtherCluesFit(NonoSolutionSide.after, clues, cl, solution, s);
+    bool cluesBeforeGood = doOtherCluesFit(NonoDirection.before, clues, cl, solution, s);
+    bool cluesAfterGood = doOtherCluesFit(NonoDirection.after, clues, cl, solution, s);
     print('Do both clues before and clues after fit? Answer: ${cluesBeforeGood && cluesAfterGood}');
     return cluesBeforeGood && cluesAfterGood;
   }
 
   List<List<String>> getSideMostSolution(List<List<String>> solution, List<int> clues) {
-    print('///// getNewSideMostSol starts');
-    print('solution: $solution , clues: $clues');
     List<int> clueIndexes = Iterable<int>.generate(clues.length, (c) => c + 2).toList();
     String firstClueIndex = solution
         .firstWhere((list) => list.contains('2') || list.contains('${clues.length + 1}'))
