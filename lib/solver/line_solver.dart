@@ -56,17 +56,20 @@ class LineSolver {
 
         String updatedSolution = initialSolution;
         for (int charIndex = 0; charIndex < allLineSolutions.length; charIndex++) {
-          print('Does list contains only zeros (0)?');
+          print(
+              'Are all possible solutions (${allLineSolutions.elementAt(charIndex)}) of box at index $charIndex only zeros (0)?');
           if (allLineSolutions.elementAt(charIndex).everyElementIsZero) {
             print('Yes. Cross out this box.');
             updatedSolution = updatedSolution.replaceRange(charIndex, charIndex + 1, '0');
             state.setCross(lineType.getSolutionPosition(lineIndex, charIndex, state.nonogram.width));
           } else {
             print('No.');
-            var startingSolutionElement = startingMostSolution.elementAt(charIndex).first.toString();
-            var endingSolutionElement = endingMostSolution.elementAt(charIndex).first.toString();
-            print('Do both lists contain the same clue index? ');
-            if (startingSolutionElement.isSameClueIndexWith(endingSolutionElement)) {
+            var startingSolutionIndex = startingMostSolution.elementAt(charIndex).first.toString();
+            var endingSolutionIndex = endingMostSolution.elementAt(charIndex).first.toString();
+            print('Do both side solutions of box at index $charIndex contain the same clue index?');
+            print('startingSolutionIndex: $startingSolutionIndex');
+            print('endingSolutionIndex  : $endingSolutionIndex');
+            if (startingSolutionIndex.isSameClueIndexWith(endingSolutionIndex)) {
               print('Yes. Fill in this box.');
               updatedSolution = updatedSolution.replaceRange(charIndex, charIndex + 1, '1');
               state.setFilled(lineType.getSolutionPosition(lineIndex, charIndex, state.nonogram.width));
