@@ -6,7 +6,7 @@ class Solver {
   Solution? solve(NonogramState state) {
     String solution = state.activeSolution.solution!;
     // solution =
-    LineSolver().lineSolver(state);
+    LineSolver().solve(state);
     // return Solution(
     //   type:,
     //   solution: '01100011010010101110101001010000110010100101111000',

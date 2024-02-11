@@ -10,21 +10,21 @@ extension NonoSolutionSideExtension on NonoSolutionSide {
     }
   }
 
-  bool hasBoxesLeft(int solutionIndex, int clue, int solutionListLength) {
+  bool hasBoxesLeft(int charIndex, int clue, int solutionListLength) {
     switch (this) {
       case NonoSolutionSide.before:
-        return solutionIndex - 1 >= 0;
+        return charIndex - 1 >= 0;
       case NonoSolutionSide.after:
-        return solutionIndex + clue + 1 < solutionListLength;
+        return charIndex + clue + 1 < solutionListLength;
     }
   }
 
-  String getSolutionSublist(String solution, int solutionIndex, int clue) {
+  String getSolutionSublist(String solution, int charIndex, int clue) {
     switch (this) {
       case NonoSolutionSide.before:
-        return '${solution.split('').sublist(0, solutionIndex - 1).join()}0';
+        return '${solution.split('').sublist(0, charIndex - 1).join()}0';
       case NonoSolutionSide.after:
-        return solution.split('').sublist(solutionIndex + clue + 1).join();
+        return solution.split('').sublist(charIndex + clue + 1).join();
     }
   }
 

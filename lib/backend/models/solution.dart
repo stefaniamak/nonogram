@@ -1,7 +1,7 @@
 import 'package:built_value/built_value.dart';
 import 'package:flutter/material.dart' as m;
-import 'package:nonogram/backend/enum/nono_line_type.dart';
 import 'package:nonogram/backend/models/solution_type.dart';
+import 'package:nonogram/backend/type_extensions/nono_line_type_extension.dart';
 
 import 'nonogram.dart';
 
