@@ -1,11 +1,11 @@
-enum NonoLineType { row, column }
+enum NonoAxis { row, column }
 
-extension NonoLineTypeExtension on NonoLineType {
+extension NonoAxisExtension on NonoAxis {
   int getSolutionPosition(int lineIndex, int charIndex, int nonoWidth) {
     switch (this) {
-      case NonoLineType.row:
+      case NonoAxis.row:
         return nonoWidth * lineIndex + charIndex;
-      case NonoLineType.column:
+      case NonoAxis.column:
         return nonoWidth * charIndex + lineIndex;
     }
   }

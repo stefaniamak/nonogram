@@ -1,6 +1,6 @@
 enum NonoDirection { before, after }
 
-extension NonoSolutionSideExtension on NonoDirection {
+extension NonoDirectionExtension on NonoDirection {
   bool hasOtherClues(int clueIndex, int clueListLength) {
     switch (this) {
       case NonoDirection.before:

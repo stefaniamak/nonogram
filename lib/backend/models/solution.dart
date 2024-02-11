@@ -1,7 +1,7 @@
 import 'package:built_value/built_value.dart';
 import 'package:flutter/material.dart' as m;
 import 'package:nonogram/backend/models/solution_type.dart';
-import 'package:nonogram/backend/type_extensions/nono_line_type_extension.dart';
+import 'package:nonogram/backend/type_extensions/nono_axis_extension.dart';
 
 import 'nonogram.dart';
 
@@ -21,11 +21,11 @@ abstract class Solution implements Built<Solution, SolutionBuilder> {
     print(solution ?? 'No Solution');
   }
 
-  String getLine(int index, Nonogram nonogram, NonoLineType lineType) {
+  String getLine(int index, Nonogram nonogram, NonoAxis lineType) {
     switch (lineType) {
-      case NonoLineType.row:
+      case NonoAxis.row:
         return getRow(index, nonogram);
-      case NonoLineType.column:
+      case NonoAxis.column:
         return getColumn(index, nonogram);
     }
   }

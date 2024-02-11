@@ -4,8 +4,8 @@ import 'package:nonogram/backend/type_extensions/nono_list_extension.dart';
 import 'package:nonogram/backend/type_extensions/nono_string_extension.dart';
 import 'package:nonogram/game_loop/nonogram_state.dart';
 
-import '../backend/type_extensions/nono_line_type_extension.dart';
-import '../backend/type_extensions/nono_solution_side_extension.dart';
+import '../backend/type_extensions/nono_axis_extension.dart';
+import '../backend/type_extensions/nono_direction_extension.dart';
 
 class LineSolver {
   void solve(NonogramState state) async {
@@ -14,11 +14,11 @@ class LineSolver {
   }
 
   void overlapping(NonogramState state) {
-    loopSides(state, state.nonogram.clues!.rows, NonoLineType.row);
-    loopSides(state, state.nonogram.clues!.columns, NonoLineType.column);
+    loopSides(state, state.nonogram.clues!.rows, NonoAxis.row);
+    loopSides(state, state.nonogram.clues!.columns, NonoAxis.column);
   }
 
-  void loopSides(NonogramState state, BuiltList<List<int>> clueLineLists, NonoLineType lineType) {
+  void loopSides(NonogramState state, BuiltList<List<int>> clueLineLists, NonoAxis lineType) {
     for (int lineIndex = 0; lineIndex < clueLineLists.length; lineIndex++) {
       print('Check ${lineType.name} with index $lineIndex.');
 
