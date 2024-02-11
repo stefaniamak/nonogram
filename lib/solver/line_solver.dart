@@ -83,30 +83,25 @@ class LineSolver {
     }
   }
 
-  @override
-  String toString() {
-    return 'LineSolver{}';
-  }
-
   List<List<String>> getAllLinePossibleSolutions(List<int> clues, String line) {
-    print('Line has at least one solved box! --------------');
-    List<List<String>> pos = Iterable.generate(line.length, (_) => <String>[]).toList();
-    for (int cl = 0; cl < clues.length; cl++) {
-      for (int s = 0; s < line.length; s++) {
-        String solNumb = canCluesFit(clues, line, s, cl) ? '${cl + 2}' : '0';
-        if (solNumb == '0') {
-          pos.elementAt(s).add(solNumb);
-        } else {
-          int clueNumb = clues[cl];
-          for (int l = s; l < s + clueNumb; l++) {
-            pos.elementAt(l).add(solNumb);
+    print('Get all possible solutions of line $line with clues $clues');
+    List<List<String>> possibleSolutions = Iterable.generate(line.length, (_) => <String>[]).toList();
+    for (int clueIndex = 0; clueIndex < clues.length; clueIndex++) {
+      for (int charIndex = 0; charIndex < line.length; charIndex++) {
+        String solutionNumb = canCluesFit(clues, line, charIndex, clueIndex) ? '${clueIndex + 2}' : '0';
+
+        int loops = solutionNumb == '0' ? 1 : clues[clueIndex];
+        for (int i = charIndex; i < charIndex + loops; i++) {
+          if (!possibleSolutions.elementAt(i).contains(solutionNumb)) {
+            possibleSolutions.elementAt(i).add(solutionNumb);
           }
         }
-        print('pos till now: $pos');
+
+        print('possibleSolutions of charIndex $charIndex and clueIndex $clueIndex are: $possibleSolutions');
       }
     }
-    print('pos: ${pos}');
-    return pos;
+    print('Final possibleSolutions of line $line with clues $clues is: ${possibleSolutions}');
+    return possibleSolutions;
   }
 
   bool doOtherCluesFit(
