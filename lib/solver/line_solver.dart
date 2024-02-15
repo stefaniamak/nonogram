@@ -166,41 +166,50 @@ class LineSolver {
   }
 
   List<List<String>> getSideMostSolution(List<List<String>> solution, List<int> clues, NonoAxisAlignment axis) {
+    print('Get ${axis.name}ing most solution of solution $solution with clues $clues');
+
     List<int> clueIndexes = Iterable<int>.generate(clues.length, (c) => c + 2).toList();
     if (axis == NonoAxisAlignment.end) {
+      print('All values should reverse');
       solution = solution.reversed.toList();
       clues = clues.reversed.toList();
       clueIndexes = clueIndexes.reversed.toList();
     }
-    print('clueIndexes AFTER: $clueIndexes');
 
-    List<List<String>> sideMostSol = [];
+    List<List<String>> sideMostSolution = [];
     List<List<String>> remainingSolution = solution;
-    print('starting remainingSolution: $remainingSolution');
-    print('starting sideMostSol: $sideMostSol');
 
+    print('Start checking clues one by one. sideMostSolution list is empty, remainingSolution is $remainingSolution');
     for (int i = 0; i < clues.length; i++) {
       int clue = clues[i];
       int clueIndex = clueIndexes.elementAt(i);
       int cluePos = remainingSolution.indexWhere((list) => list.contains('$clueIndex'));
-      print('- pos $i , clue $clue , cluePos $cluePos');
-      print('remainingSolution before: $remainingSolution');
-      print('sideMostSol before: $sideMostSol');
+      print('Clue $i with value $clue is found at position $cluePos of remainingSolution $remainingSolution');
 
-      if (cluePos > 0) sideMostSol.addAll(Iterable.generate(cluePos, (_) => ['0']).toList());
-      sideMostSol.addAll(Iterable.generate(clue, (_) => ['$clueIndex']).toList());
-      if (sideMostSol.length < solution.length) {
-        sideMostSol.add(['0']);
+      print('Is cluePos $cluePos larger than 0?');
+      print(cluePos > 0 ? 'Yes, it is. Add $cluePos "0"s to sideMostSolution list' : 'No, it isn\'t. Move on');
+      if (cluePos > 0) sideMostSolution.addAll(Iterable.generate(cluePos, (_) => ['0']).toList());
+      print('Add $clue times clueIndex $clueIndex of clue $clue at sideMostSolution list');
+      sideMostSolution.addAll(Iterable.generate(clue, (_) => ['$clueIndex']).toList());
+
+      print('Is solution completed?');
+      print(sideMostSolution.length < solution.length
+          ? 'No, not finished. Add "0" for space at sideMostSolution list and create a new sublist after clue added'
+          : 'Yes it is. Move on');
+      if (sideMostSolution.length < solution.length) {
+        sideMostSolution.add(['0']);
         remainingSolution = remainingSolution.sublist(cluePos + clue + 1);
       }
 
-      print('remainingSolution after: $remainingSolution');
-      print('sideMostSol after: $sideMostSol');
+      print('Current sideMostSolution: $sideMostSolution');
     }
-    if (sideMostSol.length < solution.length) {
-      sideMostSol.addAll(Iterable.generate(remainingSolution.length, (_) => ['0']).toList());
+
+    print('Finished checking all clues. Is sideMostSolution completed?');
+    print(sideMostSolution.length < solution.length ? 'No. Complete solution with "0"s' : 'Yes. Move on');
+    if (sideMostSolution.length < solution.length) {
+      sideMostSolution.addAll(Iterable.generate(remainingSolution.length, (_) => ['0']).toList());
     }
-    print('final sidemost solution: $sideMostSol');
-    return axis == NonoAxisAlignment.end ? sideMostSol.reversed.toList() : sideMostSol;
+    print('Final sideMostSolution: $sideMostSolution');
+    return axis == NonoAxisAlignment.end ? sideMostSolution.reversed.toList() : sideMostSolution;
   }
 }
