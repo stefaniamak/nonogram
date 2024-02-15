@@ -1,5 +1,6 @@
 import 'package:built_collection/built_collection.dart';
 import 'package:flutter/widgets.dart';
+import 'package:nonogram/backend/type_extensions/nono_axis_alignment_extension.dart';
 import 'package:nonogram/backend/type_extensions/nono_list_extension.dart';
 import 'package:nonogram/backend/type_extensions/nono_string_extension.dart';
 import 'package:nonogram/game_loop/nonogram_state.dart';
@@ -47,13 +48,11 @@ class LineSolver {
         print('All line solutions: $allLineSolutions');
 
         print('Find starting solution of $allLineSolutions with clues $clues.');
-        var startingMostSolution = getSideMostSolution(allLineSolutions, clues);
+        var startingMostSolution = getSideMostSolution(allLineSolutions, clues, NonoAxisAlignment.start);
         print('Starting most solution: $startingMostSolution');
 
         print('Find ending solution of $allLineSolutions with clues $clues.');
-        var allLineSolutionsReversed = allLineSolutions.reversed.toList();
-        var cluesReversed = clues.reversed.toList();
-        var endingMostSolution = getSideMostSolution(allLineSolutionsReversed, cluesReversed).reversed;
+        var endingMostSolution = getSideMostSolution(allLineSolutions, clues, NonoAxisAlignment.end);
         print('Ending most solution: $endingMostSolution');
 
         String updatedSolution = initialSolution;
@@ -166,14 +165,13 @@ class LineSolver {
     return cluesBeforeGood && cluesAfterGood;
   }
 
-  List<List<String>> getSideMostSolution(List<List<String>> solution, List<int> clues) {
+  List<List<String>> getSideMostSolution(List<List<String>> solution, List<int> clues, NonoAxisAlignment axis) {
     List<int> clueIndexes = Iterable<int>.generate(clues.length, (c) => c + 2).toList();
-    String firstClueIndex = solution
-        .firstWhere((list) => list.contains('2') || list.contains('${clues.length + 1}'))
-        .firstWhere((item) => item != '0' && item != '1' && item != '?');
-    print('clueIndexes: $clueIndexes');
-    print('firstClueIndex: $firstClueIndex');
-    if (firstClueIndex != '2') clueIndexes = clueIndexes.reversed.toList();
+    if (axis == NonoAxisAlignment.end) {
+      solution = solution.reversed.toList();
+      clues = clues.reversed.toList();
+      clueIndexes = clueIndexes.reversed.toList();
+    }
     print('clueIndexes AFTER: $clueIndexes');
 
     List<List<String>> sideMostSol = [];
@@ -203,6 +201,6 @@ class LineSolver {
       sideMostSol.addAll(Iterable.generate(remainingSolution.length, (_) => ['0']).toList());
     }
     print('final sidemost solution: $sideMostSol');
-    return sideMostSol;
+    return axis == NonoAxisAlignment.end ? sideMostSol.reversed.toList() : sideMostSol;
   }
 }
