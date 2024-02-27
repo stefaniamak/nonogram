@@ -16,8 +16,26 @@ class NonogramPage extends HookWidget {
   Widget build(BuildContext context) {
     var nonogramState = useNonogramState(nonogram);
 
-    return Column(
+    return Row(
       children: [
+        Column(
+          children: [
+            Text('${nonogramState.nonogram.info?.title} #${nonogramState.nonogram.id}'),
+            InkWell(
+              onTap: () {
+                LineSolver().overlapping(nonogramState);
+                // todo: build draft/empty solver structure #17 https://github.com/stefaniamak/nonogram/issues/17
+                // var solution = Solver().solve(nonogramState);
+              },
+              child: const SizedBox(
+                height: 50,
+                width: 80,
+                child: Center(child: Text('SOLVE')),
+              ),
+            ),
+            // Slider(value: value, onChanged: onChanged);
+          ],
+        ),
         NonogramGridAndClues(
           nonogram: nonogram,
           nonogramState: nonogramState,
@@ -25,18 +43,6 @@ class NonogramPage extends HookWidget {
           maxSize: Size(
             MediaQuery.of(context).size.width,
             MediaQuery.of(context).size.height * 0.8,
-          ),
-        ),
-        InkWell(
-          onTap: () {
-            LineSolver().overlapping(nonogramState);
-            // todo: build draft/empty solver structure #17 https://github.com/stefaniamak/nonogram/issues/17
-            // var solution = Solver().solve(nonogramState);
-          },
-          child: const SizedBox(
-            height: 50,
-            width: 80,
-            child: Center(child: Text('Overlapping')),
           ),
         ),
       ],
