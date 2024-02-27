@@ -5,11 +5,13 @@ class SolutionStep {
   final NonoAxis axis;
   final bool isNote;
   final int lineIndex;
+  final String explanation;
 
   SolutionStep({
     required this.currentSolution,
     required this.axis,
     required this.isNote,
     required this.lineIndex,
+    required this.explanation,
   });
 }
