@@ -8,11 +8,13 @@ import 'package:nonogram/painters/nonogram_grid.dart';
 
 class NonogramGridAndClues extends HookWidget {
   final Nonogram nonogram;
+  final NonogramState nonogramState;
   final EdgeInsets padding;
   final Size? maxSize;
 
   const NonogramGridAndClues({
     required this.nonogram,
+    required this.nonogramState,
     this.padding = EdgeInsets.zero,
     this.maxSize,
     super.key,
@@ -23,7 +25,7 @@ class NonogramGridAndClues extends HookWidget {
     var md = MediaQuery.of(context);
     var maxSize = this.maxSize ?? md.size;
 
-    var nonogramState = useNonogramState(nonogram);
+    var nonogramState = this.nonogramState;
     var nonogramUi = useNonogramUi(nonogram, maxSize, padding);
 
     return Container(
