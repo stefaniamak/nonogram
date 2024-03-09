@@ -16,7 +16,8 @@ class NonogramPage extends HookWidget {
   Widget build(BuildContext context) {
     var nonogramState = useNonogramState(nonogram);
 
-    return Row(
+    return Flex(
+      direction: MediaQuery.of(context).size.width > 400 ? Axis.horizontal : Axis.vertical,
       children: [
         Column(
           children: [
