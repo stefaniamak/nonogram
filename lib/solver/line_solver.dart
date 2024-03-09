@@ -112,55 +112,21 @@ class LineSolver {
 
       String updatedSolution = initialSolution;
       for (int charIndex = 0; charIndex < allLineSolutions.length; charIndex++) {
-        print(
-            'Are all possible solutions (${allLineSolutions.elementAt(charIndex)}) of box at index $charIndex only zeros (0)?');
-        if (allLineSolutions.elementAt(charIndex).everyElementIsZero) {
-          print('Yes. Cross out this box.');
-          updatedSolution = updatedSolution.replaceRange(charIndex, charIndex + 1, '0');
-          // state.setCross(lineType.getSolutionPosition(lineIndex, charIndex, state.nonogram.width));
+        print('Is box unknown and should be checked?');
+        if (initialSolution.characters.characterAt(charIndex).toString() == '?') {
+          print('Yes it is.');
+          print(
+              'Are all possible solutions (${allLineSolutions.elementAt(charIndex)}) of box at index $charIndex only zeros (0)?');
 
-          int indexSol = lineType.getSolutionPosition(lineIndex, charIndex, state.nonogram.width);
-          state.setCross(lineType.getSolutionPosition(lineIndex, charIndex, state.nonogram.width));
-          var fullUpdatedSolution = state.solutionSteps.last.currentSolution.replaceRange(indexSol, indexSol + 1, '0');
-          print('fullUpdatedSolution: $fullUpdatedSolution');
-          state.addStep(SolutionStep(
-            currentSolution: fullUpdatedSolution,
-            // lineSolution: endingMostSolution,
-            axis: lineType,
-            lineIndex: lineIndex,
-            explanation: 'Cross out empty boxes and fill in solution overlaps.',
-          ));
-          bool isInStack = false;
-          for (var line in state.stack) {
-            print('line.keys.first: ${line.keys.first} & charIndex $charIndex');
-            print('line.values.first: ${line.values.first} & lineType $lineType');
-            if (line.keys.first == charIndex && line.values.first != lineType) {
-              isInStack = true;
-              break;
-            }
-          }
-          if (!isInStack) {
-            state.pushStack({charIndex: lineType == NonoAxis.row ? NonoAxis.column : NonoAxis.row});
-          }
-        } else {
-          print('No.');
-          var startingSolutionIndex = startingMostSolution.elementAt(charIndex).first.toString();
-          var endingSolutionIndex = endingMostSolution.elementAt(charIndex).first.toString();
-          print('Do both side solutions of box at index $charIndex contain the same clue index?');
-          print('startingSolutionIndex: $startingSolutionIndex');
-          print('endingSolutionIndex  : $endingSolutionIndex');
-          if (startingSolutionIndex.isSameClueIndexWith(endingSolutionIndex)) {
-            print('Yes. Fill in this box.');
-            updatedSolution = updatedSolution.replaceRange(charIndex, charIndex + 1, '1');
-            // String getUpdatedActiveSolution(String activeSol, int index, String char) =>
-            //     activeSol.replaceRange(index, index + 1, char);
+          if (allLineSolutions.elementAt(charIndex).everyElementIsZero) {
+            print('Yes. Cross out this box.');
+            updatedSolution = updatedSolution.replaceRange(charIndex, charIndex + 1, '0');
+            // state.setCross(lineType.getSolutionPosition(lineIndex, charIndex, state.nonogram.width));
+
             int indexSol = lineType.getSolutionPosition(lineIndex, charIndex, state.nonogram.width);
-            // useCallback((int index) => activeSolution$.value = getUpdatedActiveSolution(activeSolution$.value, index, '1'));
-            //
-            state.setFilled(lineType.getSolutionPosition(lineIndex, charIndex, state.nonogram.width));
-            //
+            state.setCross(lineType.getSolutionPosition(lineIndex, charIndex, state.nonogram.width));
             var fullUpdatedSolution =
-                state.solutionSteps.last.currentSolution.replaceRange(indexSol, indexSol + 1, '1');
+                state.solutionSteps.last.currentSolution.replaceRange(indexSol, indexSol + 1, '0');
             print('fullUpdatedSolution: $fullUpdatedSolution');
             state.addStep(SolutionStep(
               currentSolution: fullUpdatedSolution,
@@ -171,6 +137,8 @@ class LineSolver {
             ));
             bool isInStack = false;
             for (var line in state.stack) {
+              print('line.keys.first: ${line.keys.first} & charIndex $charIndex');
+              print('line.values.first: ${line.values.first} & lineType $lineType');
               if (line.keys.first == charIndex && line.values.first != lineType) {
                 isInStack = true;
                 break;
@@ -180,9 +148,48 @@ class LineSolver {
               state.pushStack({charIndex: lineType == NonoAxis.row ? NonoAxis.column : NonoAxis.row});
             }
           } else {
-            print('No. It contains different indexes.');
+            print('No.');
+            var startingSolutionIndex = startingMostSolution.elementAt(charIndex).first.toString();
+            var endingSolutionIndex = endingMostSolution.elementAt(charIndex).first.toString();
+            print('Do both side solutions of box at index $charIndex contain the same clue index?');
+            print('startingSolutionIndex: $startingSolutionIndex');
+            print('endingSolutionIndex  : $endingSolutionIndex');
+            if (startingSolutionIndex.isSameClueIndexWith(endingSolutionIndex)) {
+              print('Yes. Fill in this box.');
+              updatedSolution = updatedSolution.replaceRange(charIndex, charIndex + 1, '1');
+              // String getUpdatedActiveSolution(String activeSol, int index, String char) =>
+              //     activeSol.replaceRange(index, index + 1, char);
+              int indexSol = lineType.getSolutionPosition(lineIndex, charIndex, state.nonogram.width);
+              // useCallback((int index) => activeSolution$.value = getUpdatedActiveSolution(activeSolution$.value, index, '1'));
+              //
+              state.setFilled(lineType.getSolutionPosition(lineIndex, charIndex, state.nonogram.width));
+              //
+              var fullUpdatedSolution =
+                  state.solutionSteps.last.currentSolution.replaceRange(indexSol, indexSol + 1, '1');
+              print('fullUpdatedSolution: $fullUpdatedSolution');
+              state.addStep(SolutionStep(
+                currentSolution: fullUpdatedSolution,
+                // lineSolution: endingMostSolution,
+                axis: lineType,
+                lineIndex: lineIndex,
+                explanation: 'Cross out empty boxes and fill in solution overlaps.',
+              ));
+              bool isInStack = false;
+              for (var line in state.stack) {
+                if (line.keys.first == charIndex && line.values.first != lineType) {
+                  isInStack = true;
+                  break;
+                }
+              }
+              if (!isInStack) {
+                state.pushStack({charIndex: lineType == NonoAxis.row ? NonoAxis.column : NonoAxis.row});
+              }
+            } else {
+              print('No. It contains different indexes.');
+            }
           }
         }
+        print('No it is not.');
       }
       // state.addStep(SolutionStep(
       //   currentSolution: updatedSolution,
