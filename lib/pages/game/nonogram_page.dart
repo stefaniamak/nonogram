@@ -22,14 +22,14 @@ class NonogramPage extends HookWidget {
         Column(
           children: [
             Text('${nonogramState.nonogram.info?.title} #${nonogramState.nonogram.id}'),
-            Text('nonogramState.activeSolution from page:'),
-            Text('${nonogramState.activeSolution.solution}'),
-            Text('solutionSteps.last.currentSolution from page:'),
-            Text('${nonogramState.solutionSteps.last.currentSolution}'),
-            Text('solutionSteps.length from page:'),
-            Text('${nonogramState.solutionSteps.length}'),
-            Text('stack.length from page:'),
-            Text('${nonogramState.stack.length}'),
+            // Text('nonogramState.activeSolution from page:'),
+            // Text('${nonogramState.activeSolution.solution}'),
+            // Text('solutionSteps.last.currentSolution from page:'),
+            // Text('${nonogramState.solutionSteps.last.currentSolution}'),
+            // Text('solutionSteps.length from page:'),
+            // Text('${nonogramState.solutionSteps.length}'),
+            // Text('stack.length from page:'),
+            // Text('${nonogramState.stack.length}'),
             InkWell(
               onTap: () {
                 LineSolver().overlapping(nonogramState);
