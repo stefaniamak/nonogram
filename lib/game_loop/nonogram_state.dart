@@ -50,14 +50,19 @@ NonogramState useNonogramState(Nonogram nonogram) {
     initializeStepsList(nonogram.clues!),
   );
 
-  final ValueNotifier<List<SolutionStep>> solutionSteps$ = useState(<SolutionStep>[]);
+  final ValueNotifier<List<SolutionStep>> solutionSteps$ = useState(
+    <SolutionStep>[SolutionStep(currentSolution: activeSolution$.value, explanation: 'Initial nonogram')],
+  );
 
-  final setFilled =
-      useCallback((int index) => activeSolution$.value = getUpdatedActiveSolution(activeSolution$.value, index, '1'));
-  final setCross =
-      useCallback((int index) => activeSolution$.value = getUpdatedActiveSolution(activeSolution$.value, index, '0'));
-  final serUnknown =
-      useCallback((int index) => activeSolution$.value = getUpdatedActiveSolution(activeSolution$.value, index, '?'));
+  final setFilled = useCallback(
+      (int index) => activeSolution$.value = getUpdatedActiveSolution(activeSolution$.value, index, '1'),
+      [activeSolution$.value]);
+  final setCross = useCallback(
+      (int index) => activeSolution$.value = getUpdatedActiveSolution(activeSolution$.value, index, '0'),
+      [activeSolution$.value]);
+  final serUnknown = useCallback(
+      (int index) => activeSolution$.value = getUpdatedActiveSolution(activeSolution$.value, index, '?'),
+      [activeSolution$.value]);
 
   final addStep = useCallback((SolutionStep step) => solutionSteps$.value.add(step));
   final pushStack = useCallback((Map<int, NonoAxis> line) => stack$.value.add(line));
