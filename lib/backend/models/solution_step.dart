@@ -2,16 +2,18 @@ import 'package:nonogram/backend/type_extensions/nono_axis_extension.dart';
 
 class SolutionStep {
   final String currentSolution;
-  final NonoAxis axis;
-  final bool isNote;
-  final int lineIndex;
+  final List<List<String>>? lineSolution;
+  final NonoAxis? axis;
+  final bool? isNote;
+  final int? lineIndex;
   final String explanation;
 
   SolutionStep({
     required this.currentSolution,
-    required this.axis,
-    required this.isNote,
-    required this.lineIndex,
+    this.lineSolution,
+    this.axis,
+    this.isNote,
+    this.lineIndex,
     required this.explanation,
   });
 }
