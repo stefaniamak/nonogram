@@ -45,6 +45,22 @@ class NonogramPage extends HookWidget {
             // Slider(value: value, onChanged: onChanged);
           ],
         ),
+        // Text('nonogramState.solutionSteps.length: ${nonogramState.solutionSteps.length}'),
+        // Text('nonogramState.stepNumber: ${nonogramState.stepNumber}'),
+        Slider(
+          value: nonogramState.stepNumber + 0.0,
+          min: 0,
+          max: nonogramState.solutionSteps.length - 1,
+          divisions: nonogramState.solutionSteps.length,
+          onChanged: (value) {
+            print('old value ${nonogramState.stepNumber}');
+            print('new value ${value}');
+            nonogramState.increaseStepNumber(value.ceil());
+
+            print('updated value ${nonogramState.stepNumber}');
+            // value > nonogramState.stepNumber ? nonogramState.increaseStepNumber : nonogramState.decreaseStepNumber;
+          },
+        ),
         NonogramGridAndClues(
           nonogram: nonogram,
           nonogramState: nonogramState,

@@ -32,10 +32,10 @@ class LineSolver {
       state.popStack();
     }
 
-    state.addStep(SolutionStep(
-      currentSolution: state.activeSolution.solution!,
-      explanation: 'Finished overlapping loop.',
-    ));
+    // state.addStep(SolutionStep(
+    //   currentSolution: state.activeSolution.solution!,
+    //   explanation: 'Finished overlapping loop.',
+    // ));
   }
 
   void loopSides(NonogramState state, int lineIndex, List<int> clues, NonoAxis lineType) {
