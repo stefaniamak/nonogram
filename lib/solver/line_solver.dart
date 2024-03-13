@@ -12,6 +12,15 @@ import '../backend/type_extensions/nono_direction_extension.dart';
 class LineSolver {
   void solve(NonogramState state) async {
     overlapping(state);
+
+    state.addStep(
+      SolutionStep(
+        currentSolution: state.solutionSteps.last.currentSolution,
+        explanation:
+            'Nonogram is ${state.solutionSteps.last.currentSolution.characters.contains('?') ? 'not solved.' : 'solved!'}',
+      ),
+    );
+    state.updateStepNumber(state.solutionSteps.length - 1);
     // return state.activeSolution.solution!;
   }
 
@@ -32,10 +41,10 @@ class LineSolver {
       state.popStack();
     }
 
-    // state.addStep(SolutionStep(
-    //   currentSolution: state.activeSolution.solution!,
-    //   explanation: 'Finished overlapping loop.',
-    // ));
+    state.addStep(SolutionStep(
+      currentSolution: state.solutionSteps.last.currentSolution,
+      explanation: 'Finished overlapping loop.',
+    ));
   }
 
   void loopSides(NonogramState state, int lineIndex, List<int> clues, NonoAxis lineType) {
@@ -66,7 +75,6 @@ class LineSolver {
             print('fullUpdatedSolution: $fullUpdatedSolution');
             state.addStep(SolutionStep(
               currentSolution: fullUpdatedSolution,
-              // lineSolution: endingMostSolution,
               axis: lineType,
               lineIndex: lineIndex,
               explanation: 'Cross out remaining empty boxes of ${lineType.name} with index $lineIndex.',
@@ -79,6 +87,9 @@ class LineSolver {
                 isInStack = true;
                 break;
               }
+            }
+            if (!isInStack) {
+              state.pushStack({charIndex: lineType == NonoAxis.row ? NonoAxis.column : NonoAxis.row});
             }
           }
         }

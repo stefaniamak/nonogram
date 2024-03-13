@@ -32,7 +32,7 @@ class NonogramPage extends HookWidget {
             // Text('${nonogramState.stack.length}'),
             InkWell(
               onTap: () {
-                LineSolver().overlapping(nonogramState);
+                LineSolver().solve(nonogramState);
                 // todo: build draft/empty solver structure #17 https://github.com/stefaniamak/nonogram/issues/17
                 // var solution = Solver().solve(nonogramState);
               },
