@@ -69,7 +69,7 @@ class LineSolver {
               // lineSolution: endingMostSolution,
               axis: lineType,
               lineIndex: lineIndex,
-              explanation: 'Cross out empty boxes and fill in solution overlaps.',
+              explanation: 'Cross out remaining empty boxes of ${lineType.name} with index $lineIndex.',
             ));
             bool isInStack = false;
             for (var line in state.stack) {
@@ -121,7 +121,6 @@ class LineSolver {
           if (allLineSolutions.elementAt(charIndex).everyElementIsZero) {
             print('Yes. Cross out this box.');
             updatedSolution = updatedSolution.replaceRange(charIndex, charIndex + 1, '0');
-            // state.setCross(lineType.getSolutionPosition(lineIndex, charIndex, state.nonogram.width));
 
             int indexSol = lineType.getSolutionPosition(lineIndex, charIndex, state.nonogram.width);
             state.setCross(lineType.getSolutionPosition(lineIndex, charIndex, state.nonogram.width));
@@ -130,10 +129,9 @@ class LineSolver {
             print('fullUpdatedSolution: $fullUpdatedSolution');
             state.addStep(SolutionStep(
               currentSolution: fullUpdatedSolution,
-              // lineSolution: endingMostSolution,
               axis: lineType,
               lineIndex: lineIndex,
-              explanation: 'Cross out empty boxes and fill in solution overlaps.',
+              explanation: 'Cross out box.',
             ));
             bool isInStack = false;
             for (var line in state.stack) {
@@ -172,7 +170,7 @@ class LineSolver {
                 // lineSolution: endingMostSolution,
                 axis: lineType,
                 lineIndex: lineIndex,
-                explanation: 'Cross out empty boxes and fill in solution overlaps.',
+                explanation: 'Fill in box.',
               ));
               bool isInStack = false;
               for (var line in state.stack) {
