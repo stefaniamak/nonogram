@@ -20,8 +20,7 @@ class NonogramState {
   final Function(int index) setCross;
   final Function(int index) setUnknown;
   final Function(SolutionStep index) addStep;
-  final Function(int index) increaseStepNumber;
-  final Function(int index) decreaseStepNumber;
+  final Function(int index) updateStepNumber;
   final Function(Map<int, NonoAxis> line) pushStack;
   final VoidCallback popStack;
 
@@ -35,8 +34,7 @@ class NonogramState {
     required this.setUnknown,
     required this.addStep,
     required this.stepNumber,
-    required this.increaseStepNumber,
-    required this.decreaseStepNumber,
+    required this.updateStepNumber,
     required this.pushStack,
     required this.popStack,
   });
@@ -57,7 +55,7 @@ NonogramState useNonogramState(Nonogram nonogram) {
   );
 
   final ValueNotifier<List<SolutionStep>> solutionSteps$ = useState(
-    <SolutionStep>[SolutionStep(currentSolution: activeSolution$.value, explanation: 'Initial nonogram')],
+    <SolutionStep>[SolutionStep(currentSolution: activeSolution$.value, explanation: 'Empty nonogram')],
   );
 
   final stepNumber$ = useState(0);
@@ -72,12 +70,9 @@ NonogramState useNonogramState(Nonogram nonogram) {
       (int index) => activeSolution$.value = getUpdatedActiveSolution(activeSolution$.value, index, '?'),
       [activeSolution$.value]);
 
-  final increaseStepNumber = useCallback((int index) {
-    print('new value $index');
+  final updateStepNumber = useCallback((int index) {
     stepNumber$.value = index;
-    print('stepNumber.value: ${stepNumber$.value}');
   });
-  final decreaseStepNumber = useCallback((int index) => stepNumber$.value--, [stepNumber$.value]);
 
   final addStep = useCallback((SolutionStep step) => solutionSteps$.value.add(step));
   final pushStack = useCallback((Map<int, NonoAxis> line) => stack$.value.add(line));
@@ -93,8 +88,7 @@ NonogramState useNonogramState(Nonogram nonogram) {
     setCross: setCross,
     setUnknown: serUnknown,
     addStep: addStep,
-    increaseStepNumber: increaseStepNumber,
-    decreaseStepNumber: decreaseStepNumber,
+    updateStepNumber: updateStepNumber,
     stepNumber: stepNumber$.value,
     stack: stack$.value,
     pushStack: pushStack,
