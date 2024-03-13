@@ -60,6 +60,7 @@ class NonogramPage extends HookWidget {
             },
           ),
         ),
+        Text(nonogramState.solutionSteps.elementAt(nonogramState.stepNumber).explanation),
         NonogramGridAndClues(
           nonogram: nonogram,
           nonogramState: nonogramState,
