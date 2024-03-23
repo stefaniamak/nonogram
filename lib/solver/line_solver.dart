@@ -21,7 +21,6 @@ class LineSolver {
       ),
     );
     state.updateStepNumber(state.solutionSteps.length - 1);
-    // return state.activeSolution.solution!;
   }
 
   void overlapping(NonogramState state) {
