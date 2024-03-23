@@ -48,12 +48,8 @@ class LineSolver {
   }
 
   void loopSides(NonogramState state, int lineIndex, List<int> clues, NonoAxis lineType) {
-    // for (int lineIndex = 0; lineIndex < clueLineLists.length; lineIndex++) {
     print('Check ${lineType.name} with index $lineIndex.');
-
-    // List<int> clues = clueLineLists.elementAt(lineIndex);
     print('${lineType.name}\'s clues: $clues');
-
     String initialSolution = state.solutionSteps.last.currentSolution.getLine(lineIndex, state.nonogram, lineType);
     print('${lineType.name}\'s initialSolution: $initialSolution');
 
@@ -166,19 +162,13 @@ class LineSolver {
             if (startingSolutionIndex.isSameClueIndexWith(endingSolutionIndex)) {
               print('Yes. Fill in this box.');
               updatedSolution = updatedSolution.replaceRange(charIndex, charIndex + 1, '1');
-              // String getUpdatedActiveSolution(String activeSol, int index, String char) =>
-              //     activeSol.replaceRange(index, index + 1, char);
               int indexSol = lineType.getSolutionPosition(lineIndex, charIndex, state.nonogram.width);
-              // useCallback((int index) => activeSolution$.value = getUpdatedActiveSolution(activeSolution$.value, index, '1'));
-              //
               state.setFilled(lineType.getSolutionPosition(lineIndex, charIndex, state.nonogram.width));
-              //
               var fullUpdatedSolution =
                   state.solutionSteps.last.currentSolution.replaceRange(indexSol, indexSol + 1, '1');
               print('fullUpdatedSolution: $fullUpdatedSolution');
               state.addStep(SolutionStep(
                 currentSolution: fullUpdatedSolution,
-                // lineSolution: endingMostSolution,
                 axis: lineType,
                 lineIndex: lineIndex,
                 explanation: 'Fill in box.',
@@ -209,7 +199,6 @@ class LineSolver {
       // ));
       print('Overlapped solution: $updatedSolution');
     }
-    // }
   }
 
   List<List<String>> getAllLinePossibleSolutions(List<int> clues, String line) {
