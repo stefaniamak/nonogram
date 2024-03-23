@@ -1,5 +1,6 @@
-import 'package:built_collection/built_collection.dart';
 import 'package:flutter/widgets.dart';
+import 'package:nonogram/backend/models/solution.dart';
+import 'package:nonogram/backend/models/solution_step.dart';
 import 'package:nonogram/backend/type_extensions/nono_axis_alignment_extension.dart';
 import 'package:nonogram/backend/type_extensions/nono_list_extension.dart';
 import 'package:nonogram/backend/type_extensions/nono_string_extension.dart';
@@ -11,58 +12,121 @@ import '../backend/type_extensions/nono_direction_extension.dart';
 class LineSolver {
   void solve(NonogramState state) async {
     overlapping(state);
-    // return state.activeSolution.solution!;
+
+    state.addStep(
+      SolutionStep(
+        currentSolution: state.solutionSteps.last.currentSolution,
+        explanation:
+            'Nonogram is ${state.solutionSteps.last.currentSolution.characters.contains('?') ? 'not solved.' : 'solved!'}',
+      ),
+    );
+    state.updateStepNumber(state.solutionSteps.length - 1);
   }
 
   void overlapping(NonogramState state) {
-    loopSides(state, state.nonogram.clues!.rows, NonoAxis.row);
-    loopSides(state, state.nonogram.clues!.columns, NonoAxis.column);
+    state.addStep(SolutionStep(
+      currentSolution: state.activeSolution.solution!,
+      explanation: 'Starting overlapping loop.',
+    ));
+
+    while (state.stack.isNotEmpty) {
+      print('stack.length from line solver: ${state.stack.length}');
+      print('stack: ${state.stack}');
+      Map<int, NonoAxis> line = state.stack.first;
+      List<int> clues = (line.values.first == NonoAxis.row ? state.nonogram.clues!.rows : state.nonogram.clues!.columns)
+          .elementAt(line.keys.first);
+      loopSides(state, line.keys.first, clues, line.values.first);
+
+      state.popStack();
+    }
+
+    state.addStep(SolutionStep(
+      currentSolution: state.solutionSteps.last.currentSolution,
+      explanation: 'Finished overlapping loop.',
+    ));
   }
 
-  void loopSides(NonogramState state, BuiltList<List<int>> clueLineLists, NonoAxis lineType) {
-    for (int lineIndex = 0; lineIndex < clueLineLists.length; lineIndex++) {
-      print('Check ${lineType.name} with index $lineIndex.');
+  void loopSides(NonogramState state, int lineIndex, List<int> clues, NonoAxis lineType) {
+    print('Check ${lineType.name} with index $lineIndex.');
+    print('${lineType.name}\'s clues: $clues');
+    String initialSolution = state.solutionSteps.last.currentSolution.getLine(lineIndex, state.nonogram, lineType);
+    print('${lineType.name}\'s initialSolution: $initialSolution');
 
-      List<int> clues = clueLineLists.elementAt(lineIndex);
-      print('${lineType.name}\'s clues: $clues');
+    int filledBoxes = initialSolution.sumFilledBoxes;
+    bool isLineCompleted = filledBoxes == clues.sum;
+    print('Are filled boxes ($filledBoxes) equal with clue\'s sum (${clues.sum})?');
 
-      String initialSolution = state.activeSolution.getLine(lineIndex, state.nonogram, lineType);
-      print('${lineType.name}\'s initialSolution: $initialSolution');
-
-      int filledBoxes = initialSolution.sumFilledBoxes;
-      bool isLineCompleted = filledBoxes == clues.sum;
-      print('Are filled boxes ($filledBoxes) equal with clue\'s sum (${clues.sum})?');
-
-      if (isLineCompleted) {
-        print('It is. Shall cross out remaining empty boxes if any left.');
-        if (initialSolution.characters.contains('?')) {
-          for (int charIndex = 0; charIndex < initialSolution.length; charIndex++) {
-            if (initialSolution.characterAt(charIndex) == '?') {
-              state.setCross(lineType.getSolutionPosition(lineIndex, charIndex, state.nonogram.width));
+    if (isLineCompleted) {
+      print('It is. Shall cross out remaining empty boxes if any left.');
+      if (initialSolution.characters.contains('?')) {
+        for (int charIndex = 0; charIndex < initialSolution.length; charIndex++) {
+          if (initialSolution.characterAt(charIndex) == '?') {
+            int indexSol = lineType.getSolutionPosition(lineIndex, charIndex, state.nonogram.width);
+            var fullUpdatedSolution = state.solutionSteps.last.getUpdatedSolution(indexSol, '0');
+            print('fullUpdatedSolution: $fullUpdatedSolution');
+            state.addStep(SolutionStep(
+              currentSolution: fullUpdatedSolution,
+              axis: lineType,
+              lineIndex: lineIndex,
+              explanation: 'Cross out remaining empty boxes of ${lineType.name} with index $lineIndex.',
+            ));
+            if (!state.stack.isInStack(charIndex, lineType)) {
+              state.pushStack({charIndex: lineType == NonoAxis.row ? NonoAxis.column : NonoAxis.row});
             }
           }
         }
-      } else {
-        print('It is not. Starts to calculate all possible solutions...');
-        List<List<String>> allLineSolutions = getAllLinePossibleSolutions(clues, initialSolution);
-        print('All line solutions: $allLineSolutions');
+      }
+    } else {
+      print('It is not. Starts to calculate all possible solutions...');
+      List<List<String>> allLineSolutions = getAllLinePossibleSolutions(clues, initialSolution);
+      print('All line solutions: $allLineSolutions');
 
-        print('Find starting solution of $allLineSolutions with clues $clues.');
-        var startingMostSolution = getSideMostSolution(allLineSolutions, clues, NonoAxisAlignment.start);
-        print('Starting most solution: $startingMostSolution');
+      print('Find starting solution of $allLineSolutions with clues $clues.');
+      var startingMostSolution = getSideMostSolution(state, allLineSolutions, clues, NonoAxisAlignment.start);
+      // state.addStep(SolutionStep(
+      //   currentSolution: initialSolution,
+      //   lineSolution: startingMostSolution,
+      //   axis: lineType,
+      //   lineIndex: lineIndex,
+      //   explanation: '${NonoAxisAlignment.start.name}ing solution of ${lineType.name} number ${lineIndex + 1}.',
+      // ));
+      print('Starting most solution: $startingMostSolution');
 
-        print('Find ending solution of $allLineSolutions with clues $clues.');
-        var endingMostSolution = getSideMostSolution(allLineSolutions, clues, NonoAxisAlignment.end);
-        print('Ending most solution: $endingMostSolution');
+      print('Find ending solution of $allLineSolutions with clues $clues.');
+      var endingMostSolution = getSideMostSolution(state, allLineSolutions, clues, NonoAxisAlignment.end);
+      // state.addStep(SolutionStep(
+      //   currentSolution: initialSolution,
+      //   lineSolution: endingMostSolution,
+      //   axis: lineType,
+      //   lineIndex: lineIndex,
+      //   explanation: '${NonoAxisAlignment.start.name}ing solution of ${lineType.name} number ${lineIndex + 1}.',
+      // ));
+      print('Ending most solution: $endingMostSolution');
 
-        String updatedSolution = initialSolution;
-        for (int charIndex = 0; charIndex < allLineSolutions.length; charIndex++) {
+      String updatedSolution = initialSolution;
+      for (int charIndex = 0; charIndex < allLineSolutions.length; charIndex++) {
+        print('Is box unknown and should be checked?');
+        if (initialSolution.characters.characterAt(charIndex).toString() == '?') {
+          print('Yes it is.');
           print(
               'Are all possible solutions (${allLineSolutions.elementAt(charIndex)}) of box at index $charIndex only zeros (0)?');
+
           if (allLineSolutions.elementAt(charIndex).everyElementIsZero) {
             print('Yes. Cross out this box.');
             updatedSolution = updatedSolution.replaceRange(charIndex, charIndex + 1, '0');
-            state.setCross(lineType.getSolutionPosition(lineIndex, charIndex, state.nonogram.width));
+
+            int indexSol = lineType.getSolutionPosition(lineIndex, charIndex, state.nonogram.width);
+            var fullUpdatedSolution = state.solutionSteps.last.getUpdatedSolution(indexSol, '0');
+            print('fullUpdatedSolution: $fullUpdatedSolution');
+            state.addStep(SolutionStep(
+              currentSolution: fullUpdatedSolution,
+              axis: lineType,
+              lineIndex: lineIndex,
+              explanation: 'Cross out box.',
+            ));
+            if (!state.stack.isInStack(charIndex, lineType)) {
+              state.pushStack({charIndex: lineType == NonoAxis.row ? NonoAxis.column : NonoAxis.row});
+            }
           } else {
             print('No.');
             var startingSolutionIndex = startingMostSolution.elementAt(charIndex).first.toString();
@@ -73,14 +137,34 @@ class LineSolver {
             if (startingSolutionIndex.isSameClueIndexWith(endingSolutionIndex)) {
               print('Yes. Fill in this box.');
               updatedSolution = updatedSolution.replaceRange(charIndex, charIndex + 1, '1');
+              int indexSol = lineType.getSolutionPosition(lineIndex, charIndex, state.nonogram.width);
               state.setFilled(lineType.getSolutionPosition(lineIndex, charIndex, state.nonogram.width));
+              var fullUpdatedSolution = state.solutionSteps.last.getUpdatedSolution(indexSol, '1');
+              print('fullUpdatedSolution: $fullUpdatedSolution');
+              state.addStep(SolutionStep(
+                currentSolution: fullUpdatedSolution,
+                axis: lineType,
+                lineIndex: lineIndex,
+                explanation: 'Fill in box.',
+              ));
+              if (!state.stack.isInStack(charIndex, lineType)) {
+                state.pushStack({charIndex: lineType == NonoAxis.row ? NonoAxis.column : NonoAxis.row});
+              }
             } else {
               print('No. It contains different indexes.');
             }
           }
         }
-        print('Overlapped solution: $updatedSolution');
+        print('No it is not.');
       }
+      // state.addStep(SolutionStep(
+      //   currentSolution: updatedSolution,
+      //   // lineSolution: endingMostSolution,
+      //   axis: lineType,
+      //   lineIndex: lineIndex,
+      //   explanation: 'Cross out empty boxes and fill in solution overlaps.',
+      // ));
+      print('Overlapped solution: $updatedSolution');
     }
   }
 
@@ -165,7 +249,8 @@ class LineSolver {
     return cluesBeforeGood && cluesAfterGood;
   }
 
-  List<List<String>> getSideMostSolution(List<List<String>> solution, List<int> clues, NonoAxisAlignment axis) {
+  List<List<String>> getSideMostSolution(
+      NonogramState state, List<List<String>> solution, List<int> clues, NonoAxisAlignment axis) {
     print('Get ${axis.name}ing most solution of solution $solution with clues $clues');
 
     List<int> clueIndexes = Iterable<int>.generate(clues.length, (c) => c + 2).toList();

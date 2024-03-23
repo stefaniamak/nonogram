@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:nonogram/backend/type_extensions/nono_string_extension.dart';
 import 'package:nonogram/game_loop/nonogram_state.dart';
 import 'package:nonogram/pages/game/nonogram_ui.dart';
 import 'package:nonogram/painters/grid_box.dart';
@@ -14,7 +15,7 @@ class NonogramGrid extends StatelessWidget {
   });
 
   PointState getGridBoxState(int index) {
-    var char = nonogramState.activeSolution.solution!.characters.characterAt(index);
+    var char = nonogramState.solutionSteps.elementAt(nonogramState.stepNumber).currentSolution.characterAt(index);
     switch (char.toString()) {
       case '?':
         return PointState.unknown;
@@ -28,11 +29,13 @@ class NonogramGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    String solution = nonogramState.solutionSteps.elementAt(nonogramState.stepNumber).currentSolution;
+
     return SizedBox(
       width: nonogramUi.gridSize.width,
       height: nonogramUi.gridSize.height,
       child: GridView.builder(
-        itemCount: nonogramState.activeSolution.solution!.length,
+        itemCount: solution.length,
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: nonogramState.nonogram.width,
         ),

@@ -44,3 +44,25 @@ abstract class Solution implements Built<Solution, SolutionBuilder> {
   Solution._();
   factory Solution([void Function(SolutionBuilder) updates]) = _$Solution;
 }
+
+extension StringExtension on String {
+  String getLine(int index, Nonogram nonogram, NonoAxis lineType) {
+    switch (lineType) {
+      case NonoAxis.row:
+        return getRow(index, nonogram);
+      case NonoAxis.column:
+        return getColumn(index, nonogram);
+    }
+  }
+
+  String getRow(int index, Nonogram nonogram) =>
+      characters.getRange(index * nonogram.width, nonogram.width * (index + 1)).string;
+
+  String getColumn(int index, Nonogram nonogram) {
+    String columnSol = '';
+    for (var solChar = index; solChar < characters.length; solChar = solChar + nonogram.width) {
+      columnSol = '$columnSol${characters.characterAt(solChar)}';
+    }
+    return columnSol;
+  }
+}
