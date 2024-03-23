@@ -61,12 +61,8 @@ class LineSolver {
       if (initialSolution.characters.contains('?')) {
         for (int charIndex = 0; charIndex < initialSolution.length; charIndex++) {
           if (initialSolution.characterAt(charIndex) == '?') {
-            // state.setCross(lineType.getSolutionPosition(lineIndex, charIndex, state.nonogram.width));
-
             int indexSol = lineType.getSolutionPosition(lineIndex, charIndex, state.nonogram.width);
-            state.setCross(lineType.getSolutionPosition(lineIndex, charIndex, state.nonogram.width));
-            var fullUpdatedSolution =
-                state.solutionSteps.last.currentSolution.replaceRange(indexSol, indexSol + 1, '0');
+            var fullUpdatedSolution = state.solutionSteps.last.getUpdatedSolution(indexSol, '0');
             print('fullUpdatedSolution: $fullUpdatedSolution');
             state.addStep(SolutionStep(
               currentSolution: fullUpdatedSolution,
@@ -74,16 +70,7 @@ class LineSolver {
               lineIndex: lineIndex,
               explanation: 'Cross out remaining empty boxes of ${lineType.name} with index $lineIndex.',
             ));
-            bool isInStack = false;
-            for (var line in state.stack) {
-              print('line.keys.first: ${line.keys.first} & charIndex $charIndex');
-              print('line.values.first: ${line.values.first} & lineType $lineType');
-              if (line.keys.first == charIndex && line.values.first != lineType) {
-                isInStack = true;
-                break;
-              }
-            }
-            if (!isInStack) {
+            if (!state.stack.isInStack(charIndex, lineType)) {
               state.pushStack({charIndex: lineType == NonoAxis.row ? NonoAxis.column : NonoAxis.row});
             }
           }
@@ -129,9 +116,7 @@ class LineSolver {
             updatedSolution = updatedSolution.replaceRange(charIndex, charIndex + 1, '0');
 
             int indexSol = lineType.getSolutionPosition(lineIndex, charIndex, state.nonogram.width);
-            state.setCross(lineType.getSolutionPosition(lineIndex, charIndex, state.nonogram.width));
-            var fullUpdatedSolution =
-                state.solutionSteps.last.currentSolution.replaceRange(indexSol, indexSol + 1, '0');
+            var fullUpdatedSolution = state.solutionSteps.last.getUpdatedSolution(indexSol, '0');
             print('fullUpdatedSolution: $fullUpdatedSolution');
             state.addStep(SolutionStep(
               currentSolution: fullUpdatedSolution,
@@ -139,16 +124,7 @@ class LineSolver {
               lineIndex: lineIndex,
               explanation: 'Cross out box.',
             ));
-            bool isInStack = false;
-            for (var line in state.stack) {
-              print('line.keys.first: ${line.keys.first} & charIndex $charIndex');
-              print('line.values.first: ${line.values.first} & lineType $lineType');
-              if (line.keys.first == charIndex && line.values.first != lineType) {
-                isInStack = true;
-                break;
-              }
-            }
-            if (!isInStack) {
+            if (!state.stack.isInStack(charIndex, lineType)) {
               state.pushStack({charIndex: lineType == NonoAxis.row ? NonoAxis.column : NonoAxis.row});
             }
           } else {
@@ -163,8 +139,7 @@ class LineSolver {
               updatedSolution = updatedSolution.replaceRange(charIndex, charIndex + 1, '1');
               int indexSol = lineType.getSolutionPosition(lineIndex, charIndex, state.nonogram.width);
               state.setFilled(lineType.getSolutionPosition(lineIndex, charIndex, state.nonogram.width));
-              var fullUpdatedSolution =
-                  state.solutionSteps.last.currentSolution.replaceRange(indexSol, indexSol + 1, '1');
+              var fullUpdatedSolution = state.solutionSteps.last.getUpdatedSolution(indexSol, '1');
               print('fullUpdatedSolution: $fullUpdatedSolution');
               state.addStep(SolutionStep(
                 currentSolution: fullUpdatedSolution,
@@ -172,14 +147,7 @@ class LineSolver {
                 lineIndex: lineIndex,
                 explanation: 'Fill in box.',
               ));
-              bool isInStack = false;
-              for (var line in state.stack) {
-                if (line.keys.first == charIndex && line.values.first != lineType) {
-                  isInStack = true;
-                  break;
-                }
-              }
-              if (!isInStack) {
+              if (!state.stack.isInStack(charIndex, lineType)) {
                 state.pushStack({charIndex: lineType == NonoAxis.row ? NonoAxis.column : NonoAxis.row});
               }
             } else {

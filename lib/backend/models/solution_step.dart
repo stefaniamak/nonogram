@@ -8,6 +8,8 @@ class SolutionStep {
   final int? lineIndex;
   final String explanation;
 
+  String getUpdatedSolution(int index, String value) => currentSolution.replaceRange(index, index + 1, value);
+
   SolutionStep({
     required this.currentSolution,
     this.lineSolution,
