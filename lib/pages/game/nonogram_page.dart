@@ -17,7 +17,8 @@ class NonogramPage extends HookWidget {
     var nonogramState = useNonogramState(nonogram);
 
     return Flex(
-      direction: MediaQuery.of(context).size.width > 400 ? Axis.horizontal : Axis.vertical,
+      direction: MediaQuery.of(context).size.width > 1000 ? Axis.horizontal : Axis.vertical,
+      verticalDirection: VerticalDirection.up,
       children: [
         Column(
           children: [
@@ -42,25 +43,25 @@ class NonogramPage extends HookWidget {
                 child: Center(child: Text('SOLVE')),
               ),
             ),
-            // Slider(value: value, onChanged: onChanged);
+            AnimatedOpacity(
+              duration: const Duration(milliseconds: 200),
+              opacity: nonogramState.solutionSteps.length <= 1 ? 0.5 : 1,
+              child: Slider(
+                value: nonogramState.stepNumber + 0.0,
+                min: 0,
+                max: nonogramState.solutionSteps.length - 1,
+                divisions: nonogramState.solutionSteps.length,
+                onChanged: (value) {
+                  nonogramState.updateStepNumber(value.ceil());
+                },
+              ),
+            ),
+            Text(nonogramState.solutionSteps.elementAt(nonogramState.stepNumber).explanation),
           ],
         ),
         // Text('nonogramState.solutionSteps.length: ${nonogramState.solutionSteps.length}'),
         // Text('nonogramState.stepNumber: ${nonogramState.stepNumber}'),
-        AnimatedOpacity(
-          duration: const Duration(milliseconds: 200),
-          opacity: nonogramState.solutionSteps.length <= 1 ? 0.5 : 1,
-          child: Slider(
-            value: nonogramState.stepNumber + 0.0,
-            min: 0,
-            max: nonogramState.solutionSteps.length - 1,
-            divisions: nonogramState.solutionSteps.length,
-            onChanged: (value) {
-              nonogramState.updateStepNumber(value.ceil());
-            },
-          ),
-        ),
-        Text(nonogramState.solutionSteps.elementAt(nonogramState.stepNumber).explanation),
+
         NonogramGridAndClues(
           nonogram: nonogram,
           nonogramState: nonogramState,
