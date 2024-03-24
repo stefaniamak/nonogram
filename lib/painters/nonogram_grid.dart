@@ -4,53 +4,58 @@ import 'package:nonogram/game_loop/nonogram_state.dart';
 import 'package:nonogram/pages/game/nonogram_ui.dart';
 import 'package:nonogram/painters/grid_box.dart';
 
+import '../backend/models/nonogram.dart';
+
 class NonogramGrid extends StatelessWidget {
-  final NonogramState nonogramState;
+  final Nonogram nonogram;
+  final NonogramState? nonogramState;
   final NonogramUi nonogramUi;
 
   const NonogramGrid({
-    required this.nonogramState,
+    required this.nonogram,
+    this.nonogramState,
     required this.nonogramUi,
     super.key,
   });
 
   PointState getGridBoxState(int index) {
-    var char = nonogramState.solutionSteps.elementAt(nonogramState.stepNumber).currentSolution.characterAt(index);
-    switch (char.toString()) {
+    var char = nonogramState?.solutionSteps.elementAt(nonogramState!.stepNumber).currentSolution.characterAt(index);
+    switch (char?.toString()) {
       case '?':
         return PointState.unknown;
       case '1':
         return PointState.filled;
       case '0':
         return PointState.cross;
+      default:
+        return PointState.unknown;
     }
-    return PointState.unknown;
   }
 
   @override
   Widget build(BuildContext context) {
-    String solution = nonogramState.solutionSteps.elementAt(nonogramState.stepNumber).currentSolution;
+    String? solution = nonogramState?.solutionSteps.elementAt(nonogramState!.stepNumber).currentSolution;
 
     return SizedBox(
       width: nonogramUi.gridSize.width,
       height: nonogramUi.gridSize.height,
       child: GridView.builder(
-        itemCount: solution.length,
+        itemCount: solution?.length ?? nonogram.width * nonogram.height,
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: nonogramState.nonogram.width,
+          crossAxisCount: nonogram.width,
         ),
         itemBuilder: (BuildContext context, int index) {
           return InkWell(
             onTap: () {
               switch (getGridBoxState(index)) {
                 case PointState.unknown:
-                  nonogramState.setFilled(index);
+                  nonogramState?.setFilled(index);
                   break;
                 case PointState.filled:
-                  nonogramState.setCross(index);
+                  nonogramState?.setCross(index);
                   break;
                 case PointState.cross:
-                  nonogramState.setUnknown(index);
+                  nonogramState?.setUnknown(index);
                   break;
               }
             },
