@@ -25,7 +25,7 @@ class NonogramListPage extends HookWidget {
                     children: [
                       NonogramGridAndClues(
                         nonogram: nonogram,
-                        maxSize: Size(250, 250),
+                        maxSize: const Size(250, 250),
                       ),
                       Text(nonogram.info?.title ?? '-'),
                     ],
