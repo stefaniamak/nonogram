@@ -12,9 +12,7 @@ class NonogramListState {
 
 NonogramListState useNonogramList() {
   final ValueNotifier<List<Nonogram>> nonograms$ = useState(
-    <Nonogram>[
-      Nonograms().dancer,
-    ],
+    Nonograms().allNonograms,
   );
 
   return NonogramListState(
