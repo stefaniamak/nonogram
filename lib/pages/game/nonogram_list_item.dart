@@ -13,6 +13,7 @@ class NonogramListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final double width = (MediaQuery.of(context).size.width - 48) / 3.5;
     return InkWell(
       onTap: () {
         Navigator.push(
@@ -28,7 +29,7 @@ class NonogramListItem extends StatelessWidget {
           children: [
             NonogramGridAndClues(
               nonogram: nonogram,
-              maxSize: const Size(250, 250),
+              maxSize: Size(width, width),
             ),
             Text(nonogram.info?.title ?? '-'),
           ],
