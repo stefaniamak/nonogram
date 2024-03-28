@@ -23,7 +23,11 @@ class NonogramListPage extends HookWidget {
               },
               childCount: nonogramListState.nonograms.length,
             ),
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 3),
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 3,
+              mainAxisSpacing: 24,
+              crossAxisSpacing: 24,
+            ),
           ),
       ]),
       // body: NonogramPage(
