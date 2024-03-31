@@ -8,13 +8,13 @@ import 'package:nonogram/painters/nonogram_grid.dart';
 
 class NonogramGridAndClues extends HookWidget {
   final Nonogram nonogram;
-  final NonogramState nonogramState;
+  final NonogramState? nonogramState;
   final EdgeInsets padding;
   final Size? maxSize;
 
   const NonogramGridAndClues({
     required this.nonogram,
-    required this.nonogramState,
+    this.nonogramState,
     this.padding = EdgeInsets.zero,
     this.maxSize,
     super.key,
@@ -36,7 +36,7 @@ class NonogramGridAndClues extends HookWidget {
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
           CluesUi(
-            clues: nonogramState.nonogram.clues!,
+            clues: nonogram.clues!,
             boxSize: nonogramUi.gridItemSide,
             axis: Axis.horizontal,
           ),
@@ -45,11 +45,12 @@ class NonogramGridAndClues extends HookWidget {
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               CluesUi(
-                clues: nonogramState.nonogram.clues!,
+                clues: nonogram.clues!,
                 boxSize: nonogramUi.gridItemSide,
                 axis: Axis.vertical,
               ),
               NonogramGrid(
+                nonogram: nonogram,
                 nonogramState: nonogramState,
                 nonogramUi: nonogramUi,
               ),

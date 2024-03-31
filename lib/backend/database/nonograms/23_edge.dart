@@ -5,51 +5,58 @@ import 'package:nonogram/backend/models/nonogram_info.dart';
 import 'package:nonogram/backend/models/solution.dart';
 import 'package:nonogram/backend/models/solution_type.dart';
 
-final Nonogram kDancer = Nonogram(
+final Nonogram kEdge = Nonogram(
   (n) => n
-    ..id = "1"
+    ..id = "5"
     ..info = NonogramInfo((i) => i
-      ..title = "Dancer"
+      ..title = "Edge"
       ..copyright = "(c) Copyright 2004 by Jan Wolter"
       ..author = "Jan Wolter"
       ..authorId = "jan"
-      ..description = "A stick figure man, dancing his stickly little heart out.").toBuilder()
-    ..note = "published,definitely unique,definitely line/color solvable"
+      ..description = "Two hats falling from a cloud?  No, just simple example of the usefulness of edges.").toBuilder()
+    ..note = "published,definitely unique,definitely requires moderate lookahead"
     ..clues = Clues(
       (c) => c
         ..columns = ListBuilder([
-          [2, 1],
-          [2, 1, 3],
-          [7],
-          [1, 3],
-          [2, 1],
+          [1],
+          [3],
+          [1],
+          [2, 2],
+          [2],
+          [4],
+          [1],
+          [3],
+          [3],
+          [1],
         ])
         ..rows = ListBuilder([
-          [2],
-          [2, 1],
-          [1, 1],
+          [1],
           [3],
-          [1, 1],
-          [1, 1],
+          [1],
           [2],
-          [1, 1],
-          [1, 2],
+          [1],
+          [3],
+          [3],
+          [1],
           [2],
+          [2],
+          [4],
         ]),
     ).toBuilder()
     ..solutions = ListBuilder([
       Solution((s) => s
         ..type = SolutionType.goal
-        ..solution = "01100011010010101110101001010000110010100101111000"
-        ..image = '''|.XX..|
-|.XX.X|
-|..X.X|
-|.XXX.|
-|X.X..|
-|X.X..|
-|..XX.|
-|.X.X.|
-|.X.XX|
-|XX...|''')
+        // ..solution = "01100011010010101110101001010000110010100101111000"
+        ..image = '''|...X......|
+|.XXX......|
+|.X........|
+|XX........|
+|.....X....|
+|...XXX....|
+|...XXX....|
+|.....X....|
+|.......XX.|
+|.......XX.|
+|......XXXX|''')
     ]),
 );
