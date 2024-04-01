@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:nonogram/backend/models/nonogram.dart';
 import 'package:nonogram/game_loop/nonogram_list_state.dart';
+import 'package:nonogram/pages/game/create_nonogram_page.dart';
 import 'package:nonogram/pages/game/nonogram_list_item.dart';
 
 class NonogramListPage extends HookWidget {
@@ -23,7 +24,14 @@ class NonogramListPage extends HookWidget {
         child: IconButton(
           icon: const Icon(Icons.add),
           color: Colors.black,
-          onPressed: () {},
+          onPressed: () {
+            // Navigator.push(
+            //   context,
+            //   MaterialPageRoute<void>(
+            //     builder: (BuildContext context) => CreateNonogramPage(nonogram: nonogram),
+            //   ),
+            // );
+          },
         ),
       ),
       body: CustomScrollView(slivers: [
