@@ -13,6 +13,19 @@ class NonogramListPage extends HookWidget {
   Widget build(BuildContext context) {
     final NonogramListState nonogramListState = useNonogramList();
     return Scaffold(
+      floatingActionButton: Ink(
+        width: 56,
+        height: 56,
+        decoration: const ShapeDecoration(
+          color: Colors.yellowAccent,
+          shape: CircleBorder(),
+        ),
+        child: IconButton(
+          icon: const Icon(Icons.add),
+          color: Colors.black,
+          onPressed: () {},
+        ),
+      ),
       body: CustomScrollView(slivers: [
         if (nonogramListState.nonograms.isNotEmpty)
           SliverGrid(
