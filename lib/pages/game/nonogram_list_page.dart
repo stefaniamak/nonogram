@@ -25,12 +25,12 @@ class NonogramListPage extends HookWidget {
           icon: const Icon(Icons.add),
           color: Colors.black,
           onPressed: () {
-            // Navigator.push(
-            //   context,
-            //   MaterialPageRoute<void>(
-            //     builder: (BuildContext context) => CreateNonogramPage(nonogram: nonogram),
-            //   ),
-            // );
+            Navigator.push(
+              context,
+              MaterialPageRoute<void>(
+                builder: (BuildContext context) => const CreateNonogramPage(),
+              ),
+            );
           },
         ),
       ),
