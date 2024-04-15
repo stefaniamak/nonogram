@@ -1,16 +1,14 @@
 import 'package:built_collection/built_collection.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:nonogram/backend/models/clues.dart';
 import 'package:nonogram/backend/models/nonogram.dart';
-import 'package:nonogram/backend/models/solution.dart';
-import 'package:nonogram/backend/type_extensions/nono_axis_extension.dart';
 
-import '../backend/models/nonogram_info.dart';
 import 'nonogram_state.dart';
 
 class CreateNonogramState {
   final Nonogram nonogram;
+  final int width;
+  final int height;
   final Function(int width) updateWidth;
   final Function(int height) updateHeight;
   final Function(int index, PointState pointState) updateSolution;
@@ -19,6 +17,8 @@ class CreateNonogramState {
 
   CreateNonogramState({
     required this.nonogram,
+    required this.width,
+    required this.height,
     required this.updateWidth,
     required this.updateHeight,
     required this.updateSolution,
@@ -58,15 +58,51 @@ CreateNonogramState useCreateNonogramState() {
 
   final updateWidth = useCallback((int index) {
     width$.value = index;
+    horizontalClues$.value = List<List<int>>.generate(width$.value, (_) => <int>[0]);
   });
 
   final updateHeight = useCallback((int index) {
     height$.value = index;
+    verticalClues$.value = List<List<int>>.generate(height$.value, (_) => <int>[0]);
   });
 
   final updateSolution = useCallback((int index, PointState pointState) {
     height$.value = index;
   });
+
+  final updateNonogram = useCallback(() {
+    nonogram$.value = Nonogram((n) => n
+      ..id = "test"
+      // ..info = NonogramInfo((i) => i
+      //   ..title = "Dancer"
+      //   ..copyright = "(c) Copyright 2004 by Jan Wolter"
+      //   ..author = "Jan Wolter"
+      //   ..authorId = "jan"
+      //   ..description = "A stick figure man, dancing his stickly little heart out.").toBuilder()
+      // ..note = "published,definitely unique,definitely line/color solvable"
+      ..clues = Clues(
+        (c) => c
+          ..columns = ListBuilder(verticalClues$.value)
+          ..rows = ListBuilder(horizontalClues$.value),
+      ).toBuilder());
+
+    //     .rebuild(
+    //   (p0) => p0
+    //     ..id = "test"
+    //     // ..info = NonogramInfo((i) => i
+    //     //   ..title = "Dancer"
+    //     //   ..copyright = "(c) Copyright 2004 by Jan Wolter"
+    //     //   ..author = "Jan Wolter"
+    //     //   ..authorId = "jan"
+    //     //   ..description = "A stick figure man, dancing his stickly little heart out.").toBuilder()
+    //     // ..note = "published,definitely unique,definitely line/color solvable"
+    //     ..clues = Clues(
+    //       (c) => c
+    //         ..columns = ListBuilder(verticalClues$.value)
+    //         ..rows = ListBuilder(horizontalClues$.value),
+    //     ).toBuilder(),
+    // );
+  }, [width$.value, height$.value, verticalClues$.value, horizontalClues$.value]);
 
   // final updateClues = useCallback((NonoAxis axis, int index, List<>) {
   //   height$.value = index;
@@ -74,6 +110,8 @@ CreateNonogramState useCreateNonogramState() {
 
   return CreateNonogramState(
     nonogram: nonogram$.value,
+    width: width$.value,
+    height: height$.value,
     updateWidth: updateWidth,
     updateHeight: updateHeight,
     updateSolution: updateSolution,
