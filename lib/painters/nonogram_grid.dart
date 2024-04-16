@@ -8,28 +8,28 @@ import 'package:nonogram/painters/grid_box.dart';
 import '../backend/models/nonogram.dart';
 
 class NonogramGrid extends StatelessWidget {
-  final Nonogram nonogram;
-  final NonogramState? nonogramState;
-  final NonogramUi nonogramUi;
+  // final Nonogram nonogram;
+  // final NonogramState? nonogramState;
+  final double gridItemSide;
 
   final Size size;
-  final String solution;
-  final Clues clues;
+  final Size boxItems;
+  final String? solution;
   final Function(int)? onTap;
 
   const NonogramGrid({
-    required this.nonogram,
-    this.nonogramState,
-    required this.nonogramUi,
+    // required this.nonogram,
+    // this.nonogramState,
+    required this.gridItemSide,
     required this.size,
-    required this.solution,
-    required this.clues,
+    required this.boxItems,
+    this.solution,
     this.onTap,
     super.key,
   });
 
   PointState getGridBoxState(int index) {
-    var char = solution.characterAt(index);
+    var char = solution?.characterAt(index);
     switch (char.toString()) {
       case '?':
         return PointState.unknown;
@@ -50,9 +50,9 @@ class NonogramGrid extends StatelessWidget {
       width: size.width,
       height: size.height,
       child: GridView.builder(
-        itemCount: solution.length,
+        itemCount: solution?.length ?? (boxItems.width * boxItems.height).ceil(),
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: nonogram.width,
+          crossAxisCount: boxItems.width.ceil(),
         ),
         itemBuilder: (BuildContext context, int index) {
           return InkWell(
@@ -78,7 +78,7 @@ class NonogramGrid extends StatelessWidget {
             child: CustomPaint(
               painter: GridBox(
                 pointState: getGridBoxState(index),
-                side: nonogramUi.gridItemSide,
+                side: gridItemSide,
               ),
             ),
           );

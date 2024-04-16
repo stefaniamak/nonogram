@@ -27,10 +27,12 @@ class NonogramListItem extends StatelessWidget {
         color: Colors.grey.withOpacity(0.5),
         child: Column(
           children: [
-            NonogramGridAndClues(
-              nonogram: nonogram,
-              maxSize: Size(width, width),
-            ),
+            if (false)
+              NonogramGridAndClues(
+                // nonogram: nonogram,
+                clues: nonogram.clues!,
+                maxSize: Size(width, width),
+              ),
             Text(nonogram.info?.title ?? '-'),
           ],
         ),

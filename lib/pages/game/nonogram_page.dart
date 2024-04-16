@@ -64,8 +64,9 @@ class NonogramPage extends HookWidget {
           // Text('nonogramState.stepNumber: ${nonogramState.stepNumber}'),
 
           NonogramGridAndClues(
-            nonogram: nonogram,
-            nonogramState: nonogramState,
+            // nonogram: nonogram,
+            clues: nonogram.clues!,
+            solution: nonogramState.solutionSteps.elementAt(nonogramState.stepNumber).currentSolution,
             padding: const EdgeInsets.all(32),
             maxSize: Size(
               MediaQuery.of(context).size.width,

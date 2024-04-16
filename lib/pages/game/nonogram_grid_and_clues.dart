@@ -1,22 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:nonogram/backend/models/clues.dart';
 import 'package:nonogram/backend/models/nonogram.dart';
 import 'package:nonogram/game_loop/nonogram_state.dart';
 import 'package:nonogram/pages/game/nono_clues.dart';
 import 'package:nonogram/pages/game/nonogram_ui.dart';
 import 'package:nonogram/painters/nonogram_grid.dart';
 
-class NonogramGridAndClues extends HookWidget {
-  final Nonogram nonogram;
-  final NonogramState? nonogramState;
+class NonogramGridAndClues extends StatelessWidget {
+  // final Nonogram nonogram;
+  final Clues clues;
+  final String? solution;
+  final Size? boxItems;
+  // final NonogramState? nonogramState;
   final EdgeInsets padding;
   final Size? maxSize;
 
   const NonogramGridAndClues({
-    required this.nonogram,
-    this.nonogramState,
-    this.padding = EdgeInsets.zero,
+    // required this.nonogram,
+    required this.clues,
+    this.solution,
     this.maxSize,
+    this.boxItems,
+
+    // this.nonogramState,
+    this.padding = EdgeInsets.zero,
     super.key,
   });
 
@@ -25,8 +33,11 @@ class NonogramGridAndClues extends HookWidget {
     var md = MediaQuery.of(context);
     var maxSize = this.maxSize ?? md.size;
 
-    var nonogramState = this.nonogramState;
-    var nonogramUi = useNonogramUi(nonogram, maxSize, padding);
+    print('clues.columnLength: ${clues.columnLength}');
+    print('clues.rowLength: ${clues.rowLength}');
+    // var nonogramState = this.nonogramState;
+    var nonogramUi = useNonogramUi(
+        Size(boxItems?.width ?? clues.columnLength + 0, boxItems?.height ?? clues.rowLength + 0), clues, maxSize, padding);
 
     return Container(
       width: nonogramUi.size.width,
@@ -36,7 +47,7 @@ class NonogramGridAndClues extends HookWidget {
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
           CluesUi(
-            clues: nonogram.clues!,
+            clues: clues,
             boxSize: nonogramUi.gridItemSide,
             axis: Axis.horizontal,
           ),
@@ -45,17 +56,20 @@ class NonogramGridAndClues extends HookWidget {
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               CluesUi(
-                clues: nonogram.clues!,
+                clues: clues,
                 boxSize: nonogramUi.gridItemSide,
                 axis: Axis.vertical,
               ),
+              // if (solution != null)
               NonogramGrid(
-                nonogram: nonogram,
-                nonogramState: nonogramState,
-                nonogramUi: nonogramUi,
-                size: Size(nonogramUi.gridSize.width, nonogramUi.gridSize.height),
-                solution: nonogramState!.solutionSteps.elementAt(nonogramState.stepNumber).currentSolution,
-                clues: nonogram.clues!,
+                // nonogram: nonogram,
+                // nonogramState: nonogramState,
+                gridItemSide: nonogramUi.gridItemSide,
+                size: nonogramUi.gridSize, // Size(nonogramUi.gridSize.width, nonogramUi.gridSize.height),
+                boxItems: Size(clues.columnLength + 0, clues.rowLength + 0),
+                // solution: nonogramState!.solutionSteps.elementAt(nonogramState.stepNumber).currentSolution,
+                solution: solution ?? Iterable.generate(clues.columnLength * clues.rowLength, (_) => '?').join(),
+                // clues: clues,
               ),
             ],
           ),
