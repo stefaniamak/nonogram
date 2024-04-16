@@ -23,7 +23,7 @@ class CreateNonogramPage extends HookWidget {
       body: Column(
         children: [
           Expanded(
-            flex: 2,
+            flex: 6,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
