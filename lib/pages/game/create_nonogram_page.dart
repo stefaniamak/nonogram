@@ -24,19 +24,35 @@ class CreateNonogramPage extends HookWidget {
         children: [
           Expanded(
             flex: 2,
-            child: NonogramGridAndClues(
-              // nonogram: nonogramState.nonogram,
-              clues: Clues(
-                (c) => c
-                  ..columns = ListBuilder(state.horizontalClues)
-                  ..rows = ListBuilder(state.verticalClues),
-              ),
-              padding: const EdgeInsets.all(32),
-              boxItems: Size(state.width + 0, state.height + 0),
-              maxSize: Size(
-                MediaQuery.of(context).size.width,
-                MediaQuery.of(context).size.height * 0.8,
-              ),
+            child: Row(
+              children: [
+                RotatedBox(
+                  quarterTurns: 1,
+                  child: Slider(
+                    value: state.height + 0.0,
+                    min: 1,
+                    max: 50,
+                    divisions: 50,
+                    onChanged: (value) {
+                      state.updateHeight(value.ceil());
+                    },
+                  ),
+                ),
+                NonogramGridAndClues(
+                  // nonogram: nonogramState.nonogram,
+                  clues: Clues(
+                    (c) => c
+                      ..columns = ListBuilder(state.horizontalClues)
+                      ..rows = ListBuilder(state.verticalClues),
+                  ),
+                  padding: const EdgeInsets.all(32),
+                  boxItems: Size(state.width + 0, state.height + 0),
+                  maxSize: Size(
+                    MediaQuery.of(context).size.width * 0.8,
+                    MediaQuery.of(context).size.height * 0.8,
+                  ),
+                ),
+              ],
             ),
           ),
           Expanded(
