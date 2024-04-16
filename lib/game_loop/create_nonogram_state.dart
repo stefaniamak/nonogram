@@ -9,6 +9,8 @@ class CreateNonogramState {
   final Nonogram nonogram;
   final int width;
   final int height;
+  final List<List<int>> horizontalClues;
+  final List<List<int>> verticalClues;
   final Function(int width) updateWidth;
   final Function(int height) updateHeight;
   final Function(int index, PointState pointState) updateSolution;
@@ -19,6 +21,8 @@ class CreateNonogramState {
     required this.nonogram,
     required this.width,
     required this.height,
+    required this.horizontalClues,
+    required this.verticalClues,
     required this.updateWidth,
     required this.updateHeight,
     required this.updateSolution,
@@ -112,6 +116,8 @@ CreateNonogramState useCreateNonogramState() {
     nonogram: nonogram$.value,
     width: width$.value,
     height: height$.value,
+    horizontalClues: horizontalClues$.value,
+    verticalClues: verticalClues$.value,
     updateWidth: updateWidth,
     updateHeight: updateHeight,
     updateSolution: updateSolution,

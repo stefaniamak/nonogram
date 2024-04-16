@@ -1,9 +1,12 @@
+import 'package:built_collection/built_collection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:nonogram/game_loop/create_nonogram_state.dart';
 import 'package:nonogram/pages/game/nonogram_grid_and_clues.dart';
+
+import '../../backend/models/clues.dart';
 
 class CreateNonogramPage extends HookWidget {
   const CreateNonogramPage({
@@ -23,7 +26,11 @@ class CreateNonogramPage extends HookWidget {
             flex: 2,
             child: NonogramGridAndClues(
               // nonogram: nonogramState.nonogram,
-              clues: state.nonogram.clues!,
+              clues: Clues(
+                (c) => c
+                  ..columns = ListBuilder(state.horizontalClues)
+                  ..rows = ListBuilder(state.verticalClues),
+              ),
               padding: const EdgeInsets.all(32),
               boxItems: Size(state.width + 0, state.height + 0),
               maxSize: Size(
