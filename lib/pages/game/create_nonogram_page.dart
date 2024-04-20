@@ -5,6 +5,9 @@ import 'package:nonogram/game_loop/create_nonogram_state.dart';
 import 'package:nonogram/pages/game/nonogram_grid_and_clues.dart';
 
 import '../../backend/models/clues.dart';
+import '../../backend/models/nonogram.dart';
+import '../../backend/models/nonogram_info.dart';
+import 'nonogram_page.dart';
 
 class CreateNonogramPage extends HookWidget {
   const CreateNonogramPage({
@@ -79,7 +82,26 @@ class CreateNonogramPage extends HookWidget {
                 },
               ),
             ),
-            Text(state.width.toString()),
+            ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute<void>(
+                      builder: (BuildContext context) => NonogramPage(
+                        nonogram: Nonogram((n) => n
+                          ..id = "-"
+                          ..info = NonogramInfo((i) => i..title = "Custom").toBuilder()
+                          ..note = "published,definitely unique,definitely line/color solvable"
+                          ..clues = Clues(
+                            (c) => c
+                              ..columns = ListBuilder(state.horizontalClues)
+                              ..rows = ListBuilder(state.verticalClues),
+                          ).toBuilder()),
+                      ),
+                    ),
+                  );
+                },
+                child: const Text('Solve')),
           ],
         ),
       ),
