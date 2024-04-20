@@ -14,61 +14,74 @@ class CreateNonogramPage extends HookWidget {
   Widget build(BuildContext context) {
     // useCreateNonogramState
     var state = useCreateNonogramState();
+    final TextEditingController textEditingController = useTextEditingController();
 
-    return Scaffold(
-      body: Column(
-        children: [
-          Expanded(
-            flex: 6,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                Expanded(
-                  child: Center(
-                    child: NonogramGridAndClues(
-                      // nonogram: nonogramState.nonogram,
-                      clues: Clues(
-                        (c) => c
-                          ..columns = ListBuilder(state.horizontalClues)
-                          ..rows = ListBuilder(state.verticalClues),
-                      ),
-                      padding: const EdgeInsets.all(32),
-                      boxItems: Size(state.width + 0, state.height + 0),
-                      maxSize: Size(
-                        MediaQuery.of(context).size.width * 0.8,
-                        MediaQuery.of(context).size.height * 0.8,
+    return SafeArea(
+      child: Scaffold(
+        body: Column(
+          children: [
+            TextFormField(
+              controller: state.selectedLineTextEditingController,
+              onChanged: (String value) {
+                print('TextFormField onChanged');
+                state.updateSelectedLine(value);
+              },
+            ),
+            Expanded(
+              flex: 6,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Expanded(
+                    child: Center(
+                      child: NonogramGridAndClues(
+                        // nonogram: nonogramState.nonogram,
+                        clues: Clues(
+                          (c) => c
+                            ..columns = ListBuilder(state.horizontalClues)
+                            ..rows = ListBuilder(state.verticalClues),
+                        ),
+                        onLineTap: (Axis axis, int index, List<int> cluesLine) {
+                          state.setSelectedLine(axis, index, cluesLine);
+                        },
+                        padding: const EdgeInsets.all(32),
+                        boxItems: Size(state.width + 0, state.height + 0),
+                        maxSize: Size(
+                          MediaQuery.of(context).size.width * 0.8,
+                          MediaQuery.of(context).size.height * 0.8,
+                        ),
                       ),
                     ),
                   ),
-                ),
-                RotatedBox(
-                  quarterTurns: 1,
-                  child: Slider(
-                    value: state.height + 0.0,
-                    min: 1,
-                    max: 50,
-                    divisions: 50,
-                    onChanged: (value) {
-                      state.updateHeight(value.ceil());
-                    },
+                  RotatedBox(
+                    quarterTurns: 1,
+                    child: Slider(
+                      value: state.height + 0.0,
+                      min: 1,
+                      max: 50,
+                      divisions: 50,
+                      onChanged: (value) {
+                        state.updateHeight(value.ceil());
+                      },
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-          Expanded(
-            child: Slider(
-              value: state.width + 0.0,
-              min: 1,
-              max: 50,
-              divisions: 50,
-              onChanged: (value) {
-                state.updateWidth(value.ceil());
-              },
+            Expanded(
+              child: Slider(
+                value: state.width + 0.0,
+                min: 1,
+                max: 50,
+                divisions: 50,
+                onChanged: (value) {
+                  state.updateWidth(value.ceil());
+                },
+              ),
             ),
-          ),
-          Text(state.width.toString()),
-        ],
+            Text(state.width.toString()),
+          ],
+        ),
       ),
     );
   }

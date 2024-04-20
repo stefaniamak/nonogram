@@ -5,33 +5,37 @@ class CluesUi extends StatelessWidget {
   final Clues clues;
   final double boxSize;
   final Axis axis;
+  final Function(Axis axis, int index, List<int> clues)? onEdit;
 
   const CluesUi({
     super.key,
     required this.clues,
     required this.boxSize,
     required this.axis,
+    this.onEdit,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Flex(
-      direction: axis,
-      mainAxisAlignment: MainAxisAlignment.end,
-      crossAxisAlignment: CrossAxisAlignment.end,
-      children: [
-        ...(axis == Axis.horizontal ? clues.columns : clues.rows).map(
-          (c) => Flex(
-            direction: axis == Axis.horizontal ? Axis.vertical : Axis.horizontal,
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              ...c.map(
-                (i) => ClueBox(side: boxSize, numb: i),
-              )
-            ],
-          ),
-        ),
-      ],
+    final list = axis == Axis.horizontal ? clues.columns : clues.rows;
+    return Flexible(
+      child: ListView.builder(
+        scrollDirection: axis,
+        physics: const NeverScrollableScrollPhysics(),
+        shrinkWrap: true,
+        itemCount: list.length,
+        itemBuilder: (BuildContext context, int index) {
+          List<int> c = list.elementAt(index);
+          return InkWell(
+            onTap: onEdit != null ? () => onEdit!.call(axis, index, c) : null,
+            child: Flex(
+              direction: axis == Axis.horizontal ? Axis.vertical : Axis.horizontal,
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [...c.map((i) => ClueBox(side: boxSize, numb: i))],
+            ),
+          );
+        },
+      ),
     );
   }
 }

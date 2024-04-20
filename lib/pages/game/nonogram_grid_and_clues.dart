@@ -12,6 +12,7 @@ class NonogramGridAndClues extends StatelessWidget {
   // final NonogramState? nonogramState;
   final EdgeInsets padding;
   final Size? maxSize;
+  final Function(Axis axis, int index, List<int>)? onLineTap;
 
   const NonogramGridAndClues({
     // required this.nonogram,
@@ -19,6 +20,7 @@ class NonogramGridAndClues extends StatelessWidget {
     this.solution,
     this.maxSize,
     this.boxItems,
+    this.onLineTap,
 
     // this.nonogramState,
     this.padding = EdgeInsets.zero,
@@ -45,6 +47,7 @@ class NonogramGridAndClues extends StatelessWidget {
             clues: clues,
             boxSize: nonogramUi.gridItemSide,
             axis: Axis.horizontal,
+            onEdit: onLineTap,
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
@@ -54,6 +57,7 @@ class NonogramGridAndClues extends StatelessWidget {
                 clues: clues,
                 boxSize: nonogramUi.gridItemSide,
                 axis: Axis.vertical,
+                onEdit: onLineTap,
               ),
               // if (solution != null)
               NonogramGrid(
