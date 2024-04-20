@@ -1,7 +1,5 @@
 import 'package:built_collection/built_collection.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:nonogram/game_loop/create_nonogram_state.dart';
 import 'package:nonogram/pages/game/nonogram_grid_and_clues.dart';
@@ -16,8 +14,6 @@ class CreateNonogramPage extends HookWidget {
   Widget build(BuildContext context) {
     // useCreateNonogramState
     var state = useCreateNonogramState();
-
-    print('nonogram width: ${state.nonogram.width}');
 
     return Scaffold(
       body: Column(
