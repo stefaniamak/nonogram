@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:nonogram/backend/models/clues.dart';
-import 'package:nonogram/backend/models/nonogram.dart';
-import 'package:nonogram/game_loop/nonogram_state.dart';
 import 'package:nonogram/pages/game/nono_clues.dart';
 import 'package:nonogram/pages/game/nonogram_ui.dart';
 import 'package:nonogram/painters/nonogram_grid.dart';
@@ -33,8 +30,6 @@ class NonogramGridAndClues extends StatelessWidget {
     var md = MediaQuery.of(context);
     var maxSize = this.maxSize ?? md.size;
 
-    print('clues.columnLength: ${clues.columnLength}');
-    print('clues.rowLength: ${clues.rowLength}');
     // var nonogramState = this.nonogramState;
     var nonogramUi = useNonogramUi(
         Size(boxItems?.width ?? clues.columnLength + 0, boxItems?.height ?? clues.rowLength + 0), clues, maxSize, padding);
