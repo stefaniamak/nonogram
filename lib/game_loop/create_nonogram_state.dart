@@ -138,6 +138,7 @@ CreateNonogramState useCreateNonogramState() {
   final updateSelectedLine = useCallback((String line) {
     List<int> list = line.split(',').map((e) => int.parse(e.trim())).toList();
     list.removeWhere((e) => e == 0);
+    if (list.isEmpty) list.add(0);
     (selectedLineAxis$.value == Axis.horizontal ? horizontalClues$ : verticalClues$).value[selectedLineIndex$.value] = list;
   });
 
