@@ -15,32 +15,17 @@ class CluesUi extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (axis == Axis.horizontal) {
-      return Row(
-        mainAxisAlignment: MainAxisAlignment.end,
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: [
-          ...clues.columns.map(
-            (c) => Column(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                ...c.map(
-                  (i) => ClueBox(side: boxSize, numb: i),
-                )
-              ],
-            ),
-          ),
-        ],
-      );
-    }
-    return Column(
+    return Flex(
+      direction: axis,
+      mainAxisAlignment: MainAxisAlignment.end,
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [
-        ...clues.rows.map(
-          (r) => Row(
+        ...(axis == Axis.horizontal ? clues.columns : clues.rows).map(
+          (c) => Flex(
+            direction: axis == Axis.horizontal ? Axis.vertical : Axis.horizontal,
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              ...r.map(
+              ...c.map(
                 (i) => ClueBox(side: boxSize, numb: i),
               )
             ],
