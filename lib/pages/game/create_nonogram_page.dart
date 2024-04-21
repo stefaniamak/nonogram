@@ -83,25 +83,26 @@ class CreateNonogramPage extends HookWidget {
             ),
           ),
           ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute<void>(
-                    builder: (BuildContext context) => NonogramPage(
-                      nonogram: Nonogram((n) => n
-                        ..id = "-"
-                        ..info = NonogramInfo((i) => i..title = "Custom").toBuilder()
-                        ..note = "published,definitely unique,definitely line/color solvable"
-                        ..clues = Clues(
-                          (c) => c
-                            ..columns = ListBuilder(state.horizontalClues)
-                            ..rows = ListBuilder(state.verticalClues),
-                        ).toBuilder()),
-                    ),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute<void>(
+                  builder: (BuildContext context) => NonogramPage(
+                    nonogram: Nonogram((n) => n
+                      ..id = "-"
+                      ..info = NonogramInfo((i) => i..title = "Custom").toBuilder()
+                      ..note = "published,definitely unique,definitely line/color solvable"
+                      ..clues = Clues(
+                        (c) => c
+                          ..columns = ListBuilder(state.horizontalClues)
+                          ..rows = ListBuilder(state.verticalClues),
+                      ).toBuilder()),
                   ),
-                );
-              },
-              child: const Text('Solve')),
+                ),
+              );
+            },
+            child: const Text('Solve'),
+          ),
           SizedBox(height: MediaQuery.of(context).padding.bottom + 12),
         ],
       ),
