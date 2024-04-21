@@ -24,6 +24,7 @@ class CluesUi extends StatelessWidget {
         physics: const NeverScrollableScrollPhysics(),
         shrinkWrap: true,
         itemCount: list.length,
+        padding: EdgeInsets.zero,
         itemBuilder: (BuildContext context, int index) {
           List<int> c = list.elementAt(index);
           return InkWell(

@@ -31,7 +31,7 @@ class CreateNonogramPage extends HookWidget {
             },
           ),
           Expanded(
-            flex: 6,
+            flex: 10,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
@@ -51,7 +51,7 @@ class CreateNonogramPage extends HookWidget {
                       boxItems: Size(state.width + 0, state.height + 0),
                       maxSize: Size(
                         MediaQuery.of(context).size.width * 0.8,
-                        MediaQuery.of(context).size.height * 0.8,
+                        MediaQuery.of(context).size.height * 0.7,
                       ),
                     ),
                   ),
@@ -61,8 +61,8 @@ class CreateNonogramPage extends HookWidget {
                   child: Slider(
                     value: state.height + 0.0,
                     min: 1,
-                    max: 50,
-                    divisions: 50,
+                    max: 20,
+                    divisions: 20,
                     onChanged: (value) {
                       state.updateHeight(value.ceil());
                     },
@@ -75,8 +75,8 @@ class CreateNonogramPage extends HookWidget {
             child: Slider(
               value: state.width + 0.0,
               min: 1,
-              max: 50,
-              divisions: 50,
+              max: 20,
+              divisions: 20,
               onChanged: (value) {
                 state.updateWidth(value.ceil());
               },
