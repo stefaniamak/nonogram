@@ -61,8 +61,8 @@ class CreateNonogramPage extends HookWidget {
                   child: Slider(
                     value: state.height + 0.0,
                     min: 1,
-                    max: 20,
-                    divisions: 20,
+                    max: 50,
+                    divisions: 50,
                     onChanged: (value) {
                       state.updateHeight(value.ceil());
                     },
@@ -75,8 +75,8 @@ class CreateNonogramPage extends HookWidget {
             child: Slider(
               value: state.width + 0.0,
               min: 1,
-              max: 20,
-              divisions: 20,
+              max: 50,
+              divisions: 50,
               onChanged: (value) {
                 state.updateWidth(value.ceil());
               },
