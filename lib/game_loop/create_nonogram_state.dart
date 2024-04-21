@@ -77,13 +77,21 @@ CreateNonogramState useCreateNonogramState() {
   // Functions
 
   final updateWidth = useCallback((int index) {
+    if (index > width$.value) {
+      horizontalClues$.value.addAll(List<List<int>>.generate(index - width$.value, (_) => <int>[0]));
+    } else {
+      horizontalClues$.value.removeRange(index, width$.value);
+    }
     width$.value = index;
-    horizontalClues$.value = List<List<int>>.generate(width$.value, (_) => <int>[0]);
   });
 
   final updateHeight = useCallback((int index) {
+    if (index > height$.value) {
+      verticalClues$.value.addAll(List<List<int>>.generate(index - height$.value, (_) => <int>[0]));
+    } else {
+      verticalClues$.value.removeRange(index, height$.value);
+    }
     height$.value = index;
-    verticalClues$.value = List<List<int>>.generate(height$.value, (_) => <int>[0]);
   });
 
   final updateSolution = useCallback((int index, PointState pointState) {
