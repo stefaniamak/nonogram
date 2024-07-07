@@ -105,6 +105,12 @@ class LineSolver {
       // ));
       if (kPrintComments && kDebugMode) print('Ending most solution: $endingMostSolution');
 
+      // if (lineIndex == 2 && lineType == NonoAxis.row) {
+      //   print('allLineSolutions: $allLineSolutions');
+      //   // print('startingMostSolution: $startingMostSolution');
+      //   // print('endingMostSolution: $endingMostSolution');
+      // }
+
       String updatedSolution = initialSolution;
       for (int charIndex = 0; charIndex < allLineSolutions.length; charIndex++) {
         if (kPrintComments && kDebugMode) print('Is box unknown and should be checked?');
@@ -195,8 +201,13 @@ class LineSolver {
 
     if (kPrintComments && kDebugMode) print('Does clue have clues ${solutionSide.name}?');
     if (!solutionSide.hasOtherClues(clueIndex, clues.length)) {
-      if (kPrintComments && kDebugMode) print('It does not. Return `true`.');
-      return true;
+      if (kPrintComments && kDebugMode) print('It does not.');
+      if (kPrintComments && kDebugMode) print('Check if there are any filled boxes which match to no clue.');
+      // if (solution.substring(clueIndex).characters.contains('1')) {
+      //   return false;
+      // }
+      // if (kPrintComments && kDebugMode) print('Return `true`.');
+      return solutionSide.isSolutionValid(solution, solutionIndex, clues[clueIndex]);
     }
     if (kPrintComments && kDebugMode) print('It does. Continue checking.');
 
@@ -213,6 +224,9 @@ class LineSolver {
     for (int solutionSublistIndex = 0; solutionSublistIndex < solutionSublist.length; solutionSublistIndex++) {
       if (canCluesFit(cluesSublist, solutionSublist, solutionSublistIndex, 0)) {
         if (kPrintComments && kDebugMode) print('It does fit. Return `true`.');
+
+        // return solutionSide.isSolutionValid(solution, solutionIndex);
+
         return true;
       }
     }
