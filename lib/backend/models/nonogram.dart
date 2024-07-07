@@ -27,8 +27,7 @@ abstract class Nonogram implements Built<Nonogram, NonogramBuilder> {
   factory Nonogram([void Function(NonogramBuilder) updates]) = _$Nonogram;
 
   Map<String, dynamic> toJson() {
-    return serializers.serializeWith(Nonogram.serializer, this)
-        as Map<String, dynamic>;
+    return serializers.serializeWith(Nonogram.serializer, this) as Map<String, dynamic>;
   }
 
   static Nonogram fromJson(Map<String, dynamic> json) {
@@ -37,3 +36,5 @@ abstract class Nonogram implements Built<Nonogram, NonogramBuilder> {
 
   static Serializer<Nonogram> get serializer => _$nonogramSerializer;
 }
+
+class NonogramMap {}

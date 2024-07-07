@@ -1,3 +1,6 @@
+import 'package:flutter/foundation.dart';
+import 'package:nonogram/solver/line_solver.dart';
+
 import 'nono_axis_extension.dart';
 
 extension NonoListExtension on List {
@@ -7,8 +10,8 @@ extension NonoListExtension on List {
 
   bool isInStack(int charIndex, NonoAxis lineType) {
     for (var line in this) {
-      print('line.keys.first: ${line.keys.first} & charIndex $charIndex');
-      print('line.values.first: ${line.values.first} & lineType $lineType');
+      if (kPrintComments && kDebugMode) print('line.keys.first: ${line.keys.first} & charIndex $charIndex');
+      if (kPrintComments && kDebugMode) print('line.values.first: ${line.values.first} & lineType $lineType');
       if (line.keys.first == charIndex && line.values.first != lineType) {
         return true;
       }
