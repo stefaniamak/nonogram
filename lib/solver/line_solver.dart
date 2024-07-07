@@ -10,7 +10,7 @@ import 'package:nonogram/game_loop/nonogram_state.dart';
 import '../backend/type_extensions/nono_axis_extension.dart';
 import '../backend/type_extensions/nono_direction_extension.dart';
 
-bool kPrintComments = true;
+bool kPrintComments = false;
 
 class LineSolver {
   void solve(NonogramState state) async {
