@@ -10,10 +10,12 @@ import 'package:nonogram/game_loop/nonogram_state.dart';
 import '../backend/type_extensions/nono_axis_extension.dart';
 import '../backend/type_extensions/nono_direction_extension.dart';
 
-bool kPrintComments = false;
+bool kPrintComments = true;
 
 class LineSolver {
   void solve(NonogramState state) async {
+    state.updateStartingDateTime(DateTime.now());
+
     overlapping(state);
 
     state.addStep(
@@ -24,6 +26,11 @@ class LineSolver {
       ),
     );
     state.updateStepNumber(state.solutionSteps.length - 1);
+
+    state.updateEndingDateTime(DateTime.now());
+    // print('Puzzle duration: ${state.startDateTime!.compareTo(state.endingDateTime!)}');
+    print('state.startDateTime ${state.startDateTime}');
+    print('state.endingDateTime ${state.endingDateTime}');
   }
 
   void overlapping(NonogramState state) {

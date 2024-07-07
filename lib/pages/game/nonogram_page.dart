@@ -58,6 +58,8 @@ class NonogramPage extends HookWidget {
                 ),
               ),
               Text(nonogramState.solutionSteps.elementAt(nonogramState.stepNumber).explanation),
+              if (nonogramState.startDateTime != null && nonogramState.endingDateTime != null)
+                Text('Puzzle duration: ${nonogramState.endingDateTime!.difference(nonogramState.startDateTime!)}'),
             ],
           ),
           // Text('nonogramState.solutionSteps.length: ${nonogramState.solutionSteps.length}'),

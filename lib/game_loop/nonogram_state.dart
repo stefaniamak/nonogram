@@ -23,6 +23,10 @@ class NonogramState {
   final Function(int index) updateStepNumber;
   final Function(Map<int, NonoAxis> line) pushStack;
   final VoidCallback popStack;
+  final DateTime? startDateTime;
+  final DateTime? endingDateTime;
+  final Function(DateTime dateTime) updateStartingDateTime;
+  final Function(DateTime dateTime) updateEndingDateTime;
 
   NonogramState({
     required this.nonogram,
@@ -37,11 +41,14 @@ class NonogramState {
     required this.updateStepNumber,
     required this.pushStack,
     required this.popStack,
+    required this.startDateTime,
+    required this.endingDateTime,
+    required this.updateStartingDateTime,
+    required this.updateEndingDateTime,
   });
 }
 
-String getUpdatedActiveSolution(String activeSol, int index, String char) =>
-    activeSol.replaceRange(index, index + 1, char);
+String getUpdatedActiveSolution(String activeSol, int index, String char) => activeSol.replaceRange(index, index + 1, char);
 
 NonogramState useNonogramState(Nonogram nonogram) {
   final activeSolution$ = useState(
@@ -63,8 +70,7 @@ NonogramState useNonogramState(Nonogram nonogram) {
   final setFilled = useCallback(
       (int index) => activeSolution$.value = getUpdatedActiveSolution(activeSolution$.value, index, '1'),
       [activeSolution$.value]);
-  final setCross = useCallback(
-      (int index) => activeSolution$.value = getUpdatedActiveSolution(activeSolution$.value, index, '0'),
+  final setCross = useCallback((int index) => activeSolution$.value = getUpdatedActiveSolution(activeSolution$.value, index, '0'),
       [activeSolution$.value]);
   final serUnknown = useCallback(
       (int index) => activeSolution$.value = getUpdatedActiveSolution(activeSolution$.value, index, '?'),
@@ -73,6 +79,13 @@ NonogramState useNonogramState(Nonogram nonogram) {
   final updateStepNumber = useCallback((int index) {
     stepNumber$.value = index;
   });
+
+  final startingDateTime$ = useState<DateTime?>(null);
+  final endingDateTime$ = useState<DateTime?>(null);
+
+  final updateStartingDateTime =
+      useCallback((DateTime dateTime) => startingDateTime$.value = dateTime, [startingDateTime$.value]);
+  final updateEndingDateTime = useCallback((DateTime dateTime) => endingDateTime$.value = dateTime, [endingDateTime$.value]);
 
   final addStep = useCallback((SolutionStep step) => solutionSteps$.value.add(step));
   final pushStack = useCallback((Map<int, NonoAxis> line) => stack$.value.add(line));
@@ -93,6 +106,10 @@ NonogramState useNonogramState(Nonogram nonogram) {
     stack: stack$.value,
     pushStack: pushStack,
     popStack: popStack,
+    startDateTime: startingDateTime$.value,
+    endingDateTime: endingDateTime$.value,
+    updateStartingDateTime: updateStartingDateTime,
+    updateEndingDateTime: updateEndingDateTime,
   );
 }
 
