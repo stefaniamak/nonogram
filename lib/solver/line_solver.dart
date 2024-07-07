@@ -70,7 +70,13 @@ class LineSolver {
     if (isLineCompleted) {
       if (kPrintComments && kDebugMode) print('It is. Shall cross out remaining empty boxes if any left.');
       if (initialSolution.characters.contains('?')) {
-        for (int charIndex = 0; charIndex < initialSolution.length; charIndex++) {
+        int charStart = initialSolution.characters.findFirst(Characters('?'))!.stringBeforeLength;
+        int charEnd = initialSolution.characters.findLast(Characters('?'))!.stringBeforeLength + 1;
+        if (kPrintComments && kDebugMode) {
+          print('charStart: $charStart');
+          print('charEnd: $charEnd');
+        }
+        for (int charIndex = charStart; charIndex < charEnd; charIndex++) {
           if (initialSolution.characterAt(charIndex) == '?') {
             int indexSol = lineType.getSolutionPosition(lineIndex, charIndex, state.nonogram.width);
             var fullUpdatedSolution = state.solutionSteps.last.getUpdatedSolution(indexSol, '0');
