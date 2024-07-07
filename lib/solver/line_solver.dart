@@ -74,9 +74,7 @@ class LineSolver {
               lineIndex: lineIndex,
               explanation: 'Cross out remaining empty boxes of ${lineType.name} with index $lineIndex.',
             ));
-            if (!state.stack.isInStack(charIndex, lineType)) {
-              state.pushStack({charIndex: lineType == NonoAxis.row ? NonoAxis.column : NonoAxis.row});
-            }
+            state.stack.updateStack(charIndex, lineType, state);
           }
         }
       }
@@ -129,9 +127,7 @@ class LineSolver {
               lineIndex: lineIndex,
               explanation: 'Cross out box.',
             ));
-            if (!state.stack.isInStack(charIndex, lineType)) {
-              state.pushStack({charIndex: lineType == NonoAxis.row ? NonoAxis.column : NonoAxis.row});
-            }
+            state.stack.updateStack(charIndex, lineType, state);
           } else {
             if (kPrintComments && kDebugMode) print('No.');
             var startingSolutionIndex = startingMostSolution.elementAt(charIndex).first.toString();
@@ -153,9 +149,7 @@ class LineSolver {
                 lineIndex: lineIndex,
                 explanation: 'Fill in box.',
               ));
-              if (!state.stack.isInStack(charIndex, lineType)) {
-                state.pushStack({charIndex: lineType == NonoAxis.row ? NonoAxis.column : NonoAxis.row});
-              }
+              state.stack.updateStack(charIndex, lineType, state);
             } else {
               if (kPrintComments && kDebugMode) print('No. It contains different indexes.');
             }

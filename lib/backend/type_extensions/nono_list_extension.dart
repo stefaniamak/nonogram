@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:nonogram/game_loop/nonogram_state.dart';
 import 'package:nonogram/solver/line_solver.dart';
 
 import 'nono_axis_extension.dart';
@@ -9,13 +10,13 @@ extension NonoListExtension on List {
   bool get everyElementIsZero => every((e) => e.toString() == '0');
 
   bool isInStack(int charIndex, NonoAxis lineType) {
-    for (var line in this) {
-      if (kPrintComments && kDebugMode) print('line.keys.first: ${line.keys.first} & charIndex $charIndex');
-      if (kPrintComments && kDebugMode) print('line.values.first: ${line.values.first} & lineType $lineType');
-      if (line.keys.first == charIndex && line.values.first != lineType) {
-        return true;
-      }
+    return contains({charIndex: lineType});
+  }
+
+  void updateStack(int charIndex, NonoAxis lineType, NonogramState state) {
+    NonoAxis newAxis = lineType == NonoAxis.row ? NonoAxis.column : NonoAxis.row;
+    if (!isInStack(charIndex, newAxis)) {
+      state.pushStack({charIndex: newAxis});
     }
-    return false;
   }
 }
