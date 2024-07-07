@@ -105,11 +105,11 @@ class LineSolver {
       // ));
       if (kPrintComments && kDebugMode) print('Ending most solution: $endingMostSolution');
 
-      if (lineIndex == 2 && lineType == NonoAxis.row) {
-        print('allLineSolutions: $allLineSolutions');
-        // print('startingMostSolution: $startingMostSolution');
-        // print('endingMostSolution: $endingMostSolution');
-      }
+      // if (lineIndex == 2 && lineType == NonoAxis.row) {
+      //   print('allLineSolutions: $allLineSolutions');
+      //   // print('startingMostSolution: $startingMostSolution');
+      //   // print('endingMostSolution: $endingMostSolution');
+      // }
 
       String updatedSolution = initialSolution;
       for (int charIndex = 0; charIndex < allLineSolutions.length; charIndex++) {
