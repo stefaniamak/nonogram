@@ -17,6 +17,11 @@ extension NonoListExtension on List {
     NonoAxis newAxis = lineType == NonoAxis.row ? NonoAxis.column : NonoAxis.row;
     if (!isInStack(charIndex, newAxis)) {
       state.pushStack({charIndex: newAxis});
+    } else {
+      // print('bumped');
+      // print('stack before ${state.stack}');
+      // state.bumpToStack({charIndex: newAxis});
+      // print('stack after ${state.stack}');
     }
   }
 }
