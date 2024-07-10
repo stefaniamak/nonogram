@@ -28,6 +28,12 @@ class NonogramState {
   final DateTime? endingDateTime;
   final Function(DateTime dateTime) updateStartingDateTime;
   final Function(DateTime dateTime) updateEndingDateTime;
+  final int linesChecked;
+  final int boxesChecked;
+  final int actualBoxesChecked;
+  final Function() updateLinesChecked;
+  final Function() updateBoxesChecked;
+  final Function() updateActualBoxesChecked;
 
   NonogramState({
     required this.nonogram,
@@ -47,6 +53,12 @@ class NonogramState {
     required this.endingDateTime,
     required this.updateStartingDateTime,
     required this.updateEndingDateTime,
+    required this.linesChecked,
+    required this.boxesChecked,
+    required this.actualBoxesChecked,
+    required this.updateLinesChecked,
+    required this.updateBoxesChecked,
+    required this.updateActualBoxesChecked,
   });
 }
 
@@ -68,6 +80,9 @@ NonogramState useNonogramState(Nonogram nonogram) {
   );
 
   final stepNumber$ = useState(0);
+  final linesChecked$ = useState(0);
+  final boxesChecked$ = useState(0);
+  final actualBoxesChecked$ = useState(0);
 
   final setFilled = useCallback(
       (int index) => activeSolution$.value = getUpdatedActiveSolution(activeSolution$.value, index, '1'),
@@ -80,6 +95,15 @@ NonogramState useNonogramState(Nonogram nonogram) {
 
   final updateStepNumber = useCallback((int index) {
     stepNumber$.value = index;
+  });
+  final updateLinesChecked = useCallback(() {
+    linesChecked$.value++;
+  });
+  final updateBoxesChecked = useCallback(() {
+    boxesChecked$.value++;
+  });
+  final updateActualBoxesChecked = useCallback(() {
+    actualBoxesChecked$.value++;
   });
 
   final startingDateTime$ = useState<DateTime?>(null);
@@ -117,6 +141,12 @@ NonogramState useNonogramState(Nonogram nonogram) {
     endingDateTime: endingDateTime$.value,
     updateStartingDateTime: updateStartingDateTime,
     updateEndingDateTime: updateEndingDateTime,
+    linesChecked: linesChecked$.value,
+    boxesChecked: boxesChecked$.value,
+    actualBoxesChecked: actualBoxesChecked$.value,
+    updateLinesChecked: updateLinesChecked,
+    updateBoxesChecked: updateBoxesChecked,
+    updateActualBoxesChecked: updateActualBoxesChecked,
   );
 }
 

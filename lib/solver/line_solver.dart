@@ -11,6 +11,8 @@ import '../backend/type_extensions/nono_axis_extension.dart';
 import '../backend/type_extensions/nono_direction_extension.dart';
 
 bool kPrintComments = false;
+bool activateReturnOnNotEnoughSolvedLines = false;
+bool countBoxes = false;
 
 class LineSolver {
   void solve(NonogramState state) async {
@@ -29,8 +31,8 @@ class LineSolver {
 
     state.updateEndingDateTime(DateTime.now());
     // print('Puzzle duration: ${state.startDateTime!.compareTo(state.endingDateTime!)}');
-    print('state.startDateTime ${state.startDateTime}');
-    print('state.endingDateTime ${state.endingDateTime}');
+    // print('state.startDateTime ${state.startDateTime}');
+    // print('state.endingDateTime ${state.endingDateTime}');
   }
 
   void overlapping(NonogramState state) {
@@ -92,8 +94,11 @@ class LineSolver {
         }
       }
     } else {
+      if (activateReturnOnNotEnoughSolvedLines && filledBoxes < (clues.sum / 4) && (state.nonogram.width / 4) > clues.sum) {
+        return;
+      }
       if (kPrintComments && kDebugMode) print('It is not. Starts to calculate all possible solutions...');
-      List<List<String>> allLineSolutions = getAllLinePossibleSolutions(clues, initialSolution);
+      List<List<String>> allLineSolutions = getAllLinePossibleSolutions(state, clues, initialSolution);
       if (kPrintComments && kDebugMode) print('All line solutions: $allLineSolutions');
 
       if (kPrintComments && kDebugMode) print('Find starting solution of $allLineSolutions with clues $clues.');
@@ -124,6 +129,7 @@ class LineSolver {
       //   // print('endingMostSolution: $endingMostSolution');
       // }
 
+      // Μπορώ εδώ αν δεν υπάρχει αλλαγή με το cashed data, τότε να μην τρέχω τη λούπα
       String updatedSolution = initialSolution;
       for (int charIndex = 0; charIndex < allLineSolutions.length; charIndex++) {
         if (kPrintComments && kDebugMode) print('Is box unknown and should be checked?');
@@ -184,15 +190,17 @@ class LineSolver {
       //   explanation: 'Cross out empty boxes and fill in solution overlaps.',
       // ));
       if (kPrintComments && kDebugMode) print('Overlapped solution: $updatedSolution');
+      state.updateLinesChecked();
     }
   }
 
-  List<List<String>> getAllLinePossibleSolutions(List<int> clues, String line) {
+  List<List<String>> getAllLinePossibleSolutions(NonogramState state, List<int> clues, String line) {
     if (kPrintComments && kDebugMode) print('Get all possible solutions of line $line with clues $clues');
     List<List<String>> possibleSolutions = Iterable.generate(line.length, (_) => <String>[]).toList();
     for (int clueIndex = 0; clueIndex < clues.length; clueIndex++) {
       for (int charIndex = 0; charIndex < line.length; charIndex++) {
-        String solutionNumb = canCluesFit(clues, line, charIndex, clueIndex) ? '${clueIndex + 2}' : '0';
+        String solutionNumb = canCluesFit(state, clues, line, charIndex, clueIndex) ? '${clueIndex + 2}' : '0';
+        if (countBoxes) state.updateBoxesChecked();
 
         int loops = solutionNumb == '0' ? 1 : clues[clueIndex];
         for (int i = charIndex; i < charIndex + loops; i++) {
@@ -209,7 +217,8 @@ class LineSolver {
     return possibleSolutions;
   }
 
-  bool doOtherCluesFit(NonoDirection solutionSide, List<int> clues, int clueIndex, String solution, int solutionIndex) {
+  bool doOtherCluesFit(
+      NonogramState state, NonoDirection solutionSide, List<int> clues, int clueIndex, String solution, int solutionIndex) {
     int clue = clues.elementAt(clueIndex);
 
     if (kPrintComments && kDebugMode) print('Does clue have clues ${solutionSide.name}?');
@@ -235,7 +244,7 @@ class LineSolver {
     List<int> cluesSublist = solutionSide.getCluesSublist(clueIndex, clues);
     if (kPrintComments && kDebugMode) print('Does solution sublist $solutionSublist fit clues $cluesSublist?');
     for (int solutionSublistIndex = 0; solutionSublistIndex < solutionSublist.length; solutionSublistIndex++) {
-      if (canCluesFit(cluesSublist, solutionSublist, solutionSublistIndex, 0)) {
+      if (canCluesFit(state, cluesSublist, solutionSublist, solutionSublistIndex, 0)) {
         if (kPrintComments && kDebugMode) print('It does fit. Return `true`.');
 
         // return solutionSide.isSolutionValid(solution, solutionIndex);
@@ -247,7 +256,7 @@ class LineSolver {
     return false;
   }
 
-  bool canCluesFit(List<int> clues, String solution, int s, int cl) {
+  bool canCluesFit(NonogramState state, List<int> clues, String solution, int s, int cl) {
     List<String> solutionList = solution.split('');
     int clue = clues.elementAt(cl);
     bool canFit;
@@ -271,10 +280,11 @@ class LineSolver {
     }
     if (kPrintComments && kDebugMode) print('true');
 
-    bool cluesBeforeGood = doOtherCluesFit(NonoDirection.before, clues, cl, solution, s);
-    bool cluesAfterGood = doOtherCluesFit(NonoDirection.after, clues, cl, solution, s);
+    bool cluesBeforeGood = doOtherCluesFit(state, NonoDirection.before, clues, cl, solution, s);
+    bool cluesAfterGood = doOtherCluesFit(state, NonoDirection.after, clues, cl, solution, s);
     if (kPrintComments && kDebugMode)
       print('Do both clues before and clues after fit? Answer: ${cluesBeforeGood && cluesAfterGood}');
+    if (countBoxes) state.updateActualBoxesChecked();
     return cluesBeforeGood && cluesAfterGood;
   }
 
