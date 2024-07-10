@@ -12,7 +12,8 @@ import '../backend/type_extensions/nono_direction_extension.dart';
 
 bool kPrintComments = false;
 bool activateReturnOnNotEnoughSolvedLines = false;
-bool countBoxes = false;
+bool countBoxes = true;
+bool countActualBoxes = false;
 
 class LineSolver {
   void solve(NonogramState state) async {
@@ -284,7 +285,7 @@ class LineSolver {
     bool cluesAfterGood = doOtherCluesFit(state, NonoDirection.after, clues, cl, solution, s);
     if (kPrintComments && kDebugMode)
       print('Do both clues before and clues after fit? Answer: ${cluesBeforeGood && cluesAfterGood}');
-    if (countBoxes) state.updateActualBoxesChecked();
+    if (countActualBoxes) state.updateActualBoxesChecked();
     return cluesBeforeGood && cluesAfterGood;
   }
 
