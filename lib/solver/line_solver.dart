@@ -79,6 +79,21 @@ class LineSolver {
           print('charStart: $charStart');
           print('charEnd: $charEnd');
         }
+
+        List<int> charIndexes = initialSolution.characters.indexed
+            .toString()
+            .split(', ?)')
+            .map((e) => e.characters.last)
+            .toString()
+            .replaceAll(')', '')
+            .replaceAll('(', '')
+            .split(',')
+            .map((e) => int.parse(e))
+            .toList();
+
+        print('initialSolution.characters.indexed: ${initialSolution.characters.indexed.toString()}');
+        print('charIndexes: ${charIndexes}');
+
         for (int charIndex = charStart; charIndex < charEnd; charIndex++) {
           if (initialSolution.characterAt(charIndex) == '?') {
             int indexSol = lineType.getSolutionPosition(lineIndex, charIndex, state.nonogram.width);
