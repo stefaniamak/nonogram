@@ -88,6 +88,7 @@ class LineSolver {
             .replaceAll(')', '')
             .replaceAll('(', '')
             .split(',')
+            .where((element) => element != ' ')
             .map((e) => int.parse(e))
             .toList();
 
