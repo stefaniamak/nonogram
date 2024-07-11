@@ -82,97 +82,30 @@ class LineSolver {
 
         final charIndexesRegexp = RegExp(r'(?<= ?)[0-9]+(?=, \?)');
 
-        // print('splitMapJoin: ${initialSolution.characters.indexed.toList().toString()}');
-        // print(
-        //     'splitMapJoin: ${initialSolution.characters.indexed.toString().splitMapJoin(charIndexesRegexp, onNonMatch: (String noMatch) => '')}');
-        // print(
-        //     'splitMapJoin: ${initialSolution.characters.indexed.toString().splitMapJoin(charIndexesRegexp, onNonMatch: (String noMatch) => '')}');
-        // print(
-        //     'splitMapJoin: ${initialSolution.characters.indexed.toString().splitMapJoin(charIndexesRegexp, onNonMatch: (String noMatch) => '').split(',')}');
-
         // Find all matches
         Iterable<Match> matches = charIndexesRegexp.allMatches(initialSolution.characters.indexed.toList().toString());
-        // print('aaaaaaaaa');
-        // print('start: ${matches.first.start}');
-        // print('end: ${matches.first.end}');
-        // print('groupCount: ${matches.first.groupCount}');
-        // print('input: ${matches.first.input}');
-        // print('pattern: ${matches.first.pattern}');
 
         // Extract the matched parts and join them with commas
         String result = matches.map((match) => match.group(0)).join(',');
 
-        // print(result); // Output: "0,1,2,3,4,5,6,32,33"
-
         List<int> charIndexes = result.split(',').map((e) => int.parse(e)).toList(); //.characters.indexed.toString().;
-        // .toString()
-        // .split(', ?)')
-        // .map((e) => e.characters.last)
-        // .toString()
-        // .replaceAll(')', '')
-        // .replaceAll('(', '')
-        // .split(',')
-        // .where((element) => element != ' ')
-        // .map((e) => int.parse(e))
-        // .toList();
 
         String lookbehinds =
             charIndexes.map((pos) => '^.{${lineType.getSolutionPosition(lineIndex, pos, state.nonogram.width)}}').join('|');
         final solutionIndexesRegexp = RegExp(r'(?<=' + lookbehinds + ').');
 
-        // if (lineIndex == 16) {
-        //   print('lineType.name: ${lineType.name}');
-        //   print('charIndexes.length: ${charIndexes.length}');
-        //   print('initialSolution.characters.indexed: ${initialSolution.characters.indexed}');
-        //   print('charIndexes: ${charIndexes}');
-        //   // print('current solution: ${state.solutionSteps.last.currentSolution}');
-        //   // print('updated solution: ${state.solutionSteps.last.currentSolution.replaceAllMapped(solutionIndexesRegexp, (match) => '0')}');
-        // }
-        // print('---------');
-        // print('initialSolution.characters.indexed: ${initialSolution.characters.indexed.toString()}');
-        // print('charIndexes: ${charIndexes}');
-        //
-        // print('state.solutionSteps.last.currentSolution: ${state.solutionSteps.last.currentSolution}');
-        // print('lineIndex: $lineIndex | lineType: $lineType');
-        // print('line: ${state.solutionSteps.last.currentSolution.getLine(lineIndex, state.nonogram, lineType)}');
-        // print('linR: ${state.solutionSteps.last.currentSolution.replaceAllMapped(solutionIndexesRegexp, (match) => '0')}');
-        // print('//');
-        // String _difSol = '123456789qwertyuiopasdfghjklzxcvbnmερτυθιοπασδφγηξκλζχψωβνμQWERTYUIOPASDFGHJKLZXCVBNM';
-        // print('solution 2: $_difSol');
-        // print('line 2: ${_difSol.getLine(lineIndex, state.nonogram, lineType)}');
-        // print('line R: ${_difSol.replaceAllMapped(solutionIndexesRegexp, (match) => '.')}');
-
-        // Iterable.generate(state.nonogram.width, (e) => NonoAxis.column.getSolutionPosition(lineIndex, e, state.nonogram.width)).join();
-
-        // var lineSolution =
-        //     state.solutionSteps.last.currentSolution.getLine(lineIndex, state.nonogram, lineType).replaceAll('?', '0');
-        // var fullUpdatedSolution = state.solutionSteps.last.currentSolution.replaceAllMapped(from, (match) => null) //.getUpdatedSolution(indexSol, lineSolution);
-
         var fullUpdatedSolution =
             state.solutionSteps.last.currentSolution.replaceAllMapped(solutionIndexesRegexp, (match) => '0');
         if (kPrintComments && kDebugMode) print('fullUpdatedSolution: $fullUpdatedSolution');
+
         state.addStep(SolutionStep(
           currentSolution: fullUpdatedSolution,
           axis: lineType,
           lineIndex: lineIndex,
           explanation: 'Cross out all remaining empty boxes of ${lineType.name} with index $lineIndex.',
         ));
-        state.stack.updateStack(charIndexes, lineType, state);
 
-        // for (int charIndex in charIndexes) {
-        //   if (initialSolution.characterAt(charIndex) == '?') {
-        //     int indexSol = lineType.getSolutionPosition(lineIndex, charIndex, state.nonogram.width);
-        //     var fullUpdatedSolution = state.solutionSteps.last.getUpdatedSolution(indexSol, '0');
-        //     if (kPrintComments && kDebugMode) print('fullUpdatedSolution: $fullUpdatedSolution');
-        //     state.addStep(SolutionStep(
-        //       currentSolution: fullUpdatedSolution,
-        //       axis: lineType,
-        //       lineIndex: lineIndex,
-        //       explanation: 'Cross out remaining empty boxes of ${lineType.name} with index $lineIndex.',
-        //     ));
-        //     state.stack.updateStack(charIndex, lineType, state);
-        //   }
-        // }
+        state.stack.updateStack(charIndexes, lineType, state);
       }
     } else {
       if (activateReturnOnNotEnoughSolvedLines && filledBoxes < (clues.sum / 4) && (state.nonogram.width / 4) > clues.sum) {
