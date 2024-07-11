@@ -92,8 +92,30 @@ class LineSolver {
             .map((e) => int.parse(e))
             .toList();
 
+        String lookbehinds = charIndexes
+            .map((pos) => '^.{${NonoAxis.column.getSolutionPosition(lineIndex, pos, state.nonogram.width)}}')
+            .join('|');
+        final regexp = RegExp(r'(?<=' + lookbehinds + ').');
+
+        print('---------');
         print('initialSolution.characters.indexed: ${initialSolution.characters.indexed.toString()}');
         print('charIndexes: ${charIndexes}');
+
+        print('state.solutionSteps.last.currentSolution: ${state.solutionSteps.last.currentSolution}');
+        print('lineIndex: $lineIndex | lineType: $lineType');
+        print('line: ${state.solutionSteps.last.currentSolution.getLine(lineIndex, state.nonogram, lineType)}');
+        print('linR: ${state.solutionSteps.last.currentSolution.replaceAllMapped(regexp, (match) => '0')}');
+        print('//');
+        String _difSol = '123456789qwertyuiopasdfghjklzxcvbnmερτυθιοπασδφγηξκλζχψωβνμQWERTYUIOPASDFGHJKLZXCVBNM';
+        print('solution 2: $_difSol');
+        print('line 2: ${_difSol.getLine(lineIndex, state.nonogram, lineType)}');
+        print('line R: ${_difSol.replaceAllMapped(regexp, (match) => '.')}');
+
+        // Iterable.generate(state.nonogram.width, (e) => NonoAxis.column.getSolutionPosition(lineIndex, e, state.nonogram.width)).join();
+
+        var lineSolution =
+            state.solutionSteps.last.currentSolution.getLine(lineIndex, state.nonogram, lineType).replaceAll('?', '0');
+        // var fullUpdatedSolution = state.solutionSteps.last.currentSolution.replaceAllMapped(from, (match) => null) //.getUpdatedSolution(indexSol, lineSolution);
 
         for (int charIndex in charIndexes) {
           if (initialSolution.characterAt(charIndex) == '?') {
