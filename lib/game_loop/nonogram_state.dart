@@ -21,7 +21,7 @@ class NonogramState {
   final Function(int index) setUnknown;
   final Function(SolutionStep index) addStep;
   final Function(int index) updateStepNumber;
-  final Function(Map<int, NonoAxis> line) pushStack;
+  final Function(List<Map<int, NonoAxis>> line) pushStack;
   final Function(Map<int, NonoAxis> line) bumpToStack;
   final VoidCallback popStack;
   final DateTime? startDateTime;
@@ -114,7 +114,7 @@ NonogramState useNonogramState(Nonogram nonogram) {
   final updateEndingDateTime = useCallback((DateTime dateTime) => endingDateTime$.value = dateTime, [endingDateTime$.value]);
 
   final addStep = useCallback((SolutionStep step) => solutionSteps$.value.add(step));
-  final pushStack = useCallback((Map<int, NonoAxis> line) => stack$.value.add(line));
+  final pushStack = useCallback((List<Map<int, NonoAxis>> lines) => stack$.value.addAll(lines));
   final bumpToStack = useCallback((Map<int, NonoAxis> line) {
     stack$.value.remove(line);
     stack$.value = [line, ...stack$.value];
