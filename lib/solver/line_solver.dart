@@ -95,7 +95,7 @@ class LineSolver {
         print('initialSolution.characters.indexed: ${initialSolution.characters.indexed.toString()}');
         print('charIndexes: ${charIndexes}');
 
-        for (int charIndex = charStart; charIndex < charEnd; charIndex++) {
+        for (int charIndex in charIndexes) {
           if (initialSolution.characterAt(charIndex) == '?') {
             int indexSol = lineType.getSolutionPosition(lineIndex, charIndex, state.nonogram.width);
             var fullUpdatedSolution = state.solutionSteps.last.getUpdatedSolution(indexSol, '0');
