@@ -80,11 +80,31 @@ class LineSolver {
           print('charEnd: $charEnd');
         }
 
-        final charIndexesRegexp = RegExp(r'(?<= ?)[0-9]+(?=, \?)');
-
+        /// In the bellow 4 lines, we want to crate a List<int> with all the index positions
+        /// of question marks ("?") in a String. In our case, the String is the current line solution.
+        ///
+        /// Get initialSolution of that line, and make an characters.indexed list.
+        /// This list creates a new list which includes the original list but matched with their
+        /// indexes on that list.
+        /// e.g. String `0?1` has the result ((0, 0), (1, ?), (2, 1))
+        ///
+        /// I use .toString() to get the list as a String, and via RegEx search I get all
+        /// the indexes of the `?` of the solution.
+        ///
+        /// The RegEx [charIndexesRegexp] says...
+        ///   [0-9]    -> take only numbers...
+        ///   +        -> ...any many of the previous case (which is numbers)...
+        ///   (?=, \?) -> that have the String ", ?" right after it
+        ///
+        /// After getting all the matches, we group them by joining them with commas (",").
+        /// Then, we take that joined String, split it by "," and parses its contents to int.
+        ///
+        /// Now, we have a List<int> of all the indexes of that solution's "?".
+        /// e.g. String "((0, 0), (1, ?), (2, 1))" has the result [1].
+        ///
+        final charIndexesRegexp = RegExp(r'[0-9]+(?=, \?)');
         // Find all matches
         Iterable<Match> matches = charIndexesRegexp.allMatches(initialSolution.characters.indexed.toList().toString());
-
         // Extract the matched parts and join them with commas
         String result = matches.map((match) => match.group(0)).join(',');
         List<int> charIndexes = result.split(',').map((e) => int.parse(e)).toList();
