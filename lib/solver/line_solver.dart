@@ -10,12 +10,12 @@ import 'package:nonogram/game_loop/nonogram_state.dart';
 import '../backend/type_extensions/nono_axis_extension.dart';
 import '../backend/type_extensions/nono_direction_extension.dart';
 
-bool kPrintComments = false;
-bool activateReturnOnNotEnoughSolvedLines = false;
-bool countBoxes = true;
-bool countActualBoxes = false;
-
 class LineSolver {
+  bool kPrintComments = false;
+  bool activateReturnOnNotEnoughSolvedLines = false;
+  bool countBoxes = false;
+  bool countActualBoxes = false;
+
   void solve(NonogramState state) async {
     state.updateStartingDateTime(DateTime.now());
 
@@ -87,8 +87,7 @@ class LineSolver {
 
         // Extract the matched parts and join them with commas
         String result = matches.map((match) => match.group(0)).join(',');
-
-        List<int> charIndexes = result.split(',').map((e) => int.parse(e)).toList(); //.characters.indexed.toString().;
+        List<int> charIndexes = result.split(',').map((e) => int.parse(e)).toList();
 
         String lookbehinds =
             charIndexes.map((pos) => '^.{${lineType.getSolutionPosition(lineIndex, pos, state.nonogram.width)}}').join('|');
