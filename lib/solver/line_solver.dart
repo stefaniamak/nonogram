@@ -80,27 +80,26 @@ class LineSolver {
           print('charEnd: $charEnd');
         }
 
-        /// In the bellow 4 lines, we want to crate a List<int> with all the index positions
+        /// In the following 4 lines, we create a List<int> with all the index positions
         /// of question marks ("?") in a String. In our case, the String is the current line solution.
         ///
-        /// Get initialSolution of that line, and make an characters.indexed list.
-        /// This list creates a new list which includes the original list but matched with their
-        /// indexes on that list.
+        /// We get the initialSolution of that line and create a list of characters with their indexes (`characters.indexed`).
+        /// This indexed list includes the original characters matched with their positions in the String.
         /// e.g. String `0?1` has the result ((0, 0), (1, ?), (2, 1))
         ///
-        /// I use .toString() to get the list as a String, and via RegEx search I get all
-        /// the indexes of the `?` of the solution.
+        /// We then convert this indexed list to a String using .toString() and use a RegEx search to get all
+        /// the indexes of the `?` characters in the solution.
         ///
-        /// The RegEx [charIndexesRegexp] says...
-        ///   [0-9]    -> take only numbers...
-        ///   +        -> ...any many of the previous case (which is numbers)...
-        ///   (?=, \?) -> that have the String ", ?" right after it
+        /// The RegEx [charIndexesRegexp] pattern is:
+        ///   [0-9]    -> Matches digits...
+        ///   +        -> One or more of the previous case...
+        ///   (?=, ?) -> That are followed by the String ", ?".
         ///
-        /// After getting all the matches, we group them by joining them with commas (",").
-        /// Then, we take that joined String, split it by "," and parses its contents to int.
+        /// After getting all the matches, we join them with commas (",") to form a single String.
+        /// Then, we split this String by "," and parse its contents to integers.
         ///
-        /// Now, we have a List<int> of all the indexes of that solution's "?".
-        /// e.g. String "((0, 0), (1, ?), (2, 1))" has the result [1].
+        /// Now, we have a List<int> of all the indexes of the "?" characters in the solution.
+        /// e.g. String "((0, 0), (1, ?), (2, 1))" results in [1].
         ///
         final charIndexesRegexp = RegExp(r'[0-9]+(?=, \?)');
         // Find all matches
