@@ -109,53 +109,42 @@ class LineSolver {
         String result = matches.map((match) => match.group(0)).join(',');
         List<int> charIndexes = result.split(',').map((e) => int.parse(e)).toList();
 
-        /// Following 3 lines use the list of indexes of "?" of the line solution to find them
-        /// within the whole puzzle solution String, and replaces them with "0"s to cross the out.
+        /// The following 3 lines use the list of indexes of "?" in the line solution to find and replace them
+        /// with "0"s in the entire puzzle solution String.
         ///
-        /// Similarly, we used RegEx to do this work. That was because the positions that
-        /// a column has in a solution String is not grouped together in a position like the
-        /// ones of a row are, but are spread within the solution.
+        /// We use RegEx for this task because the positions of a column in the solution String are spread out,
+        /// unlike those of a row, which are contiguous.
         ///
-        /// The way that the position of each index of a column and row to the whole puzzle
-        /// solution was that it counted the new index that the solution had. So from local index
-        /// that had to do with the line solution String, now we needed to get the global indexes
-        /// considering the locations of the local indexes based on what line we were searching for.
+        /// To find the global positions of each column index in the entire puzzle solution, we convert the local
+        /// indexes from the line solution String to global indexes, taking into account the line we are searching.
         ///
-        /// What we needed to do was to create a RegEx which found all the single elements of the
-        /// global solution, and replace them with "0".
+        /// We create a RegEx to find and replace the specific characters in the global solution with "0".
         ///
-        /// The Regex, so, searches for all the single char Strings that have a specific number
-        /// of characters before them. We generate all the required number of characters based on
-        /// the list of indexes we calculated beforehand for the local solution, and it searches
-        /// all Strings that have exactly that many characters before them.
+        /// The RegEx searches for single character Strings with a specific number of characters before them.
+        /// We generate the required number of characters based on the list of indexes from the local solution,
+        /// and the RegEx matches Strings with exactly that many characters before them.
         ///
-        /// The RegEx is `(?<=lookbehinds).` where [lookbehinds] is another RegEx String, which
-        /// includes a generated String via the local positions list. That generated String is
-        /// multiple ReGex Strings of "?<=^.{7})." (where "7" any number 0 or above), which
-        /// get ReGex grouped (with parenthesis) and separated via "|". Section by section, I will
-        /// explain the parts of the ReGex.
+        /// The RegEx is `(?<=lookbehinds).` where [lookbehinds] is another RegEx String, generated from the local positions list.
+        /// This String consists of multiple RegEx patterns like `(?<=^.{7}).` (where "7" is any number 0 or above),
+        /// grouped and separated by "|". Let's break down the parts of the RegEx:
         ///
-        /// Explaining `(?<=lookbehinds).`
-        ///   (?<=lookbehinds): find the matches where behind them they have the [lookbehinds]
-        ///                     case [true].
-        ///   .               : keep just the next character of that case, whatever it is in value.
-        /// Explaining `lookbehinds`, e.g. ((?<=^.{7}).)|(?<=^.{10}).))
-        ///   Explaining `(?<=^.{7}).`:
-        ///     ?<= : find the match where before that there is...
-        ///     ^   : a String that starts with...
-        ///     .   : just any single character...
-        ///     {7} : multiply the previous case by 7 (where "7" any number 0 or above), so just
-        ///           any and only 7 characters...
-        ///     .   : after finding that groups result (which is everything after that case) give
-        ///           me the one any character right after it.
-        ///   | : If the character you are checking has exactly as many chars as the above ReGex
-        ///       says it should have, keep it.
+        /// Explaining `(?<=lookbehinds).`:
+        ///   (?<=lookbehinds): Matches where [lookbehinds] is true.
+        ///   .               : Matches the next character after the lookbehind condition.
         ///
-        /// e.g. the above example ReGex ((?<=^.{7}).)|(?<=^.{10}).)) applied to a String, it
-        ///      will return the 8th and 11th characters as a result, as they are the only ones
-        ///      that have exactly 7 and 10 chars before them.
+        /// Explaining `lookbehinds`, e.g. ((?<=^.{7}).)|(?<=^.{10}).):
+        ///   (?<=^.{7}).    :
+        ///     (?<= : Lookbehind assertion to ensure what precedes the match...
+        ///     ^    : Is the start of the String...
+        ///     .    : Followed by any single character...
+        ///     {7}  : Previous case repeated exactly 7 times (where "7" is any number 0 or above)...
+        ///     .    : Matches the character immediately following this sequence.
+        ///   |    : Or (alternates between the above generated number conditions).
         ///
-        /// We use the above case to run replaceAllMapped and change the "?" chars we want to "0".
+        /// e.g. RegEx `((?<=^.{7}).)|(?<=^.{10}).)` applied to a String will return the 8th and 11th
+        /// characters, as they have exactly 7 and 10 characters before them, respectively.
+        ///
+        /// We use this regex with replaceAllMapped to change the "?" characters to "0".
         ///
         String lookbehinds =
             charIndexes.map((pos) => '^.{${lineType.getSolutionPosition(lineIndex, pos, state.nonogram.width)}}').join('|');
