@@ -171,6 +171,7 @@ class LineSolver {
       List<List<String>> allLineSolutions = getAllLinePossibleSolutions(state, clues, initialSolution);
       // if (kPrintComments && kDebugMode)
       print('All line solutions: $allLineSolutions');
+      print('allLineSolutions.indexed ${allLineSolutions.indexed}');
 
       if (kPrintComments && kDebugMode) print('Find starting solution of $allLineSolutions with clues $clues.');
       List<String> startingMostSolution = getSideMostSolution(state, allLineSolutions, clues, NonoAxisAlignment.start);
@@ -202,59 +203,143 @@ class LineSolver {
       //   // print('endingMostSolution: $endingMostSolution');
       // }
 
+      RegExp regZeroFilledMatches = RegExp(r'\((\d+), \[(0)\]\)');
+      String inputZeros = allLineSolutions.indexed.toList().toString();
+      var matchesZeros = regZeroFilledMatches.allMatches(inputZeros);
+      for (var mach in matchesZeros) {
+        print('mach: ${mach.group(0)}');
+      }
+
+      RegExp regExpFilledMatches = RegExp(r'\((\d+), ([2-9]|\d{2,})\)');
+      // RegExp regExpFilledMatches = RegExp(r'\((\d+), (\d+)\)');
+      String inputNumbers = '${startingMostSolution.indexed.toList()}${endingMostSolution.indexed.toList()}';
+      print('startingMostSolution: ${startingMostSolution.indexed}');
+      var matchesNumbers = regExpFilledMatches.allMatches(inputNumbers);
+
+      // Use a map to count occurrences of each pair
+      Map<String, int> pairCount = {};
+      // Use a map to store the right number as keys and a set of left numbers as values for pairs that appear twice
+      Map<int, Set<int>> matchMap = {};
+
+      for (var match in matchesNumbers) {
+        String pair = match.group(0)!;
+        // print('pair: $pair');
+        int leftNumber = int.parse(match.group(1)!);
+        // print('leftNumber: $leftNumber');
+        int rightNumber = int.parse(match.group(2)!);
+        // print('rightNumber: $rightNumber');
+
+        // Count occurrences of each pair
+        pairCount[pair] = (pairCount[pair] ?? 0) + 1;
+
+        // Add to matchMap if pair occurs exactly twice
+        if (pairCount[pair] == 2) {
+          matchMap.putIfAbsent(rightNumber, () => {});
+          matchMap[rightNumber]!.add(leftNumber);
+        } else if (pairCount[pair]! > 2) {
+          matchMap[rightNumber]?.remove(leftNumber);
+        }
+      }
+
+      if (matchesZeros.isNotEmpty) {
+        matchMap.putIfAbsent(0, () => {});
+        matchMap[0]!.addAll(matchesZeros.map((match) => int.parse(match.group(1)!)));
+      }
+
+      // Convert the sets to lists and print the final map
+      Map<int, List<int>> result = matchMap.map((key, value) => MapEntry(key, value.toList()));
+
+      print('result: $result');
+
+      for (int clueKey in result.keys) {
+        List<int> charIndexes = result[clueKey]!;
+        int clueIndex = clueKey == 0 ? 0 : clueKey - 2;
+
+        String lookbehinds =
+            charIndexes.map((pos) => '^.{${lineType.getSolutionPosition(lineIndex, pos, state.nonogram.width)}}').join('|');
+        final solutionIndexesRegexp = RegExp(r'(?<=' + lookbehinds + ').');
+
+        var fullUpdatedSolution =
+            state.solutionSteps.last.currentSolution.replaceAllMapped(solutionIndexesRegexp, (match) => clueKey == 0 ? '0' : '1');
+        if (kPrintComments && kDebugMode) print('fullUpdatedSolution: $fullUpdatedSolution');
+
+        print('clueIndex: $clueIndex');
+        print('clues: $clues');
+        if (result.isNotEmpty) {
+          state.addStep(SolutionStep(
+            currentSolution: fullUpdatedSolution,
+            axis: lineType,
+            lineIndex: lineIndex,
+            explanation:
+                '${clueKey == 0 ? 'Cross out' : 'Fill in'} sure boxes for clue ${clues.elementAt(clueIndex)} with index $clueIndex of ${lineType.name} with index $lineIndex.',
+          ));
+          state.stack.updateStack(charIndexes, lineType, state);
+        }
+      }
+
+      // for (var match in combinedSolution) {
+      //   String matchStr = match.group(0)!;
+      //   matchCount[matchStr] = (matchCount[matchStr] ?? 0) + 1;
+      // }
+      //
+      // print('combinedSolution        : ${combinedSolution}');
+      // combinedSolution = combinedSolution.toSet().toList();
+      // print('combinedSolution.toSet(): ${combinedSolution}');
+
       // Μπορώ εδώ αν δεν υπάρχει αλλαγή με το cashed data, τότε να μην τρέχω τη λούπα
       String updatedSolution = initialSolution;
-      for (int charIndex = 0; charIndex < allLineSolutions.length; charIndex++) {
-        if (kPrintComments && kDebugMode) print('Is box unknown and should be checked?');
-        if (initialSolution.characters.characterAt(charIndex).toString() == '?') {
-          if (kPrintComments && kDebugMode) print('Yes it is.');
-          if (kPrintComments && kDebugMode)
-            print(
-                'Are all possible solutions (${allLineSolutions.elementAt(charIndex)}) of box at index $charIndex only zeros (0)?');
-
-          if (allLineSolutions.elementAt(charIndex).everyElementIsZero) {
-            if (kPrintComments && kDebugMode) print('Yes. Cross out this box.');
-            updatedSolution = updatedSolution.replaceRange(charIndex, charIndex + 1, '0');
-
-            int indexSol = lineType.getSolutionPosition(lineIndex, charIndex, state.nonogram.width);
-            var fullUpdatedSolution = state.solutionSteps.last.getUpdatedSolution(indexSol, '0');
-            if (kPrintComments && kDebugMode) print('fullUpdatedSolution: $fullUpdatedSolution');
-            state.addStep(SolutionStep(
-              currentSolution: fullUpdatedSolution,
-              axis: lineType,
-              lineIndex: lineIndex,
-              explanation: 'Cross out box.',
-            ));
-            state.stack.updateStack([charIndex], lineType, state);
-          } else {
-            if (kPrintComments && kDebugMode) print('No.');
-            var startingSolutionIndex = startingMostSolution.elementAt(charIndex).toString();
-            var endingSolutionIndex = endingMostSolution.elementAt(charIndex).toString();
+      if (false)
+        for (int charIndex = 0; charIndex < allLineSolutions.length; charIndex++) {
+          if (kPrintComments && kDebugMode) print('Is box unknown and should be checked?');
+          if (initialSolution.characters.characterAt(charIndex).toString() == '?') {
+            if (kPrintComments && kDebugMode) print('Yes it is.');
             if (kPrintComments && kDebugMode)
-              print('Do both side solutions of box at index $charIndex contain the same clue index?');
-            if (kPrintComments && kDebugMode) print('startingSolutionIndex: $startingSolutionIndex');
-            if (kPrintComments && kDebugMode) print('endingSolutionIndex  : $endingSolutionIndex');
-            if (startingSolutionIndex.isSameClueIndexWith(endingSolutionIndex)) {
-              if (kPrintComments && kDebugMode) print('Yes. Fill in this box.');
-              updatedSolution = updatedSolution.replaceRange(charIndex, charIndex + 1, '1');
+              print(
+                  'Are all possible solutions (${allLineSolutions.elementAt(charIndex)}) of box at index $charIndex only zeros (0)?');
+
+            if (allLineSolutions.elementAt(charIndex).everyElementIsZero) {
+              if (kPrintComments && kDebugMode) print('Yes. Cross out this box.');
+              updatedSolution = updatedSolution.replaceRange(charIndex, charIndex + 1, '0');
+
               int indexSol = lineType.getSolutionPosition(lineIndex, charIndex, state.nonogram.width);
-              state.setFilled(lineType.getSolutionPosition(lineIndex, charIndex, state.nonogram.width));
-              var fullUpdatedSolution = state.solutionSteps.last.getUpdatedSolution(indexSol, '1');
+              var fullUpdatedSolution = state.solutionSteps.last.getUpdatedSolution(indexSol, '0');
               if (kPrintComments && kDebugMode) print('fullUpdatedSolution: $fullUpdatedSolution');
               state.addStep(SolutionStep(
                 currentSolution: fullUpdatedSolution,
                 axis: lineType,
                 lineIndex: lineIndex,
-                explanation: 'Fill in box.',
+                explanation: 'Cross out box.',
               ));
               state.stack.updateStack([charIndex], lineType, state);
             } else {
-              if (kPrintComments && kDebugMode) print('No. It contains different indexes.');
+              if (kPrintComments && kDebugMode) print('No.');
+              var startingSolutionIndex = startingMostSolution.elementAt(charIndex).toString();
+              var endingSolutionIndex = endingMostSolution.elementAt(charIndex).toString();
+              if (kPrintComments && kDebugMode)
+                print('Do both side solutions of box at index $charIndex contain the same clue index?');
+              if (kPrintComments && kDebugMode) print('startingSolutionIndex: $startingSolutionIndex');
+              if (kPrintComments && kDebugMode) print('endingSolutionIndex  : $endingSolutionIndex');
+              if (startingSolutionIndex.isSameClueIndexWith(endingSolutionIndex)) {
+                if (kPrintComments && kDebugMode) print('Yes. Fill in this box.');
+                updatedSolution = updatedSolution.replaceRange(charIndex, charIndex + 1, '1');
+                int indexSol = lineType.getSolutionPosition(lineIndex, charIndex, state.nonogram.width);
+                state.setFilled(lineType.getSolutionPosition(lineIndex, charIndex, state.nonogram.width));
+                var fullUpdatedSolution = state.solutionSteps.last.getUpdatedSolution(indexSol, '1');
+                if (kPrintComments && kDebugMode) print('fullUpdatedSolution: $fullUpdatedSolution');
+                state.addStep(SolutionStep(
+                  currentSolution: fullUpdatedSolution,
+                  axis: lineType,
+                  lineIndex: lineIndex,
+                  explanation: 'Fill in box.',
+                ));
+                state.stack.updateStack([charIndex], lineType, state);
+              } else {
+                if (kPrintComments && kDebugMode) print('No. It contains different indexes.');
+              }
             }
           }
+          if (kPrintComments && kDebugMode) print('No it is not.');
         }
-        if (kPrintComments && kDebugMode) print('No it is not.');
-      }
       // state.addStep(SolutionStep(
       //   currentSolution: updatedSolution,
       //   // lineSolution: endingMostSolution,
