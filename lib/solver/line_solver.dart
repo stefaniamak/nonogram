@@ -166,12 +166,14 @@ class LineSolver {
       if (activateReturnOnNotEnoughSolvedLines && filledBoxes < (clues.sum / 4) && (state.nonogram.width / 4) > clues.sum) {
         return;
       }
+      print('/////////');
       if (kPrintComments && kDebugMode) print('It is not. Starts to calculate all possible solutions...');
       List<List<String>> allLineSolutions = getAllLinePossibleSolutions(state, clues, initialSolution);
-      if (kPrintComments && kDebugMode) print('All line solutions: $allLineSolutions');
+      // if (kPrintComments && kDebugMode)
+      print('All line solutions: $allLineSolutions');
 
       if (kPrintComments && kDebugMode) print('Find starting solution of $allLineSolutions with clues $clues.');
-      var startingMostSolution = getSideMostSolution(state, allLineSolutions, clues, NonoAxisAlignment.start);
+      List<String> startingMostSolution = getSideMostSolution(state, allLineSolutions, clues, NonoAxisAlignment.start);
       // state.addStep(SolutionStep(
       //   currentSolution: initialSolution,
       //   lineSolution: startingMostSolution,
@@ -179,10 +181,11 @@ class LineSolver {
       //   lineIndex: lineIndex,
       //   explanation: '${NonoAxisAlignment.start.name}ing solution of ${lineType.name} number ${lineIndex + 1}.',
       // ));
-      if (kPrintComments && kDebugMode) print('Starting most solution: $startingMostSolution');
+      // if (kPrintComments && kDebugMode)
+      print('Starting most solution: $startingMostSolution');
 
       if (kPrintComments && kDebugMode) print('Find ending solution of $allLineSolutions with clues $clues.');
-      var endingMostSolution = getSideMostSolution(state, allLineSolutions, clues, NonoAxisAlignment.end);
+      List<String> endingMostSolution = getSideMostSolution(state, allLineSolutions, clues, NonoAxisAlignment.end);
       // state.addStep(SolutionStep(
       //   currentSolution: initialSolution,
       //   lineSolution: endingMostSolution,
@@ -190,7 +193,8 @@ class LineSolver {
       //   lineIndex: lineIndex,
       //   explanation: '${NonoAxisAlignment.start.name}ing solution of ${lineType.name} number ${lineIndex + 1}.',
       // ));
-      if (kPrintComments && kDebugMode) print('Ending most solution: $endingMostSolution');
+      // if (kPrintComments && kDebugMode)
+      print('Ending most solution  : $endingMostSolution');
 
       // if (lineIndex == 2 && lineType == NonoAxis.row) {
       //   print('allLineSolutions: $allLineSolutions');
@@ -224,8 +228,8 @@ class LineSolver {
             state.stack.updateStack([charIndex], lineType, state);
           } else {
             if (kPrintComments && kDebugMode) print('No.');
-            var startingSolutionIndex = startingMostSolution.elementAt(charIndex).first.toString();
-            var endingSolutionIndex = endingMostSolution.elementAt(charIndex).first.toString();
+            var startingSolutionIndex = startingMostSolution.elementAt(charIndex).toString();
+            var endingSolutionIndex = endingMostSolution.elementAt(charIndex).toString();
             if (kPrintComments && kDebugMode)
               print('Do both side solutions of box at index $charIndex contain the same clue index?');
             if (kPrintComments && kDebugMode) print('startingSolutionIndex: $startingSolutionIndex');
@@ -357,8 +361,7 @@ class LineSolver {
     return cluesBeforeGood && cluesAfterGood;
   }
 
-  List<List<String>> getSideMostSolution(
-      NonogramState state, List<List<String>> solution, List<int> clues, NonoAxisAlignment axis) {
+  List<String> getSideMostSolution(NonogramState state, List<List<String>> solution, List<int> clues, NonoAxisAlignment axis) {
     if (kPrintComments && kDebugMode) print('Get ${axis.name}ing most solution of solution $solution with clues $clues');
 
     List<int> clueIndexes = Iterable<int>.generate(clues.length, (c) => c + 2).toList();
@@ -369,7 +372,7 @@ class LineSolver {
       clueIndexes = clueIndexes.reversed.toList();
     }
 
-    List<List<String>> sideMostSolution = [];
+    List<String> sideMostSolution = [];
     List<List<String>> remainingSolution = solution;
 
     if (kPrintComments && kDebugMode)
@@ -384,9 +387,9 @@ class LineSolver {
       if (kPrintComments && kDebugMode) print('Is cluePos $cluePos larger than 0?');
       if (kPrintComments && kDebugMode)
         print(cluePos > 0 ? 'Yes, it is. Add $cluePos "0"s to sideMostSolution list' : 'No, it isn\'t. Move on');
-      if (cluePos > 0) sideMostSolution.addAll(Iterable.generate(cluePos, (_) => ['0']).toList());
+      if (cluePos > 0) sideMostSolution.addAll(Iterable.generate(cluePos, (_) => '0').toList());
       if (kPrintComments && kDebugMode) print('Add $clue times clueIndex $clueIndex of clue $clue at sideMostSolution list');
-      sideMostSolution.addAll(Iterable.generate(clue, (_) => ['$clueIndex']).toList());
+      sideMostSolution.addAll(Iterable.generate(clue, (_) => '$clueIndex').toList());
 
       if (kPrintComments && kDebugMode) print('Is solution completed?');
       if (kPrintComments && kDebugMode)
@@ -394,7 +397,7 @@ class LineSolver {
             ? 'No, not finished. Add "0" for space at sideMostSolution list and create a new sublist after clue added'
             : 'Yes it is. Move on');
       if (sideMostSolution.length < solution.length) {
-        sideMostSolution.add(['0']);
+        sideMostSolution.add('0');
         remainingSolution = remainingSolution.sublist(cluePos + clue + 1);
       }
 
@@ -405,7 +408,7 @@ class LineSolver {
     if (kPrintComments && kDebugMode)
       print(sideMostSolution.length < solution.length ? 'No. Complete solution with "0"s' : 'Yes. Move on');
     if (sideMostSolution.length < solution.length) {
-      sideMostSolution.addAll(Iterable.generate(remainingSolution.length, (_) => ['0']).toList());
+      sideMostSolution.addAll(Iterable.generate(remainingSolution.length, (_) => '0').toList());
     }
     if (kPrintComments && kDebugMode) print('Final sideMostSolution: $sideMostSolution');
     return axis == NonoAxisAlignment.end ? sideMostSolution.reversed.toList() : sideMostSolution;
