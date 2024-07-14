@@ -15,6 +15,7 @@ class LineSolver {
   bool activateReturnOnNotEnoughSolvedLines = false;
   bool countBoxes = false;
   bool countActualBoxes = false;
+  bool groupSteps = true;
 
   void solve(NonogramState state) async {
     state.updateStartingDateTime(DateTime.now());
@@ -165,8 +166,7 @@ class LineSolver {
     } else {
       if (activateReturnOnNotEnoughSolvedLines && filledBoxes < (clues.sum / 4) && (state.nonogram.width / 4) > clues.sum) {
         return;
-      }
-      // print('/////////');
+      } // print('/////////');
       if (kPrintComments && kDebugMode) print('It is not. Starts to calculate all possible solutions...');
       List<List<String>> allLineSolutions = getAllLinePossibleSolutions(state, clues, initialSolution);
       // if (kPrintComments && kDebugMode)
@@ -198,107 +198,111 @@ class LineSolver {
       // if (kPrintComments && kDebugMode)
       // print('Ending most solution  : $endingMostSolution');
 
-      // if (lineIndex == 2 && lineType == NonoAxis.row) {
-      //   print('allLineSolutions: $allLineSolutions');
-      //   // print('startingMostSolution: $startingMostSolution');
-      //   // print('endingMostSolution: $endingMostSolution');
-      // }
+      String updatedSolution = '';
 
-      // print('charIndexes:                  $charIndexes');
-      // print('allLineSolutions.indexed:     ${allLineSolutions.indexed}');
-      // print('startingMostSolution.indexed: ${startingMostSolution.indexed}');
-      // print('endingMostSolution.indexed:   ${endingMostSolution.indexed}');
+      if (groupSteps) {
+        // if (lineIndex == 2 && lineType == NonoAxis.row) {
+        //   print('allLineSolutions: $allLineSolutions');
+        //   // print('startingMostSolution: $startingMostSolution');
+        //   // print('endingMostSolution: $endingMostSolution');
+        // }
 
-      // Generate a regex pattern to match any number except those in the exclusion list
-      String inclusionPattern = charIndexes.map((e) => e.toString()).join('|'); //r'\d+'; //
-      // String generatedPattern = r'(' + inclusionPattern + r')';
+        // print('charIndexes:                  $charIndexes');
+        // print('allLineSolutions.indexed:     ${allLineSolutions.indexed}');
+        // print('startingMostSolution.indexed: ${startingMostSolution.indexed}');
+        // print('endingMostSolution.indexed:   ${endingMostSolution.indexed}');
 
-      RegExp regZeroFilledMatches = RegExp(r'\((' + inclusionPattern + r'), \[(0)\]\)');
-      String inputZeros = allLineSolutions.indexed.toList().toString();
-      var matchesZeros = regZeroFilledMatches.allMatches(inputZeros);
-      // for (var mach in matchesZeros) {
-      //   // print('mach: ${mach.group(0)}');
-      // }
+        // Generate a regex pattern to match any number except those in the exclusion list
+        String inclusionPattern = charIndexes.map((e) => e.toString()).join('|'); //r'\d+'; //
+        // String generatedPattern = r'(' + inclusionPattern + r')';
 
-      RegExp regExpFilledMatches = RegExp(r'\((' + inclusionPattern + r'), ([2-9]|\d{2,})\)');
-      // RegExp regExpFilledMatches = RegExp(r'\((\d+), (\d+)\)');
-      String inputNumbers = '${startingMostSolution.indexed.toList()}${endingMostSolution.indexed.toList()}';
-      // print('startingMostSolution: ${startingMostSolution.indexed}');
-      var matchesNumbers = regExpFilledMatches.allMatches(inputNumbers);
+        RegExp regZeroFilledMatches = RegExp(r'\((' + inclusionPattern + r'), \[(0)\]\)');
+        String inputZeros = allLineSolutions.indexed.toList().toString();
+        var matchesZeros = regZeroFilledMatches.allMatches(inputZeros);
+        // for (var mach in matchesZeros) {
+        //   // print('mach: ${mach.group(0)}');
+        // }
 
-      // Use a map to count occurrences of each pair
-      Map<String, int> pairCount = {};
-      // Use a map to store the right number as keys and a set of left numbers as values for pairs that appear twice
-      Map<int, Set<int>> matchMap = {};
+        RegExp regExpFilledMatches = RegExp(r'\((' + inclusionPattern + r'), ([2-9]|\d{2,})\)');
+        // RegExp regExpFilledMatches = RegExp(r'\((\d+), (\d+)\)');
+        String inputNumbers = '${startingMostSolution.indexed.toList()}${endingMostSolution.indexed.toList()}';
+        // print('startingMostSolution: ${startingMostSolution.indexed}');
+        var matchesNumbers = regExpFilledMatches.allMatches(inputNumbers);
 
-      for (var match in matchesNumbers) {
-        String pair = match.group(0)!;
-        // print('pair: $pair');
-        int leftNumber = int.parse(match.group(1)!);
-        // print('leftNumber: $leftNumber');
-        int rightNumber = int.parse(match.group(2)!);
-        // print('rightNumber: $rightNumber');
+        // Use a map to count occurrences of each pair
+        Map<String, int> pairCount = {};
+        // Use a map to store the right number as keys and a set of left numbers as values for pairs that appear twice
+        Map<int, Set<int>> matchMap = {};
 
-        // Count occurrences of each pair
-        pairCount[pair] = (pairCount[pair] ?? 0) + 1;
+        for (var match in matchesNumbers) {
+          String pair = match.group(0)!;
+          // print('pair: $pair');
+          int leftNumber = int.parse(match.group(1)!);
+          // print('leftNumber: $leftNumber');
+          int rightNumber = int.parse(match.group(2)!);
+          // print('rightNumber: $rightNumber');
 
-        // Add to matchMap if pair occurs exactly twice
-        if (pairCount[pair] == 2) {
-          matchMap.putIfAbsent(rightNumber, () => {});
-          matchMap[rightNumber]!.add(leftNumber);
-        } else if (pairCount[pair]! > 2) {
-          matchMap[rightNumber]?.remove(leftNumber);
+          // Count occurrences of each pair
+          pairCount[pair] = (pairCount[pair] ?? 0) + 1;
+
+          // Add to matchMap if pair occurs exactly twice
+          if (pairCount[pair] == 2) {
+            matchMap.putIfAbsent(rightNumber, () => {});
+            matchMap[rightNumber]!.add(leftNumber);
+          } else if (pairCount[pair]! > 2) {
+            matchMap[rightNumber]?.remove(leftNumber);
+          }
         }
-      }
 
-      if (matchesZeros.isNotEmpty) {
-        matchMap.putIfAbsent(0, () => {});
-        matchMap[0]!.addAll(matchesZeros.map((match) => int.parse(match.group(1)!)));
-      }
-
-      // Convert the sets to lists and print the final map
-      Map<int, List<int>> result = matchMap.map((key, value) => MapEntry(key, value.toList()));
-
-      // print('result: $result');
-
-      for (int clueKey in result.keys) {
-        List<int> charIndexes = result[clueKey]!;
-        int clueIndex = clueKey == 0 ? 0 : clueKey - 2;
-
-        String lookbehinds =
-            charIndexes.map((pos) => '^.{${lineType.getSolutionPosition(lineIndex, pos, state.nonogram.width)}}').join('|');
-        final solutionIndexesRegexp = RegExp(r'(?<=' + lookbehinds + ').');
-
-        var fullUpdatedSolution =
-            state.solutionSteps.last.currentSolution.replaceAllMapped(solutionIndexesRegexp, (match) => clueKey == 0 ? '0' : '1');
-        if (kPrintComments && kDebugMode) print('fullUpdatedSolution: $fullUpdatedSolution');
-
-        // print('clueIndex: $clueIndex');
-        // print('clues: $clues');
-        if (result.isNotEmpty) {
-          state.addStep(SolutionStep(
-            currentSolution: fullUpdatedSolution,
-            axis: lineType,
-            lineIndex: lineIndex,
-            explanation:
-                '${clueKey == 0 ? 'Cross out' : 'Fill in'} sure boxes for clue ${clues.elementAt(clueIndex)} with index $clueIndex of ${lineType.name} with index $lineIndex.',
-          ));
-          state.stack.updateStack(charIndexes, lineType, state);
+        if (matchesZeros.isNotEmpty) {
+          matchMap.putIfAbsent(0, () => {});
+          matchMap[0]!.addAll(matchesZeros.map((match) => int.parse(match.group(1)!)));
         }
-      }
 
-      // for (var match in combinedSolution) {
-      //   String matchStr = match.group(0)!;
-      //   matchCount[matchStr] = (matchCount[matchStr] ?? 0) + 1;
-      // }
-      //
-      // print('combinedSolution        : ${combinedSolution}');
-      // combinedSolution = combinedSolution.toSet().toList();
-      // print('combinedSolution.toSet(): ${combinedSolution}');
+        // Convert the sets to lists and print the final map
+        Map<int, List<int>> result = matchMap.map((key, value) => MapEntry(key, value.toList()));
 
-      // Μπορώ εδώ αν δεν υπάρχει αλλαγή με το cashed data, τότε να μην τρέχω τη λούπα
-      String updatedSolution = initialSolution;
-      if (false)
+        // print('result: $result');
+
+        for (int clueKey in result.keys) {
+          List<int> charIndexes = result[clueKey]!;
+          int clueIndex = clueKey == 0 ? 0 : clueKey - 2;
+
+          String lookbehinds =
+              charIndexes.map((pos) => '^.{${lineType.getSolutionPosition(lineIndex, pos, state.nonogram.width)}}').join('|');
+          final solutionIndexesRegexp = RegExp(r'(?<=' + lookbehinds + ').');
+
+          var fullUpdatedSolution = state.solutionSteps.last.currentSolution
+              .replaceAllMapped(solutionIndexesRegexp, (match) => clueKey == 0 ? '0' : '1');
+          if (kPrintComments && kDebugMode) print('fullUpdatedSolution: $fullUpdatedSolution');
+
+          // print('clueIndex: $clueIndex');
+          // print('clues: $clues');
+          if (result.isNotEmpty) {
+            state.addStep(SolutionStep(
+              currentSolution: fullUpdatedSolution,
+              axis: lineType,
+              lineIndex: lineIndex,
+              explanation:
+                  '${clueKey == 0 ? 'Cross out' : 'Fill in'} sure boxes for clue ${clues.elementAt(clueIndex)} with index $clueIndex of ${lineType.name} with index $lineIndex.',
+            ));
+            state.stack.updateStack(charIndexes, lineType, state);
+          }
+        }
+
+        // for (var match in combinedSolution) {
+        //   String matchStr = match.group(0)!;
+        //   matchCount[matchStr] = (matchCount[matchStr] ?? 0) + 1;
+        // }
+        //
+        // print('combinedSolution        : ${combinedSolution}');
+        // combinedSolution = combinedSolution.toSet().toList();
+        // print('combinedSolution.toSet(): ${combinedSolution}');
+        // Μπορώ εδώ αν δεν υπάρχει αλλαγή με το cashed data, τότε να μην τρέχω τη λούπα
+        //  updatedSolution = initialSolution;
+      } else {
+        // Μπορώ εδώ αν δεν υπάρχει αλλαγή με το cashed data, τότε να μην τρέχω τη λούπα
+        String updatedSolution = initialSolution;
         for (int charIndex = 0; charIndex < allLineSolutions.length; charIndex++) {
           if (kPrintComments && kDebugMode) print('Is box unknown and should be checked?');
           if (initialSolution.characters.characterAt(charIndex).toString() == '?') {
@@ -350,6 +354,7 @@ class LineSolver {
           }
           if (kPrintComments && kDebugMode) print('No it is not.');
         }
+      }
       // state.addStep(SolutionStep(
       //   currentSolution: updatedSolution,
       //   // lineSolution: endingMostSolution,
