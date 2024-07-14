@@ -166,12 +166,12 @@ class LineSolver {
       if (activateReturnOnNotEnoughSolvedLines && filledBoxes < (clues.sum / 4) && (state.nonogram.width / 4) > clues.sum) {
         return;
       }
-      print('/////////');
+      // print('/////////');
       if (kPrintComments && kDebugMode) print('It is not. Starts to calculate all possible solutions...');
       List<List<String>> allLineSolutions = getAllLinePossibleSolutions(state, clues, initialSolution);
       // if (kPrintComments && kDebugMode)
-      print('All line solutions: $allLineSolutions');
-      print('allLineSolutions.indexed ${allLineSolutions.indexed}');
+      // print('All line solutions: $allLineSolutions');
+      // print('allLineSolutions.indexed ${allLineSolutions.indexed}');
 
       if (kPrintComments && kDebugMode) print('Find starting solution of $allLineSolutions with clues $clues.');
       List<String> startingMostSolution = getSideMostSolution(state, allLineSolutions, clues, NonoAxisAlignment.start);
@@ -183,7 +183,7 @@ class LineSolver {
       //   explanation: '${NonoAxisAlignment.start.name}ing solution of ${lineType.name} number ${lineIndex + 1}.',
       // ));
       // if (kPrintComments && kDebugMode)
-      print('Starting most solution: $startingMostSolution');
+      // print('Starting most solution: $startingMostSolution');
 
       if (kPrintComments && kDebugMode) print('Find ending solution of $allLineSolutions with clues $clues.');
       List<String> endingMostSolution = getSideMostSolution(state, allLineSolutions, clues, NonoAxisAlignment.end);
@@ -195,7 +195,7 @@ class LineSolver {
       //   explanation: '${NonoAxisAlignment.start.name}ing solution of ${lineType.name} number ${lineIndex + 1}.',
       // ));
       // if (kPrintComments && kDebugMode)
-      print('Ending most solution  : $endingMostSolution');
+      // print('Ending most solution  : $endingMostSolution');
 
       // if (lineIndex == 2 && lineType == NonoAxis.row) {
       //   print('allLineSolutions: $allLineSolutions');
@@ -206,14 +206,14 @@ class LineSolver {
       RegExp regZeroFilledMatches = RegExp(r'\((\d+), \[(0)\]\)');
       String inputZeros = allLineSolutions.indexed.toList().toString();
       var matchesZeros = regZeroFilledMatches.allMatches(inputZeros);
-      for (var mach in matchesZeros) {
-        print('mach: ${mach.group(0)}');
-      }
+      // for (var mach in matchesZeros) {
+      //   // print('mach: ${mach.group(0)}');
+      // }
 
       RegExp regExpFilledMatches = RegExp(r'\((\d+), ([2-9]|\d{2,})\)');
       // RegExp regExpFilledMatches = RegExp(r'\((\d+), (\d+)\)');
       String inputNumbers = '${startingMostSolution.indexed.toList()}${endingMostSolution.indexed.toList()}';
-      print('startingMostSolution: ${startingMostSolution.indexed}');
+      // print('startingMostSolution: ${startingMostSolution.indexed}');
       var matchesNumbers = regExpFilledMatches.allMatches(inputNumbers);
 
       // Use a map to count occurrences of each pair
@@ -249,7 +249,7 @@ class LineSolver {
       // Convert the sets to lists and print the final map
       Map<int, List<int>> result = matchMap.map((key, value) => MapEntry(key, value.toList()));
 
-      print('result: $result');
+      // print('result: $result');
 
       for (int clueKey in result.keys) {
         List<int> charIndexes = result[clueKey]!;
@@ -263,8 +263,8 @@ class LineSolver {
             state.solutionSteps.last.currentSolution.replaceAllMapped(solutionIndexesRegexp, (match) => clueKey == 0 ? '0' : '1');
         if (kPrintComments && kDebugMode) print('fullUpdatedSolution: $fullUpdatedSolution');
 
-        print('clueIndex: $clueIndex');
-        print('clues: $clues');
+        // print('clueIndex: $clueIndex');
+        // print('clues: $clues');
         if (result.isNotEmpty) {
           state.addStep(SolutionStep(
             currentSolution: fullUpdatedSolution,
