@@ -70,6 +70,34 @@ class LineSolver {
     bool isLineCompleted = filledBoxes == clues.sum;
     if (kPrintComments && kDebugMode) print('Are filled boxes ($filledBoxes) equal with clue\'s sum (${clues.sum})?');
 
+    /// In the following 4 lines, we create a List<int> with all the index positions
+    /// of question marks ("?") in a String. In our case, the String is the current line solution.
+    ///
+    /// We get the initialSolution of that line and create a list of characters with their indexes (`characters.indexed`).
+    /// This indexed list includes the original characters matched with their positions in the String.
+    /// e.g. String `0?1` has the result ((0, 0), (1, ?), (2, 1))
+    ///
+    /// We then convert this indexed list to a String using .toString() and use a RegEx search to get all
+    /// the indexes of the `?` characters in the solution.
+    ///
+    /// The RegEx [charIndexesRegexp] pattern is:
+    ///   [0-9]    -> Matches digits...
+    ///   +        -> One or more of the previous case...
+    ///   (?=, ?) -> That are followed by the String ", ?".
+    ///
+    /// After getting all the matches, we join them with commas (",") to form a single String.
+    /// Then, we split this String by "," and parse its contents to integers.
+    ///
+    /// Now, we have a List<int> of all the indexes of the "?" characters in the solution.
+    /// e.g. String "((0, 0), (1, ?), (2, 1))" results in [1].
+    ///
+    final charIndexesRegexp = RegExp(r'[0-9]+(?=, \?)');
+    // Find all matches
+    Iterable<Match> matches = charIndexesRegexp.allMatches(initialSolution.characters.indexed.toList().toString());
+    // Extract the matched parts and join them with commas
+    String result = matches.map((match) => match.group(0)).join(',');
+    List<int> charIndexes = result.isNotEmpty ? result.split(',').map((e) => int.parse(e)).toList() : <int>[];
+
     if (isLineCompleted) {
       if (kPrintComments && kDebugMode) print('It is. Shall cross out remaining empty boxes if any left.');
       if (initialSolution.characters.contains('?')) {
@@ -79,34 +107,6 @@ class LineSolver {
           print('charStart: $charStart');
           print('charEnd: $charEnd');
         }
-
-        /// In the following 4 lines, we create a List<int> with all the index positions
-        /// of question marks ("?") in a String. In our case, the String is the current line solution.
-        ///
-        /// We get the initialSolution of that line and create a list of characters with their indexes (`characters.indexed`).
-        /// This indexed list includes the original characters matched with their positions in the String.
-        /// e.g. String `0?1` has the result ((0, 0), (1, ?), (2, 1))
-        ///
-        /// We then convert this indexed list to a String using .toString() and use a RegEx search to get all
-        /// the indexes of the `?` characters in the solution.
-        ///
-        /// The RegEx [charIndexesRegexp] pattern is:
-        ///   [0-9]    -> Matches digits...
-        ///   +        -> One or more of the previous case...
-        ///   (?=, ?) -> That are followed by the String ", ?".
-        ///
-        /// After getting all the matches, we join them with commas (",") to form a single String.
-        /// Then, we split this String by "," and parse its contents to integers.
-        ///
-        /// Now, we have a List<int> of all the indexes of the "?" characters in the solution.
-        /// e.g. String "((0, 0), (1, ?), (2, 1))" results in [1].
-        ///
-        final charIndexesRegexp = RegExp(r'[0-9]+(?=, \?)');
-        // Find all matches
-        Iterable<Match> matches = charIndexesRegexp.allMatches(initialSolution.characters.indexed.toList().toString());
-        // Extract the matched parts and join them with commas
-        String result = matches.map((match) => match.group(0)).join(',');
-        List<int> charIndexes = result.split(',').map((e) => int.parse(e)).toList();
 
         /// The following 3 lines use the list of indexes of "?" in the line solution to find and replace them
         /// with "0"s in the entire puzzle solution String.
@@ -147,7 +147,7 @@ class LineSolver {
         ///
         String lookbehinds =
             charIndexes.map((pos) => '^.{${lineType.getSolutionPosition(lineIndex, pos, state.nonogram.width)}}').join('|');
-        final solutionIndexesRegexp = RegExp(r'(?<=' + lookbehinds + ').');
+        final solutionIndexesRegexp = RegExp(r'(?<=' + lookbehinds + r').');
 
         var fullUpdatedSolution =
             state.solutionSteps.last.currentSolution.replaceAllMapped(solutionIndexesRegexp, (match) => '0');
@@ -171,6 +171,7 @@ class LineSolver {
       List<List<String>> allLineSolutions = getAllLinePossibleSolutions(state, clues, initialSolution);
       // if (kPrintComments && kDebugMode)
       // print('All line solutions: $allLineSolutions');
+      // print('initialSolution ${initialSolution}');
       // print('allLineSolutions.indexed ${allLineSolutions.indexed}');
 
       if (kPrintComments && kDebugMode) print('Find starting solution of $allLineSolutions with clues $clues.');
@@ -203,14 +204,23 @@ class LineSolver {
       //   // print('endingMostSolution: $endingMostSolution');
       // }
 
-      RegExp regZeroFilledMatches = RegExp(r'\((\d+), \[(0)\]\)');
+      // print('charIndexes:                  $charIndexes');
+      // print('allLineSolutions.indexed:     ${allLineSolutions.indexed}');
+      // print('startingMostSolution.indexed: ${startingMostSolution.indexed}');
+      // print('endingMostSolution.indexed:   ${endingMostSolution.indexed}');
+
+      // Generate a regex pattern to match any number except those in the exclusion list
+      String inclusionPattern = charIndexes.map((e) => e.toString()).join('|'); //r'\d+'; //
+      // String generatedPattern = r'(' + inclusionPattern + r')';
+
+      RegExp regZeroFilledMatches = RegExp(r'\((' + inclusionPattern + r'), \[(0)\]\)');
       String inputZeros = allLineSolutions.indexed.toList().toString();
       var matchesZeros = regZeroFilledMatches.allMatches(inputZeros);
       // for (var mach in matchesZeros) {
       //   // print('mach: ${mach.group(0)}');
       // }
 
-      RegExp regExpFilledMatches = RegExp(r'\((\d+), ([2-9]|\d{2,})\)');
+      RegExp regExpFilledMatches = RegExp(r'\((' + inclusionPattern + r'), ([2-9]|\d{2,})\)');
       // RegExp regExpFilledMatches = RegExp(r'\((\d+), (\d+)\)');
       String inputNumbers = '${startingMostSolution.indexed.toList()}${endingMostSolution.indexed.toList()}';
       // print('startingMostSolution: ${startingMostSolution.indexed}');
