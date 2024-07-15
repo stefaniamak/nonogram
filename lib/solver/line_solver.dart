@@ -202,32 +202,15 @@ class LineSolver {
       String updatedSolution = '';
 
       if (groupSteps) {
-        // if (lineIndex == 2 && lineType == NonoAxis.row) {
-        //   print('allLineSolutions: $allLineSolutions');
-        //   // print('startingMostSolution: $startingMostSolution');
-        //   // print('endingMostSolution: $endingMostSolution');
-        // }
-
-        // print('charIndexesOfQMarks:                  $charIndexesOfQMarks');
-        // print('allLineSolutions.indexed:     ${allLineSolutions.indexed}');
-        // print('startingMostSolution.indexed: ${startingMostSolution.indexed}');
-        // print('endingMostSolution.indexed:   ${endingMostSolution.indexed}');
-
         // Generate a regex pattern to match any number except those in the exclusion list
-        String inclusionPattern = charIndexesOfQMarks.map((e) => e.toString()).join('|'); //r'\d+'; //
-        // String generatedPattern = r'(' + inclusionPattern + r')';
+        String inclusionPattern = charIndexesOfQMarks.map((e) => e.toString()).join('|');
 
         RegExp regZeroFilledMatches = RegExp(r'\((' + inclusionPattern + r'), \[(0)\]\)');
         String inputZeros = allLineSolutions.indexed.toList().toString();
         var matchesZeros = regZeroFilledMatches.allMatches(inputZeros);
-        // for (var mach in matchesZeros) {
-        //   // print('mach: ${mach.group(0)}');
-        // }
 
         RegExp regExpFilledMatches = RegExp(r'\((' + inclusionPattern + r'), ([2-9]|\d{2,})\)');
-        // RegExp regExpFilledMatches = RegExp(r'\((\d+), (\d+)\)');
         String inputNumbers = '${startingMostSolution.indexed.toList()}${endingMostSolution.indexed.toList()}';
-        // print('startingMostSolution: ${startingMostSolution.indexed}');
         var matchesNumbers = regExpFilledMatches.allMatches(inputNumbers);
 
         // Use a map to count occurrences of each pair
@@ -263,22 +246,18 @@ class LineSolver {
         // Convert the sets to lists and print the final map
         Map<int, List<int>> result = matchMap.map((key, value) => MapEntry(key, value.toList()));
 
-        // print('result: $result');
-
         for (int clueKey in result.keys) {
           List<int> charIndexes = result[clueKey]!;
           int clueIndex = clueKey == 0 ? 0 : clueKey - 2;
 
           String lookbehinds =
               charIndexes.map((pos) => '^.{${lineType.getSolutionPosition(lineIndex, pos, state.nonogram.width)}}').join('|');
-          final solutionIndexesRegexp = RegExp(r'(?<=' + lookbehinds + ').');
+          final solutionIndexesRegexp = RegExp(r'(?<=' + lookbehinds + r').');
 
           var fullUpdatedSolution = state.solutionSteps.last.currentSolution
               .replaceAllMapped(solutionIndexesRegexp, (match) => clueKey == 0 ? '0' : '1');
           if (kPrintComments && kDebugMode) print('fullUpdatedSolution: $fullUpdatedSolution');
 
-          // print('clueIndex: $clueIndex');
-          // print('clues: $clues');
           if (result.isNotEmpty) {
             state.addStep(SolutionStep(
               currentSolution: fullUpdatedSolution,
@@ -290,17 +269,6 @@ class LineSolver {
             state.stack.updateStack(charIndexes, lineType, state);
           }
         }
-
-        // for (var match in combinedSolution) {
-        //   String matchStr = match.group(0)!;
-        //   matchCount[matchStr] = (matchCount[matchStr] ?? 0) + 1;
-        // }
-        //
-        // print('combinedSolution        : ${combinedSolution}');
-        // combinedSolution = combinedSolution.toSet().toList();
-        // print('combinedSolution.toSet(): ${combinedSolution}');
-        // Μπορώ εδώ αν δεν υπάρχει αλλαγή με το cashed data, τότε να μην τρέχω τη λούπα
-        //  updatedSolution = initialSolution;
       } else {
         String updatedSolution = initialSolution;
         for (int charIndex in charIndexesOfQMarks) {
@@ -331,6 +299,7 @@ class LineSolver {
               var endingSolutionIndex = endingMostSolution.elementAt(charIndex).toString();
               if (kPrintComments && kDebugMode)
                 print('Do both side solutions of box at index $charIndex contain the same clue index?');
+
               if (kPrintComments && kDebugMode) print('startingSolutionIndex: $startingSolutionIndex');
               if (kPrintComments && kDebugMode) print('endingSolutionIndex  : $endingSolutionIndex');
               if (startingSolutionIndex.isSameClueIndexWith(endingSolutionIndex)) {
@@ -355,13 +324,6 @@ class LineSolver {
           if (kPrintComments && kDebugMode) print('No it is not.');
         }
       }
-      // state.addStep(SolutionStep(
-      //   currentSolution: updatedSolution,
-      //   // lineSolution: endingMostSolution,
-      //   axis: lineType,
-      //   lineIndex: lineIndex,
-      //   explanation: 'Cross out empty boxes and fill in solution overlaps.',
-      // ));
       if (kPrintComments && kDebugMode) print('Overlapped solution: $updatedSolution');
       state.updateLinesChecked();
     }
