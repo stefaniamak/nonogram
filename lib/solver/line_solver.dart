@@ -15,7 +15,7 @@ class LineSolver {
   bool activateReturnOnNotEnoughSolvedLines = false;
   bool countBoxes = false;
   bool countActualBoxes = false;
-  bool groupSteps = true;
+  bool groupSteps = false;
 
   void solve(NonogramState state) async {
     state.updateStartingDateTime(DateTime.now());
@@ -97,7 +97,7 @@ class LineSolver {
     Iterable<Match> matches = charIndexesRegexp.allMatches(initialSolution.characters.indexed.toList().toString());
     // Extract the matched parts and join them with commas
     String result = matches.map((match) => match.group(0)).join(',');
-    List<int> charIndexes = result.isNotEmpty ? result.split(',').map((e) => int.parse(e)).toList() : <int>[];
+    List<int> charIndexesOfQMarks = result.isNotEmpty ? result.split(',').map((e) => int.parse(e)).toList() : <int>[];
 
     if (isLineCompleted) {
       if (kPrintComments && kDebugMode) print('It is. Shall cross out remaining empty boxes if any left.');
@@ -146,8 +146,9 @@ class LineSolver {
         ///
         /// We use this regex with replaceAllMapped to change the "?" characters to "0".
         ///
-        String lookbehinds =
-            charIndexes.map((pos) => '^.{${lineType.getSolutionPosition(lineIndex, pos, state.nonogram.width)}}').join('|');
+        String lookbehinds = charIndexesOfQMarks
+            .map((pos) => '^.{${lineType.getSolutionPosition(lineIndex, pos, state.nonogram.width)}}')
+            .join('|');
         final solutionIndexesRegexp = RegExp(r'(?<=' + lookbehinds + r').');
 
         var fullUpdatedSolution =
@@ -161,7 +162,7 @@ class LineSolver {
           explanation: 'Cross out all remaining empty boxes of ${lineType.name} with index $lineIndex.',
         ));
 
-        state.stack.updateStack(charIndexes, lineType, state);
+        state.stack.updateStack(charIndexesOfQMarks, lineType, state);
       }
     } else {
       if (activateReturnOnNotEnoughSolvedLines && filledBoxes < (clues.sum / 4) && (state.nonogram.width / 4) > clues.sum) {
@@ -207,13 +208,13 @@ class LineSolver {
         //   // print('endingMostSolution: $endingMostSolution');
         // }
 
-        // print('charIndexes:                  $charIndexes');
+        // print('charIndexesOfQMarks:                  $charIndexesOfQMarks');
         // print('allLineSolutions.indexed:     ${allLineSolutions.indexed}');
         // print('startingMostSolution.indexed: ${startingMostSolution.indexed}');
         // print('endingMostSolution.indexed:   ${endingMostSolution.indexed}');
 
         // Generate a regex pattern to match any number except those in the exclusion list
-        String inclusionPattern = charIndexes.map((e) => e.toString()).join('|'); //r'\d+'; //
+        String inclusionPattern = charIndexesOfQMarks.map((e) => e.toString()).join('|'); //r'\d+'; //
         // String generatedPattern = r'(' + inclusionPattern + r')';
 
         RegExp regZeroFilledMatches = RegExp(r'\((' + inclusionPattern + r'), \[(0)\]\)');
@@ -301,9 +302,8 @@ class LineSolver {
         // Μπορώ εδώ αν δεν υπάρχει αλλαγή με το cashed data, τότε να μην τρέχω τη λούπα
         //  updatedSolution = initialSolution;
       } else {
-        // Μπορώ εδώ αν δεν υπάρχει αλλαγή με το cashed data, τότε να μην τρέχω τη λούπα
         String updatedSolution = initialSolution;
-        for (int charIndex = 0; charIndex < allLineSolutions.length; charIndex++) {
+        for (int charIndex in charIndexesOfQMarks) {
           if (kPrintComments && kDebugMode) print('Is box unknown and should be checked?');
           if (initialSolution.characters.characterAt(charIndex).toString() == '?') {
             if (kPrintComments && kDebugMode) print('Yes it is.');
