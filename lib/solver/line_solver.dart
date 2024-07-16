@@ -167,7 +167,7 @@ class LineSolver {
     } else {
       if (activateReturnOnNotEnoughSolvedLines && filledBoxes < (clues.sum / 4) && (state.nonogram.width / 4) > clues.sum) {
         return;
-      } // print('/////////');
+      }
       if (kPrintComments && kDebugMode) print('It is not. Starts to calculate all possible solutions...');
       List<List<String>> allLineSolutions = getAllLinePossibleSolutions(state, clues, initialSolution);
       if (kPrintComments && kDebugMode) print('All line solutions: $allLineSolutions');
@@ -198,52 +198,23 @@ class LineSolver {
 
       if (groupSteps) {
         // Generate a regex pattern to match any number except those in the exclusion list
-        String inclusionPattern = charIndexesOfQMarks.map((e) => e.toString()).join('|');
-
+        String inclusionPattern = charIndexesOfQMarks.map((e) => e).join('|');
         // Precompile regex patterns
         RegExp regZeroFilledMatches = RegExp(r'\((' + inclusionPattern + r'), \[(0)\]\)');
-        // RegExp regExpFilledMatches = RegExp(r'\((' + inclusionPattern + r'), ([2-9]|\d{2,})\)');
-
         // Convert input lists to string once
         String inputZeros = allLineSolutions.indexed.toList().toString();
-        // String inputNumbers = '${startingMostSolution.indexed.toList()}${endingMostSolution.indexed.toList()}';
-
         // Find matches using precompiled regex patterns
         Iterable<RegExpMatch> matchesZeros = regZeroFilledMatches.allMatches(inputZeros);
-        // Iterable<RegExpMatch> matchesNumbers = regExpFilledMatches.allMatches(inputNumbers);
-        // Iterable<RegExpMatch> matchesNumbersLeft = regExpFilledMatches.allMatches(inputNumbers);
-        // Iterable<RegExpMatch> matchesNumbersRight = regExpFilledMatches.allMatches(inputNumbers);
 
-        // Use a map to count occurrences of each pair
-        Map<String, int> pairCount = {};
         // Use a map to store the right number as keys and a set of left numbers as values for pairs that appear twice
         Map<int, Set<int>> matchMap = {};
-        // print('.........');
-        // print('inputNumbersStart: ${inputNumbersStart}');
-        // print('inputNumbersEnd: ${inputNumbersEnd}');
-        // print('duplicateInputNumbers: ${duplicateInputNumbers}');
 
-        Set<(int, String)> inputNumbersStart = startingMostSolution.indexed.toSet(); //.toString();
-        Set<(int, String)> inputNumbersEnd = endingMostSolution.indexed.toSet(); //.toString();
+        Set<(int, String)> inputNumbersStart = startingMostSolution.indexed.toSet();
+        Set<(int, String)> inputNumbersEnd = endingMostSolution.indexed.toSet();
         var duplicateInputNumbers = inputNumbersStart.intersection(inputNumbersEnd);
 
-        // print('----');
-        // print('inputNumbersStart: ${inputNumbersStart}');
-        // print('inputNumbersEnd: ${inputNumbersEnd}');
-        // print('duplicateInputNumbers: ${duplicateInputNumbers}');
-
         for (var match in duplicateInputNumbers) {
-          (int, String) pair = match; // match.group(0)!;
-
-          // Count occurrences of each pair
-          // pairCount[pair] = (pairCount[pair] ?? 0) + 1;
-
-          // Add to matchMap if pair occurs exactly twice
-          // if (!matchesNumbersDuplicates.contains(pair)) {
-          //(pairCount[pair]! >= 2) {
-          // print('/////////');
-          // print('leftNumber: ${pair.$1}');
-          // print('rightNumber: ${pair.$2}');
+          (int, String) pair = match;
           int leftNumber = pair.$1;
           int rightNumber = int.parse(pair.$2);
           if (rightNumber != 0 && charIndexesOfQMarks.contains(leftNumber)) {
