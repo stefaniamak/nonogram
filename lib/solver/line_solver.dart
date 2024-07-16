@@ -15,7 +15,7 @@ class LineSolver {
   bool activateReturnOnNotEnoughSolvedLines = false;
   bool countBoxes = false;
   bool countActualBoxes = false;
-  bool groupSteps = false;
+  bool groupSteps = true;
 
   void solve(NonogramState state) async {
     state.updateStartingDateTime(DateTime.now());
@@ -170,10 +170,7 @@ class LineSolver {
       } // print('/////////');
       if (kPrintComments && kDebugMode) print('It is not. Starts to calculate all possible solutions...');
       List<List<String>> allLineSolutions = getAllLinePossibleSolutions(state, clues, initialSolution);
-      // if (kPrintComments && kDebugMode)
-      // print('All line solutions: $allLineSolutions');
-      // print('initialSolution ${initialSolution}');
-      // print('allLineSolutions.indexed ${allLineSolutions.indexed}');
+      if (kPrintComments && kDebugMode) print('All line solutions: $allLineSolutions');
 
       if (kPrintComments && kDebugMode) print('Find starting solution of $allLineSolutions with clues $clues.');
       List<String> startingMostSolution = getSideMostSolution(state, allLineSolutions, clues, NonoAxisAlignment.start);
@@ -184,8 +181,7 @@ class LineSolver {
       //   lineIndex: lineIndex,
       //   explanation: '${NonoAxisAlignment.start.name}ing solution of ${lineType.name} number ${lineIndex + 1}.',
       // ));
-      // if (kPrintComments && kDebugMode)
-      // print('Starting most solution: $startingMostSolution');
+      if (kPrintComments && kDebugMode) print('Starting most solution: $startingMostSolution');
 
       if (kPrintComments && kDebugMode) print('Find ending solution of $allLineSolutions with clues $clues.');
       List<String> endingMostSolution = getSideMostSolution(state, allLineSolutions, clues, NonoAxisAlignment.end);
@@ -196,8 +192,7 @@ class LineSolver {
       //   lineIndex: lineIndex,
       //   explanation: '${NonoAxisAlignment.start.name}ing solution of ${lineType.name} number ${lineIndex + 1}.',
       // ));
-      // if (kPrintComments && kDebugMode)
-      // print('Ending most solution  : $endingMostSolution');
+      if (kPrintComments && kDebugMode) print('Ending most solution  : $endingMostSolution');
 
       String updatedSolution = '';
 
@@ -205,36 +200,55 @@ class LineSolver {
         // Generate a regex pattern to match any number except those in the exclusion list
         String inclusionPattern = charIndexesOfQMarks.map((e) => e.toString()).join('|');
 
+        // Precompile regex patterns
         RegExp regZeroFilledMatches = RegExp(r'\((' + inclusionPattern + r'), \[(0)\]\)');
-        String inputZeros = allLineSolutions.indexed.toList().toString();
-        var matchesZeros = regZeroFilledMatches.allMatches(inputZeros);
+        // RegExp regExpFilledMatches = RegExp(r'\((' + inclusionPattern + r'), ([2-9]|\d{2,})\)');
 
-        RegExp regExpFilledMatches = RegExp(r'\((' + inclusionPattern + r'), ([2-9]|\d{2,})\)');
-        String inputNumbers = '${startingMostSolution.indexed.toList()}${endingMostSolution.indexed.toList()}';
-        var matchesNumbers = regExpFilledMatches.allMatches(inputNumbers);
+        // Convert input lists to string once
+        String inputZeros = allLineSolutions.indexed.toList().toString();
+        // String inputNumbers = '${startingMostSolution.indexed.toList()}${endingMostSolution.indexed.toList()}';
+
+        // Find matches using precompiled regex patterns
+        Iterable<RegExpMatch> matchesZeros = regZeroFilledMatches.allMatches(inputZeros);
+        // Iterable<RegExpMatch> matchesNumbers = regExpFilledMatches.allMatches(inputNumbers);
+        // Iterable<RegExpMatch> matchesNumbersLeft = regExpFilledMatches.allMatches(inputNumbers);
+        // Iterable<RegExpMatch> matchesNumbersRight = regExpFilledMatches.allMatches(inputNumbers);
 
         // Use a map to count occurrences of each pair
         Map<String, int> pairCount = {};
         // Use a map to store the right number as keys and a set of left numbers as values for pairs that appear twice
         Map<int, Set<int>> matchMap = {};
+        // print('.........');
+        // print('inputNumbersStart: ${inputNumbersStart}');
+        // print('inputNumbersEnd: ${inputNumbersEnd}');
+        // print('duplicateInputNumbers: ${duplicateInputNumbers}');
 
-        for (var match in matchesNumbers) {
-          String pair = match.group(0)!;
-          // print('pair: $pair');
-          int leftNumber = int.parse(match.group(1)!);
-          // print('leftNumber: $leftNumber');
-          int rightNumber = int.parse(match.group(2)!);
-          // print('rightNumber: $rightNumber');
+        Set<(int, String)> inputNumbersStart = startingMostSolution.indexed.toSet(); //.toString();
+        Set<(int, String)> inputNumbersEnd = endingMostSolution.indexed.toSet(); //.toString();
+        var duplicateInputNumbers = inputNumbersStart.intersection(inputNumbersEnd);
+
+        // print('----');
+        // print('inputNumbersStart: ${inputNumbersStart}');
+        // print('inputNumbersEnd: ${inputNumbersEnd}');
+        // print('duplicateInputNumbers: ${duplicateInputNumbers}');
+
+        for (var match in duplicateInputNumbers) {
+          (int, String) pair = match; // match.group(0)!;
 
           // Count occurrences of each pair
-          pairCount[pair] = (pairCount[pair] ?? 0) + 1;
+          // pairCount[pair] = (pairCount[pair] ?? 0) + 1;
 
           // Add to matchMap if pair occurs exactly twice
-          if (pairCount[pair] == 2) {
+          // if (!matchesNumbersDuplicates.contains(pair)) {
+          //(pairCount[pair]! >= 2) {
+          // print('/////////');
+          // print('leftNumber: ${pair.$1}');
+          // print('rightNumber: ${pair.$2}');
+          int leftNumber = pair.$1;
+          int rightNumber = int.parse(pair.$2);
+          if (rightNumber != 0 && charIndexesOfQMarks.contains(leftNumber)) {
             matchMap.putIfAbsent(rightNumber, () => {});
             matchMap[rightNumber]!.add(leftNumber);
-          } else if (pairCount[pair]! > 2) {
-            matchMap[rightNumber]?.remove(leftNumber);
           }
         }
 
