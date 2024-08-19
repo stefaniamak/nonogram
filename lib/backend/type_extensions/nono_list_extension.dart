@@ -13,10 +13,28 @@ extension NonoListExtension on List {
     return contains({charIndex: lineType});
   }
 
-  void updateStack(int charIndex, NonoAxis lineType, NonogramState state) {
+  void updateStack(List<int> charIndexes, NonoAxis lineType, NonogramState state) {
     NonoAxis newAxis = lineType == NonoAxis.row ? NonoAxis.column : NonoAxis.row;
-    if (!isInStack(charIndex, newAxis)) {
-      state.pushStack({charIndex: newAxis});
+    List<Map<int, NonoAxis>> newStackElements = charIndexes.map((charIndex) => {charIndex: newAxis}).toList();
+    List<Map<int, NonoAxis>> finalStackElements = newStackElements;
+
+    if (finalStackElements.length > 1) {
+      List<Map<int, NonoAxis>> commonStackElements = newStackElements.toSet().intersection(toSet()).toList();
+      finalStackElements = newStackElements;
+      finalStackElements.removeWhere((element) => commonStackElements.contains(element));
     }
+
+    if (finalStackElements.isNotEmpty) {
+      state.pushStack(newStackElements);
+    }
+
+    // if (!isInStack(charIndexes, newAxis)) {
+    //   state.pushStack({charIndexes: newAxis});
+    // } else {
+    //   // print('bumped');
+    //   // print('stack before ${state.stack}');
+    //   // state.bumpToStack({charIndex: newAxis});
+    //   // print('stack after ${state.stack}');
+    // }
   }
 }

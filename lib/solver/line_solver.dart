@@ -10,10 +10,16 @@ import 'package:nonogram/game_loop/nonogram_state.dart';
 import '../backend/type_extensions/nono_axis_extension.dart';
 import '../backend/type_extensions/nono_direction_extension.dart';
 
-bool kPrintComments = false;
-
 class LineSolver {
+  bool kPrintComments = false;
+  bool activateReturnOnNotEnoughSolvedLines = false;
+  bool countBoxes = false;
+  bool countActualBoxes = false;
+  bool groupSteps = true;
+
   void solve(NonogramState state) async {
+    state.updateStartingDateTime(DateTime.now());
+
     overlapping(state);
 
     state.addStep(
@@ -24,6 +30,11 @@ class LineSolver {
       ),
     );
     state.updateStepNumber(state.solutionSteps.length - 1);
+
+    state.updateEndingDateTime(DateTime.now());
+    // print('Puzzle duration: ${state.startDateTime!.compareTo(state.endingDateTime!)}');
+    // print('state.startDateTime ${state.startDateTime}');
+    // print('state.endingDateTime ${state.endingDateTime}');
   }
 
   void overlapping(NonogramState state) {
@@ -60,31 +71,109 @@ class LineSolver {
     bool isLineCompleted = filledBoxes == clues.sum;
     if (kPrintComments && kDebugMode) print('Are filled boxes ($filledBoxes) equal with clue\'s sum (${clues.sum})?');
 
+    /// In the following 4 lines, we create a List<int> with all the index positions
+    /// of question marks ("?") in a String. In our case, the String is the current line solution.
+    ///
+    /// We get the initialSolution of that line and create a list of characters with their indexes (`characters.indexed`).
+    /// This indexed list includes the original characters matched with their positions in the String.
+    /// e.g. String `0?1` has the result ((0, 0), (1, ?), (2, 1))
+    ///
+    /// We then convert this indexed list to a String using .toString() and use a RegEx search to get all
+    /// the indexes of the `?` characters in the solution.
+    ///
+    /// The RegEx [charIndexesRegexp] pattern is:
+    ///   [0-9]    -> Matches digits...
+    ///   +        -> One or more of the previous case...
+    ///   (?=, ?) -> That are followed by the String ", ?".
+    ///
+    /// After getting all the matches, we join them with commas (",") to form a single String.
+    /// Then, we split this String by "," and parse its contents to integers.
+    ///
+    /// Now, we have a List<int> of all the indexes of the "?" characters in the solution.
+    /// e.g. String "((0, 0), (1, ?), (2, 1))" results in [1].
+    ///
+    final charIndexesRegexp = RegExp(r'[0-9]+(?=, \?)');
+    // Find all matches
+    Iterable<Match> matches = charIndexesRegexp.allMatches(initialSolution.characters.indexed.toList().toString());
+    // Extract the matched parts and join them with commas
+    String result = matches.map((match) => match.group(0)).join(',');
+    List<int> charIndexesOfQMarks = result.isNotEmpty ? result.split(',').map((e) => int.parse(e)).toList() : <int>[];
+
     if (isLineCompleted) {
       if (kPrintComments && kDebugMode) print('It is. Shall cross out remaining empty boxes if any left.');
       if (initialSolution.characters.contains('?')) {
-        for (int charIndex = 0; charIndex < initialSolution.length; charIndex++) {
-          if (initialSolution.characterAt(charIndex) == '?') {
-            int indexSol = lineType.getSolutionPosition(lineIndex, charIndex, state.nonogram.width);
-            var fullUpdatedSolution = state.solutionSteps.last.getUpdatedSolution(indexSol, '0');
-            if (kPrintComments && kDebugMode) print('fullUpdatedSolution: $fullUpdatedSolution');
-            state.addStep(SolutionStep(
-              currentSolution: fullUpdatedSolution,
-              axis: lineType,
-              lineIndex: lineIndex,
-              explanation: 'Cross out remaining empty boxes of ${lineType.name} with index $lineIndex.',
-            ));
-            state.stack.updateStack(charIndex, lineType, state);
-          }
+        int charStart = initialSolution.characters.findFirst(Characters('?'))!.stringBeforeLength;
+        int charEnd = initialSolution.characters.findLast(Characters('?'))!.stringBeforeLength + 1;
+        if (kPrintComments && kDebugMode) {
+          print('charStart: $charStart');
+          print('charEnd: $charEnd');
         }
+
+        /// The following 3 lines use the list of indexes of "?" in the line solution to find and replace them
+        /// with "0"s in the entire puzzle solution String.
+        ///
+        /// We use RegEx for this task because the positions of a column in the solution String are spread out,
+        /// unlike those of a row, which are contiguous.
+        ///
+        /// To find the global positions of each column index in the entire puzzle solution, we convert the local
+        /// indexes from the line solution String to global indexes, taking into account the line we are searching.
+        ///
+        /// We create a RegEx to find and replace the specific characters in the global solution with "0".
+        ///
+        /// The RegEx searches for single character Strings with a specific number of characters before them.
+        /// We generate the required number of characters based on the list of indexes from the local solution,
+        /// and the RegEx matches Strings with exactly that many characters before them.
+        ///
+        /// The RegEx is `(?<=lookbehinds).` where [lookbehinds] is another RegEx String, generated from the local positions list.
+        /// This String consists of multiple RegEx patterns like `(?<=^.{7}).` (where "7" is any number 0 or above),
+        /// grouped and separated by "|". Let's break down the parts of the RegEx:
+        ///
+        /// Explaining `(?<=lookbehinds).`:
+        ///   (?<=lookbehinds): Matches where [lookbehinds] is true.
+        ///   .               : Matches the next character after the lookbehind condition.
+        ///
+        /// Explaining `lookbehinds`, e.g. ((?<=^.{7}).)|(?<=^.{10}).):
+        ///   (?<=^.{7}).    :
+        ///     (?<= : Lookbehind assertion to ensure what precedes the match...
+        ///     ^    : Is the start of the String...
+        ///     .    : Followed by any single character...
+        ///     {7}  : Previous case repeated exactly 7 times (where "7" is any number 0 or above)...
+        ///     .    : Matches the character immediately following this sequence.
+        ///   |    : Or (alternates between the above generated number conditions).
+        ///
+        /// e.g. RegEx `((?<=^.{7}).)|(?<=^.{10}).)` applied to a String will return the 8th and 11th
+        /// characters, as they have exactly 7 and 10 characters before them, respectively.
+        ///
+        /// We use this regex with replaceAllMapped to change the "?" characters to "0".
+        ///
+        String lookbehinds = charIndexesOfQMarks
+            .map((pos) => '^.{${lineType.getSolutionPosition(lineIndex, pos, state.nonogram.width)}}')
+            .join('|');
+        final solutionIndexesRegexp = RegExp(r'(?<=' + lookbehinds + r').');
+
+        var fullUpdatedSolution =
+            state.solutionSteps.last.currentSolution.replaceAllMapped(solutionIndexesRegexp, (match) => '0');
+        if (kPrintComments && kDebugMode) print('fullUpdatedSolution: $fullUpdatedSolution');
+
+        state.addStep(SolutionStep(
+          currentSolution: fullUpdatedSolution,
+          axis: lineType,
+          lineIndex: lineIndex,
+          explanation: 'Cross out all remaining empty boxes of ${lineType.name} with index $lineIndex.',
+        ));
+
+        state.stack.updateStack(charIndexesOfQMarks, lineType, state);
       }
     } else {
+      if (activateReturnOnNotEnoughSolvedLines && filledBoxes < (clues.sum / 4) && (state.nonogram.width / 4) > clues.sum) {
+        return;
+      }
       if (kPrintComments && kDebugMode) print('It is not. Starts to calculate all possible solutions...');
-      List<List<String>> allLineSolutions = getAllLinePossibleSolutions(clues, initialSolution);
+      List<List<String>> allLineSolutions = getAllLinePossibleSolutions(state, clues, initialSolution);
       if (kPrintComments && kDebugMode) print('All line solutions: $allLineSolutions');
 
       if (kPrintComments && kDebugMode) print('Find starting solution of $allLineSolutions with clues $clues.');
-      var startingMostSolution = getSideMostSolution(state, allLineSolutions, clues, NonoAxisAlignment.start);
+      List<String> startingMostSolution = getSideMostSolution(state, allLineSolutions, clues, NonoAxisAlignment.start);
       // state.addStep(SolutionStep(
       //   currentSolution: initialSolution,
       //   lineSolution: startingMostSolution,
@@ -95,7 +184,7 @@ class LineSolver {
       if (kPrintComments && kDebugMode) print('Starting most solution: $startingMostSolution');
 
       if (kPrintComments && kDebugMode) print('Find ending solution of $allLineSolutions with clues $clues.');
-      var endingMostSolution = getSideMostSolution(state, allLineSolutions, clues, NonoAxisAlignment.end);
+      List<String> endingMostSolution = getSideMostSolution(state, allLineSolutions, clues, NonoAxisAlignment.end);
       // state.addStep(SolutionStep(
       //   currentSolution: initialSolution,
       //   lineSolution: endingMostSolution,
@@ -103,83 +192,135 @@ class LineSolver {
       //   lineIndex: lineIndex,
       //   explanation: '${NonoAxisAlignment.start.name}ing solution of ${lineType.name} number ${lineIndex + 1}.',
       // ));
-      if (kPrintComments && kDebugMode) print('Ending most solution: $endingMostSolution');
+      if (kPrintComments && kDebugMode) print('Ending most solution  : $endingMostSolution');
 
-      // if (lineIndex == 2 && lineType == NonoAxis.row) {
-      //   print('allLineSolutions: $allLineSolutions');
-      //   // print('startingMostSolution: $startingMostSolution');
-      //   // print('endingMostSolution: $endingMostSolution');
-      // }
+      String updatedSolution = '';
 
-      String updatedSolution = initialSolution;
-      for (int charIndex = 0; charIndex < allLineSolutions.length; charIndex++) {
-        if (kPrintComments && kDebugMode) print('Is box unknown and should be checked?');
-        if (initialSolution.characters.characterAt(charIndex).toString() == '?') {
-          if (kPrintComments && kDebugMode) print('Yes it is.');
-          if (kPrintComments && kDebugMode)
-            print(
-                'Are all possible solutions (${allLineSolutions.elementAt(charIndex)}) of box at index $charIndex only zeros (0)?');
+      if (groupSteps) {
+        // Generate a regex pattern to match any number except those in the exclusion list
+        String inclusionPattern = charIndexesOfQMarks.map((e) => e).join('|');
+        // Precompile regex patterns
+        RegExp regZeroFilledMatches = RegExp(r'\((' + inclusionPattern + r'), \[(0)\]\)');
+        // Convert input lists to string once
+        String inputZeros = allLineSolutions.indexed.toList().toString();
+        // Find matches using precompiled regex patterns
+        Iterable<RegExpMatch> matchesZeros = regZeroFilledMatches.allMatches(inputZeros);
 
-          if (allLineSolutions.elementAt(charIndex).everyElementIsZero) {
-            if (kPrintComments && kDebugMode) print('Yes. Cross out this box.');
-            updatedSolution = updatedSolution.replaceRange(charIndex, charIndex + 1, '0');
+        // Use a map to store the right number as keys and a set of left numbers as values for pairs that appear twice
+        Map<int, Set<int>> matchMap = {};
 
-            int indexSol = lineType.getSolutionPosition(lineIndex, charIndex, state.nonogram.width);
-            var fullUpdatedSolution = state.solutionSteps.last.getUpdatedSolution(indexSol, '0');
-            if (kPrintComments && kDebugMode) print('fullUpdatedSolution: $fullUpdatedSolution');
+        Set<(int, String)> inputNumbersStart = startingMostSolution.indexed.toSet();
+        Set<(int, String)> inputNumbersEnd = endingMostSolution.indexed.toSet();
+        var duplicateInputNumbers = inputNumbersStart.intersection(inputNumbersEnd);
+
+        for (var match in duplicateInputNumbers) {
+          (int, String) pair = match;
+          int leftNumber = pair.$1;
+          int rightNumber = int.parse(pair.$2);
+          if (rightNumber != 0 && charIndexesOfQMarks.contains(leftNumber)) {
+            matchMap.putIfAbsent(rightNumber, () => {});
+            matchMap[rightNumber]!.add(leftNumber);
+          }
+        }
+
+        if (matchesZeros.isNotEmpty) {
+          matchMap.putIfAbsent(0, () => {});
+          matchMap[0]!.addAll(matchesZeros.map((match) => int.parse(match.group(1)!)));
+        }
+
+        // Convert the sets to lists and print the final map
+        Map<int, List<int>> result = matchMap.map((key, value) => MapEntry(key, value.toList()));
+
+        for (int clueKey in result.keys) {
+          List<int> charIndexes = result[clueKey]!;
+          int clueIndex = clueKey == 0 ? 0 : clueKey - 2;
+
+          String lookbehinds =
+              charIndexes.map((pos) => '^.{${lineType.getSolutionPosition(lineIndex, pos, state.nonogram.width)}}').join('|');
+          final solutionIndexesRegexp = RegExp(r'(?<=' + lookbehinds + r').');
+
+          var fullUpdatedSolution = state.solutionSteps.last.currentSolution
+              .replaceAllMapped(solutionIndexesRegexp, (match) => clueKey == 0 ? '0' : '1');
+          if (kPrintComments && kDebugMode) print('fullUpdatedSolution: $fullUpdatedSolution');
+
+          if (result.isNotEmpty) {
             state.addStep(SolutionStep(
               currentSolution: fullUpdatedSolution,
               axis: lineType,
               lineIndex: lineIndex,
-              explanation: 'Cross out box.',
+              explanation:
+                  '${clueKey == 0 ? 'Cross out' : 'Fill in'} sure boxes for clue ${clues.elementAt(clueIndex)} with index $clueIndex of ${lineType.name} with index $lineIndex.',
             ));
-            state.stack.updateStack(charIndex, lineType, state);
-          } else {
-            if (kPrintComments && kDebugMode) print('No.');
-            var startingSolutionIndex = startingMostSolution.elementAt(charIndex).first.toString();
-            var endingSolutionIndex = endingMostSolution.elementAt(charIndex).first.toString();
+            state.stack.updateStack(charIndexes, lineType, state);
+          }
+        }
+      } else {
+        String updatedSolution = initialSolution;
+        for (int charIndex in charIndexesOfQMarks) {
+          if (kPrintComments && kDebugMode) print('Is box unknown and should be checked?');
+          if (initialSolution.characters.characterAt(charIndex).toString() == '?') {
+            if (kPrintComments && kDebugMode) print('Yes it is.');
             if (kPrintComments && kDebugMode)
-              print('Do both side solutions of box at index $charIndex contain the same clue index?');
-            if (kPrintComments && kDebugMode) print('startingSolutionIndex: $startingSolutionIndex');
-            if (kPrintComments && kDebugMode) print('endingSolutionIndex  : $endingSolutionIndex');
-            if (startingSolutionIndex.isSameClueIndexWith(endingSolutionIndex)) {
-              if (kPrintComments && kDebugMode) print('Yes. Fill in this box.');
-              updatedSolution = updatedSolution.replaceRange(charIndex, charIndex + 1, '1');
+              print(
+                  'Are all possible solutions (${allLineSolutions.elementAt(charIndex)}) of box at index $charIndex only zeros (0)?');
+
+            if (allLineSolutions.elementAt(charIndex).everyElementIsZero) {
+              if (kPrintComments && kDebugMode) print('Yes. Cross out this box.');
+              updatedSolution = updatedSolution.replaceRange(charIndex, charIndex + 1, '0');
+
               int indexSol = lineType.getSolutionPosition(lineIndex, charIndex, state.nonogram.width);
-              state.setFilled(lineType.getSolutionPosition(lineIndex, charIndex, state.nonogram.width));
-              var fullUpdatedSolution = state.solutionSteps.last.getUpdatedSolution(indexSol, '1');
+              var fullUpdatedSolution = state.solutionSteps.last.getUpdatedSolution(indexSol, '0');
               if (kPrintComments && kDebugMode) print('fullUpdatedSolution: $fullUpdatedSolution');
               state.addStep(SolutionStep(
                 currentSolution: fullUpdatedSolution,
                 axis: lineType,
                 lineIndex: lineIndex,
-                explanation: 'Fill in box.',
+                explanation: 'Cross out box.',
               ));
-              state.stack.updateStack(charIndex, lineType, state);
+              state.stack.updateStack([charIndex], lineType, state);
             } else {
-              if (kPrintComments && kDebugMode) print('No. It contains different indexes.');
+              if (kPrintComments && kDebugMode) print('No.');
+              var startingSolutionIndex = startingMostSolution.elementAt(charIndex).toString();
+              var endingSolutionIndex = endingMostSolution.elementAt(charIndex).toString();
+              if (kPrintComments && kDebugMode)
+                print('Do both side solutions of box at index $charIndex contain the same clue index?');
+
+              if (kPrintComments && kDebugMode) print('startingSolutionIndex: $startingSolutionIndex');
+              if (kPrintComments && kDebugMode) print('endingSolutionIndex  : $endingSolutionIndex');
+              if (startingSolutionIndex.isSameClueIndexWith(endingSolutionIndex)) {
+                if (kPrintComments && kDebugMode) print('Yes. Fill in this box.');
+                updatedSolution = updatedSolution.replaceRange(charIndex, charIndex + 1, '1');
+                int indexSol = lineType.getSolutionPosition(lineIndex, charIndex, state.nonogram.width);
+                state.setFilled(lineType.getSolutionPosition(lineIndex, charIndex, state.nonogram.width));
+                var fullUpdatedSolution = state.solutionSteps.last.getUpdatedSolution(indexSol, '1');
+                if (kPrintComments && kDebugMode) print('fullUpdatedSolution: $fullUpdatedSolution');
+                state.addStep(SolutionStep(
+                  currentSolution: fullUpdatedSolution,
+                  axis: lineType,
+                  lineIndex: lineIndex,
+                  explanation: 'Fill in box.',
+                ));
+                state.stack.updateStack([charIndex], lineType, state);
+              } else {
+                if (kPrintComments && kDebugMode) print('No. It contains different indexes.');
+              }
             }
           }
+          if (kPrintComments && kDebugMode) print('No it is not.');
         }
-        if (kPrintComments && kDebugMode) print('No it is not.');
       }
-      // state.addStep(SolutionStep(
-      //   currentSolution: updatedSolution,
-      //   // lineSolution: endingMostSolution,
-      //   axis: lineType,
-      //   lineIndex: lineIndex,
-      //   explanation: 'Cross out empty boxes and fill in solution overlaps.',
-      // ));
       if (kPrintComments && kDebugMode) print('Overlapped solution: $updatedSolution');
+      state.updateLinesChecked();
     }
   }
 
-  List<List<String>> getAllLinePossibleSolutions(List<int> clues, String line) {
+  List<List<String>> getAllLinePossibleSolutions(NonogramState state, List<int> clues, String line) {
     if (kPrintComments && kDebugMode) print('Get all possible solutions of line $line with clues $clues');
     List<List<String>> possibleSolutions = Iterable.generate(line.length, (_) => <String>[]).toList();
     for (int clueIndex = 0; clueIndex < clues.length; clueIndex++) {
       for (int charIndex = 0; charIndex < line.length; charIndex++) {
-        String solutionNumb = canCluesFit(clues, line, charIndex, clueIndex) ? '${clueIndex + 2}' : '0';
+        String solutionNumb = canCluesFit(state, clues, line, charIndex, clueIndex) ? '${clueIndex + 2}' : '0';
+        if (countBoxes) state.updateBoxesChecked();
 
         int loops = solutionNumb == '0' ? 1 : clues[clueIndex];
         for (int i = charIndex; i < charIndex + loops; i++) {
@@ -196,7 +337,8 @@ class LineSolver {
     return possibleSolutions;
   }
 
-  bool doOtherCluesFit(NonoDirection solutionSide, List<int> clues, int clueIndex, String solution, int solutionIndex) {
+  bool doOtherCluesFit(
+      NonogramState state, NonoDirection solutionSide, List<int> clues, int clueIndex, String solution, int solutionIndex) {
     int clue = clues.elementAt(clueIndex);
 
     if (kPrintComments && kDebugMode) print('Does clue have clues ${solutionSide.name}?');
@@ -222,7 +364,7 @@ class LineSolver {
     List<int> cluesSublist = solutionSide.getCluesSublist(clueIndex, clues);
     if (kPrintComments && kDebugMode) print('Does solution sublist $solutionSublist fit clues $cluesSublist?');
     for (int solutionSublistIndex = 0; solutionSublistIndex < solutionSublist.length; solutionSublistIndex++) {
-      if (canCluesFit(cluesSublist, solutionSublist, solutionSublistIndex, 0)) {
+      if (canCluesFit(state, cluesSublist, solutionSublist, solutionSublistIndex, 0)) {
         if (kPrintComments && kDebugMode) print('It does fit. Return `true`.');
 
         // return solutionSide.isSolutionValid(solution, solutionIndex);
@@ -234,7 +376,7 @@ class LineSolver {
     return false;
   }
 
-  bool canCluesFit(List<int> clues, String solution, int s, int cl) {
+  bool canCluesFit(NonogramState state, List<int> clues, String solution, int s, int cl) {
     List<String> solutionList = solution.split('');
     int clue = clues.elementAt(cl);
     bool canFit;
@@ -258,15 +400,15 @@ class LineSolver {
     }
     if (kPrintComments && kDebugMode) print('true');
 
-    bool cluesBeforeGood = doOtherCluesFit(NonoDirection.before, clues, cl, solution, s);
-    bool cluesAfterGood = doOtherCluesFit(NonoDirection.after, clues, cl, solution, s);
+    bool cluesBeforeGood = doOtherCluesFit(state, NonoDirection.before, clues, cl, solution, s);
+    bool cluesAfterGood = doOtherCluesFit(state, NonoDirection.after, clues, cl, solution, s);
     if (kPrintComments && kDebugMode)
       print('Do both clues before and clues after fit? Answer: ${cluesBeforeGood && cluesAfterGood}');
+    if (countActualBoxes) state.updateActualBoxesChecked();
     return cluesBeforeGood && cluesAfterGood;
   }
 
-  List<List<String>> getSideMostSolution(
-      NonogramState state, List<List<String>> solution, List<int> clues, NonoAxisAlignment axis) {
+  List<String> getSideMostSolution(NonogramState state, List<List<String>> solution, List<int> clues, NonoAxisAlignment axis) {
     if (kPrintComments && kDebugMode) print('Get ${axis.name}ing most solution of solution $solution with clues $clues');
 
     List<int> clueIndexes = Iterable<int>.generate(clues.length, (c) => c + 2).toList();
@@ -277,7 +419,7 @@ class LineSolver {
       clueIndexes = clueIndexes.reversed.toList();
     }
 
-    List<List<String>> sideMostSolution = [];
+    List<String> sideMostSolution = [];
     List<List<String>> remainingSolution = solution;
 
     if (kPrintComments && kDebugMode)
@@ -292,9 +434,9 @@ class LineSolver {
       if (kPrintComments && kDebugMode) print('Is cluePos $cluePos larger than 0?');
       if (kPrintComments && kDebugMode)
         print(cluePos > 0 ? 'Yes, it is. Add $cluePos "0"s to sideMostSolution list' : 'No, it isn\'t. Move on');
-      if (cluePos > 0) sideMostSolution.addAll(Iterable.generate(cluePos, (_) => ['0']).toList());
+      if (cluePos > 0) sideMostSolution.addAll(Iterable.generate(cluePos, (_) => '0').toList());
       if (kPrintComments && kDebugMode) print('Add $clue times clueIndex $clueIndex of clue $clue at sideMostSolution list');
-      sideMostSolution.addAll(Iterable.generate(clue, (_) => ['$clueIndex']).toList());
+      sideMostSolution.addAll(Iterable.generate(clue, (_) => '$clueIndex').toList());
 
       if (kPrintComments && kDebugMode) print('Is solution completed?');
       if (kPrintComments && kDebugMode)
@@ -302,7 +444,7 @@ class LineSolver {
             ? 'No, not finished. Add "0" for space at sideMostSolution list and create a new sublist after clue added'
             : 'Yes it is. Move on');
       if (sideMostSolution.length < solution.length) {
-        sideMostSolution.add(['0']);
+        sideMostSolution.add('0');
         remainingSolution = remainingSolution.sublist(cluePos + clue + 1);
       }
 
@@ -313,7 +455,7 @@ class LineSolver {
     if (kPrintComments && kDebugMode)
       print(sideMostSolution.length < solution.length ? 'No. Complete solution with "0"s' : 'Yes. Move on');
     if (sideMostSolution.length < solution.length) {
-      sideMostSolution.addAll(Iterable.generate(remainingSolution.length, (_) => ['0']).toList());
+      sideMostSolution.addAll(Iterable.generate(remainingSolution.length, (_) => '0').toList());
     }
     if (kPrintComments && kDebugMode) print('Final sideMostSolution: $sideMostSolution');
     return axis == NonoAxisAlignment.end ? sideMostSolution.reversed.toList() : sideMostSolution;
