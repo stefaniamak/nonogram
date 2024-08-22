@@ -137,6 +137,9 @@ NonogramState useNonogramState(Nonogram nonogram) {
 
   final ValueNotifier<Map<String, bool>> cachedBoxSolutions$ = useState<Map<String, bool>>({});
   final updateCachedBoxSolutions = useCallback((List<int> clues, int clueIndex, String solution, int solutionIndex, bool value) {
+    if (cachedBoxSolutions$.value.length > 500000) {
+      cachedBoxSolutions$.value = {};
+    }
     cachedBoxSolutions$.value['$clues,$clueIndex,$solution,$solutionIndex'] = value;
   });
 
