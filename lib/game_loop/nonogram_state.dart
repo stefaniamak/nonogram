@@ -31,9 +31,13 @@ class NonogramState {
   final int linesChecked;
   final int boxesChecked;
   final int actualBoxesChecked;
+  final int otherBoxesChecked;
   final Function() updateLinesChecked;
   final Function() updateBoxesChecked;
   final Function() updateActualBoxesChecked;
+  final Function() updateOtherBoxesChecked;
+  final Map<String, bool> cachedBoxSolutions;
+  final Function(List<int> clues, int clueIndex, String solution, int solutionIndex, bool value) updateCachedBoxSolutions;
 
   NonogramState({
     required this.nonogram,
@@ -56,9 +60,13 @@ class NonogramState {
     required this.linesChecked,
     required this.boxesChecked,
     required this.actualBoxesChecked,
+    required this.otherBoxesChecked,
     required this.updateLinesChecked,
     required this.updateBoxesChecked,
     required this.updateActualBoxesChecked,
+    required this.updateOtherBoxesChecked,
+    required this.cachedBoxSolutions,
+    required this.updateCachedBoxSolutions,
   });
 }
 
@@ -83,6 +91,7 @@ NonogramState useNonogramState(Nonogram nonogram) {
   final linesChecked$ = useState(0);
   final boxesChecked$ = useState(0);
   final actualBoxesChecked$ = useState(0);
+  final otherBoxesChecked$ = useState(0);
 
   final setFilled = useCallback(
       (int index) => activeSolution$.value = getUpdatedActiveSolution(activeSolution$.value, index, '1'),
@@ -105,6 +114,9 @@ NonogramState useNonogramState(Nonogram nonogram) {
   final updateActualBoxesChecked = useCallback(() {
     actualBoxesChecked$.value++;
   });
+  final updateOtherBoxesChecked = useCallback(() {
+    otherBoxesChecked$.value++;
+  });
 
   final startingDateTime$ = useState<DateTime?>(null);
   final endingDateTime$ = useState<DateTime?>(null);
@@ -120,6 +132,13 @@ NonogramState useNonogramState(Nonogram nonogram) {
     stack$.value = [line, ...stack$.value];
   });
   final popStack = useCallback(() => stack$.value.removeAt(0));
+
+  // Cache
+
+  final ValueNotifier<Map<String, bool>> cachedBoxSolutions$ = useState<Map<String, bool>>({});
+  final updateCachedBoxSolutions = useCallback((List<int> clues, int clueIndex, String solution, int solutionIndex, bool value) {
+    cachedBoxSolutions$.value['$clues,$clueIndex,$solution,$solutionIndex'] = value;
+  });
 
   return NonogramState(
     nonogram: nonogram,
@@ -144,9 +163,13 @@ NonogramState useNonogramState(Nonogram nonogram) {
     linesChecked: linesChecked$.value,
     boxesChecked: boxesChecked$.value,
     actualBoxesChecked: actualBoxesChecked$.value,
+    otherBoxesChecked: otherBoxesChecked$.value,
     updateLinesChecked: updateLinesChecked,
     updateBoxesChecked: updateBoxesChecked,
     updateActualBoxesChecked: updateActualBoxesChecked,
+    updateOtherBoxesChecked: updateOtherBoxesChecked,
+    cachedBoxSolutions: cachedBoxSolutions$.value,
+    updateCachedBoxSolutions: updateCachedBoxSolutions,
   );
 }
 

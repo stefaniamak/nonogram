@@ -61,7 +61,7 @@ class NonogramPage extends HookWidget {
               if (nonogramState.startDateTime != null && nonogramState.endingDateTime != null)
                 Text('Puzzle duration: ${nonogramState.endingDateTime!.difference(nonogramState.startDateTime!)}'),
               Text(
-                  'Lines checked: ${nonogramState.linesChecked} | Boxes checked: ${nonogramState.boxesChecked} | Actual boxes checked: ${nonogramState.actualBoxesChecked}'),
+                  'Lines checked: ${nonogramState.linesChecked} | Boxes checked: ${nonogramState.boxesChecked} | Actual boxes checked: ${nonogramState.actualBoxesChecked} | Other boxes checked: ${nonogramState.otherBoxesChecked}'),
             ],
           ),
           // Text('nonogramState.solutionSteps.length: ${nonogramState.solutionSteps.length}'),
