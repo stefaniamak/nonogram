@@ -13,9 +13,9 @@ import '../backend/type_extensions/nono_direction_extension.dart';
 class LineSolver {
   bool kPrintComments = false;
   bool activateReturnOnNotEnoughSolvedLines = false;
-  bool countBoxes = false;
-  bool countActualBoxes = false;
-  bool countOtherBoxes = false;
+  bool countBoxes = true;
+  bool countActualBoxes = true;
+  bool countOtherBoxes = true;
   bool groupSteps = true;
 
   void solve(NonogramState state) async {
