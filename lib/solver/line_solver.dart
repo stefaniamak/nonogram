@@ -13,9 +13,9 @@ import '../backend/type_extensions/nono_direction_extension.dart';
 class LineSolver {
   bool kPrintComments = false;
   bool activateReturnOnNotEnoughSolvedLines = false;
-  bool countBoxes = false;
-  bool countActualBoxes = false;
-  bool countOtherBoxes = false;
+  bool countBoxes = true;
+  bool countActualBoxes = true;
+  bool countOtherBoxes = true;
   bool groupSteps = true;
 
   void solve(NonogramState state) async {
@@ -322,8 +322,10 @@ class LineSolver {
     List<List<String>> possibleSolutions = Iterable.generate(line.length, (_) => <String>[]).toList();
     for (int clueIndex = 0; clueIndex < clues.length; clueIndex++) {
       int minStartingPoint = clueIndex == 0 ? 0 : clues.take(clueIndex).reduce((int value, int element) => value + element + 1);
-      // print('minStartingPoint: $minStartingPoint');
-      for (int charIndex = minStartingPoint; charIndex < line.length; charIndex++) {
+      int maxEndingPoint = clueIndex == clues.length - 1
+          ? line.length
+          : line.length - clues.sublist(clueIndex + 1).reduce((int value, int element) => value + element + 1);
+      for (int charIndex = minStartingPoint; charIndex < maxEndingPoint; charIndex++) {
         bool? cache = state.cachedBoxSolutions['$clues,$clueIndex,$line,$charIndex'];
         bool isInCache = cache != null;
         bool result;
