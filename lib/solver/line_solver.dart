@@ -359,16 +359,7 @@ class LineSolver {
       NonogramState state, NonoDirection solutionSide, List<int> clues, int clueIndex, String solution, int solutionIndex) {
     int clue = clues.elementAt(clueIndex);
 
-    // bool? cache = state.cachedBoxSolutions['$clues,$clueIndex,$solution,$solutionIndex'];
-    // bool isInCache = cache != null;
-    // if (isInCache) {
-    //   state.updateCachedBoxSolutions(clues, clueIndex, solution, solutionIndex, cache);
-    //   return cache;
-    // }
-
     if (countOtherBoxes) state.updateOtherBoxesChecked();
-
-    // print('clues: $clues , clue: $clue , position $clueIndex , solution $solution , line $solution');
 
     if (kPrintComments && kDebugMode) print('Does clue have clues ${solutionSide.name}?');
     if (!solutionSide.hasOtherClues(clueIndex, clues.length)) {
@@ -393,11 +384,6 @@ class LineSolver {
     List<int> cluesSublist = solutionSide.getCluesSublist(clueIndex, clues);
     if (kPrintComments && kDebugMode) print('Does solution sublist $solutionSublist fit clues $cluesSublist?');
     for (int solutionSublistIndex = 0; solutionSublistIndex < solutionSublist.length; solutionSublistIndex++) {
-      // bool? cache = state.cachedBoxSolutions['$cluesSublist,0,$solutionSublist,$solutionSublistIndex'];
-      // bool isInCache = cache != null;
-      // if (isInCache) {
-      //   return cache;
-      // }
       if (canCluesFit(state, cluesSublist, solutionSublist, solutionSublistIndex, 0)) {
         if (kPrintComments && kDebugMode) print('It does fit. Return `true`.');
 
@@ -435,16 +421,6 @@ class LineSolver {
       return false;
     }
     if (kPrintComments && kDebugMode) print('true');
-
-    // bool? cache = state.cachedBoxSolutions['$clues,$cl,$solution,$s'];
-    // bool isInCache = cache != null;
-    // bool cluesBeforeGood;
-    // if (!isInCache) {
-    // cluesBeforeGood = doOtherCluesFit(state, NonoDirection.before, clues, cl, solution, s);
-    //   state.updateCachedBoxSolutions(clues, cl, solution, s, cluesBeforeGood);
-    // } else {
-    //   cluesBeforeGood = cache;
-    // }
 
     bool cluesBeforeGood = doOtherCluesFit(state, NonoDirection.before, clues, cl, solution, s);
     bool cluesAfterGood = doOtherCluesFit(state, NonoDirection.after, clues, cl, solution, s);
