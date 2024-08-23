@@ -13,9 +13,9 @@ import '../backend/type_extensions/nono_direction_extension.dart';
 class LineSolver {
   bool kPrintComments = false;
   bool activateReturnOnNotEnoughSolvedLines = false;
-  bool countBoxes = true;
-  bool countActualBoxes = true;
-  bool countOtherBoxes = true;
+  bool countBoxes = false;
+  bool countActualBoxes = false;
+  bool countOtherBoxes = false;
   bool groupSteps = true;
 
   void solve(NonogramState state) async {
@@ -36,6 +36,7 @@ class LineSolver {
     // print('Puzzle duration: ${state.startDateTime!.compareTo(state.endingDateTime!)}');
     // print('state.startDateTime ${state.startDateTime}');
     // print('state.endingDateTime ${state.endingDateTime}');
+    print('state.cachedBoxSolutions: ${state.cachedBoxSolutions}');
   }
 
   void overlapping(NonogramState state) {
@@ -387,11 +388,11 @@ class LineSolver {
     List<int> cluesSublist = solutionSide.getCluesSublist(clueIndex, clues);
     if (kPrintComments && kDebugMode) print('Does solution sublist $solutionSublist fit clues $cluesSublist?');
     for (int solutionSublistIndex = 0; solutionSublistIndex < solutionSublist.length; solutionSublistIndex++) {
-      bool? cache = state.cachedBoxSolutions['$cluesSublist,0,$solutionSublist,$solutionSublistIndex'];
-      bool isInCache = cache != null;
-      if (isInCache) {
-        return cache;
-      }
+      // bool? cache = state.cachedBoxSolutions['$cluesSublist,0,$solutionSublist,$solutionSublistIndex'];
+      // bool isInCache = cache != null;
+      // if (isInCache) {
+      //   return cache;
+      // }
       if (canCluesFit(state, cluesSublist, solutionSublist, solutionSublistIndex, 0)) {
         if (kPrintComments && kDebugMode) print('It does fit. Return `true`.');
 
