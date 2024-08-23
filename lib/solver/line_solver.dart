@@ -36,7 +36,7 @@ class LineSolver {
     // print('Puzzle duration: ${state.startDateTime!.compareTo(state.endingDateTime!)}');
     // print('state.startDateTime ${state.startDateTime}');
     // print('state.endingDateTime ${state.endingDateTime}');
-    print('state.cachedBoxSolutions: ${state.cachedBoxSolutions}');
+    // print('state.cachedBoxSolutions: ${state.cachedBoxSolutions}');
   }
 
   void overlapping(NonogramState state) {
@@ -321,7 +321,9 @@ class LineSolver {
     if (kPrintComments && kDebugMode) print('Get all possible solutions of line $line with clues $clues');
     List<List<String>> possibleSolutions = Iterable.generate(line.length, (_) => <String>[]).toList();
     for (int clueIndex = 0; clueIndex < clues.length; clueIndex++) {
-      for (int charIndex = 0; charIndex < line.length; charIndex++) {
+      int minStartingPoint = clueIndex == 0 ? 0 : clues.take(clueIndex).reduce((int value, int element) => value + element + 1);
+      // print('minStartingPoint: $minStartingPoint');
+      for (int charIndex = minStartingPoint; charIndex < line.length; charIndex++) {
         bool? cache = state.cachedBoxSolutions['$clues,$clueIndex,$line,$charIndex'];
         bool isInCache = cache != null;
         bool result;
@@ -330,6 +332,7 @@ class LineSolver {
         } else {
           result = canCluesFit(state, clues, line, charIndex, clueIndex);
           state.updateCachedBoxSolutions(clues, clueIndex, line, charIndex, result);
+          if (result == false) {}
           if (countBoxes) state.updateBoxesChecked();
         }
         String solutionNumb = result ? '${clueIndex + 2}' : '0';
