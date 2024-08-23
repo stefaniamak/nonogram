@@ -324,7 +324,7 @@ class LineSolver {
       int minStartingPoint = clueIndex == 0 ? 0 : clues.take(clueIndex).reduce((int value, int element) => value + element + 1);
       int maxEndingPoint = clueIndex == clues.length - 1
           ? line.length
-          : line.length - clues.sublist(clueIndex + 1).reduce((int value, int element) => value + element + 1);
+          : line.length - clues.sublist(clueIndex + 1).reduce((int value, int element) => value + element + 1) - clues[clueIndex];
       for (int charIndex = minStartingPoint; charIndex < maxEndingPoint; charIndex++) {
         bool? cache = state.cachedBoxSolutions['$clues,$clueIndex,$line,$charIndex'];
         bool isInCache = cache != null;
