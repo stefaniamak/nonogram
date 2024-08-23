@@ -50,42 +50,44 @@ class NonogramGrid extends StatelessWidget {
       width: size.width,
       height: size.height,
       child: GridView.builder(
+        padding: EdgeInsets.zero,
+        // clipBehavior: Clip.none,
+        // shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+
         itemCount: solution?.length ?? (boxItems.width * boxItems.height).ceil(),
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: boxItems.width.ceil(),
         ),
         itemBuilder: (BuildContext context, int index) {
-          return InkWell(
-            onTap: onTap != null
-                ? () {
-                    onTap!.call(index);
-                  }
-                : null,
-
-            //   () {
-            // switch (getGridBoxState(index)) {
-            //   case PointState.unknown:
-            //     nonogramState?.setFilled(index);
-            //     break;
-            //   case PointState.filled:
-            //     nonogramState?.setCross(index);
-            //     break;
-            //   case PointState.cross:
-            //     nonogramState?.setUnknown(index);
-            //     break;
-            // }
-            // },
-            child: CustomPaint(
-              painter: GridBox(
-                pointState: getGridBoxState(index),
-                side: gridItemSide,
-              ),
+          final CustomPaint customPaint = CustomPaint(
+            isComplex: true,
+            foregroundPainter: GridBox(
+              pointState: getGridBoxState(index),
+              side: gridItemSide,
             ),
           );
+
+          // return Text('X');
+          // return DecoratedBox(
+          //   decoration: BoxDecoration(border: Border.all(color: Colors.blueAccent)),
+          // );
+          // switch (index.toString()) {
+          //   case '?':
+          //     return Icon(Icons.crop_square_sharp, size: gridItemSide);
+          //     return DecoratedBox(
+          //       decoration: BoxDecoration(border: Border.all(color: Colors.black)),
+          //     );
+          //   case '1':
+          //     return Icon(Icons.close);
+          //   case '0':
+          //     return SizedBox();
+          //   default:
+          //     return SizedBox();
+          // }
+
+          return onTap != null ? InkWell(onTap: () => onTap!.call(index), child: customPaint) : customPaint;
         },
-        padding: EdgeInsets.zero,
-        shrinkWrap: true,
-        physics: const NeverScrollableScrollPhysics(),
       ),
     );
   }

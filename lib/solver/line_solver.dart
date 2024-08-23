@@ -13,8 +13,9 @@ import '../backend/type_extensions/nono_direction_extension.dart';
 class LineSolver {
   bool kPrintComments = false;
   bool activateReturnOnNotEnoughSolvedLines = false;
-  bool countBoxes = false;
-  bool countActualBoxes = false;
+  bool countBoxes = true;
+  bool countActualBoxes = true;
+  bool countOtherBoxes = true;
   bool groupSteps = true;
 
   void solve(NonogramState state) async {
@@ -35,6 +36,7 @@ class LineSolver {
     // print('Puzzle duration: ${state.startDateTime!.compareTo(state.endingDateTime!)}');
     // print('state.startDateTime ${state.startDateTime}');
     // print('state.endingDateTime ${state.endingDateTime}');
+    // print('state.cachedBoxSolutions: ${state.cachedBoxSolutions}');
   }
 
   void overlapping(NonogramState state) {
@@ -169,6 +171,7 @@ class LineSolver {
         return;
       }
       if (kPrintComments && kDebugMode) print('It is not. Starts to calculate all possible solutions...');
+      // print('line type: $lineType + line index: $lineIndex');
       List<List<String>> allLineSolutions = getAllLinePossibleSolutions(state, clues, initialSolution);
       if (kPrintComments && kDebugMode) print('All line solutions: $allLineSolutions');
 
@@ -318,9 +321,24 @@ class LineSolver {
     if (kPrintComments && kDebugMode) print('Get all possible solutions of line $line with clues $clues');
     List<List<String>> possibleSolutions = Iterable.generate(line.length, (_) => <String>[]).toList();
     for (int clueIndex = 0; clueIndex < clues.length; clueIndex++) {
-      for (int charIndex = 0; charIndex < line.length; charIndex++) {
-        String solutionNumb = canCluesFit(state, clues, line, charIndex, clueIndex) ? '${clueIndex + 2}' : '0';
-        if (countBoxes) state.updateBoxesChecked();
+      int minStartingPoint = clueIndex == 0 ? 0 : clues.take(clueIndex).reduce((int value, int element) => value + element + 1);
+      int maxEndingPoint = clueIndex == clues.length - 1
+          ? line.length
+          : line.length - clues.sublist(clueIndex + 1).reduce((int value, int element) => value + element + 1);
+      for (int charIndex = minStartingPoint; charIndex < maxEndingPoint; charIndex++) {
+        bool? cache = state.cachedBoxSolutions['$clues,$clueIndex,$line,$charIndex'];
+        bool isInCache = cache != null;
+        bool result;
+        if (isInCache) {
+          result = cache;
+        } else {
+          result = canCluesFit(state, clues, line, charIndex, clueIndex);
+          state.updateCachedBoxSolutions(clues, clueIndex, line, charIndex, result);
+          if (result == false) {}
+          if (countBoxes) state.updateBoxesChecked();
+        }
+        String solutionNumb = result ? '${clueIndex + 2}' : '0';
+        // print('can fit: $result');
 
         int loops = solutionNumb == '0' ? 1 : clues[clueIndex];
         for (int i = charIndex; i < charIndex + loops; i++) {
@@ -340,6 +358,8 @@ class LineSolver {
   bool doOtherCluesFit(
       NonogramState state, NonoDirection solutionSide, List<int> clues, int clueIndex, String solution, int solutionIndex) {
     int clue = clues.elementAt(clueIndex);
+
+    if (countOtherBoxes) state.updateOtherBoxesChecked();
 
     if (kPrintComments && kDebugMode) print('Does clue have clues ${solutionSide.name}?');
     if (!solutionSide.hasOtherClues(clueIndex, clues.length)) {
@@ -368,7 +388,7 @@ class LineSolver {
         if (kPrintComments && kDebugMode) print('It does fit. Return `true`.');
 
         // return solutionSide.isSolutionValid(solution, solutionIndex);
-
+        state.updateCachedBoxSolutions(cluesSublist, 0, solutionSublist, solutionSublistIndex, true);
         return true;
       }
     }
@@ -380,6 +400,8 @@ class LineSolver {
     List<String> solutionList = solution.split('');
     int clue = clues.elementAt(cl);
     bool canFit;
+
+    // print('clues: $clues , clue: $cl , position $s , solution $solution , line $solution');
 
     if (kPrintComments && kDebugMode) print('Does clue $clue fit at $solutionList from position $s to position ${s + clue}?');
     if (clue > solutionList.getRange(s, solutionList.length).length) {
@@ -402,6 +424,7 @@ class LineSolver {
 
     bool cluesBeforeGood = doOtherCluesFit(state, NonoDirection.before, clues, cl, solution, s);
     bool cluesAfterGood = doOtherCluesFit(state, NonoDirection.after, clues, cl, solution, s);
+
     if (kPrintComments && kDebugMode)
       print('Do both clues before and clues after fit? Answer: ${cluesBeforeGood && cluesAfterGood}');
     if (countActualBoxes) state.updateActualBoxesChecked();
