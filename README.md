@@ -18,3 +18,9 @@ samples, guidance on mobile development, and a full API reference.
 
 ### generate
 `flutter packages pub run build_runner build`
+
+### update host
+1. `flutter build web`
+2. `firebase deploy`
+
+Note: Might need flutter pub get or version change.
