@@ -17,69 +17,77 @@ class NonogramPage extends HookWidget {
   Widget build(BuildContext context) {
     var nonogramState = useNonogramState(nonogram);
 
-    return AppPage(children: [
-      Flex(
-        direction: MediaQuery.of(context).size.width > 1200 ? Axis.horizontal : Axis.vertical,
-        verticalDirection: VerticalDirection.up,
-        children: [
-          Column(
-            children: [
-              Text('${nonogramState.nonogram.info?.title} #${nonogramState.nonogram.id}'),
-              // Text('nonogramState.activeSolution from page:'),
-              // Text('${nonogramState.activeSolution.solution}'),
-              // Text('solutionSteps.last.currentSolution from page:'),
-              // Text('${nonogramState.solutionSteps.last.currentSolution}'),
-              // Text('solutionSteps.length from page:'),
-              // Text('${nonogramState.solutionSteps.length}'),
-              // Text('stack.length from page:'),
-              // Text('${nonogramState.stack.length}'),
-              InkWell(
-                onTap: () {
-                  LineSolver().solve(nonogramState);
-                  // todo: build draft/empty solver structure #17 https://github.com/stefaniamak/nonogram/issues/17
-                  // var solution = Solver().solve(nonogramState);
-                },
-                child: const SizedBox(
-                  height: 50,
-                  width: 80,
-                  child: Center(child: Text('SOLVE')),
-                ),
+    return AppPage(
+      children: [
+        Flex(
+          direction: MediaQuery.of(context).size.width > 1200 ? Axis.horizontal : Axis.vertical,
+          // verticalDirection: VerticalDirection.up,
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            NonogramGridAndClues(
+              // nonogram: nonogram,
+              clues: nonogram.clues!,
+              solution: nonogramState.solutionSteps.elementAt(nonogramState.stepNumber).currentSolution,
+              padding: const EdgeInsets.all(32),
+              maxSize: Size(
+                MediaQuery.of(context).size.width,
+                MediaQuery.of(context).size.height * 0.8,
               ),
-              AnimatedOpacity(
-                duration: const Duration(milliseconds: 200),
-                opacity: nonogramState.solutionSteps.length <= 1 ? 0.5 : 1,
-                child: Slider(
-                  value: nonogramState.stepNumber + 0.0,
-                  min: 0,
-                  max: nonogramState.solutionSteps.length - 1,
-                  divisions: nonogramState.solutionSteps.length,
-                  onChanged: (value) {
-                    nonogramState.updateStepNumber(value.ceil());
-                  },
-                ),
-              ),
-              Text(nonogramState.solutionSteps.elementAt(nonogramState.stepNumber).explanation),
-              if (nonogramState.startDateTime != null && nonogramState.endingDateTime != null)
-                Text('Puzzle duration: ${nonogramState.endingDateTime!.difference(nonogramState.startDateTime!)}'),
-              Text(
-                  'Lines checked: ${nonogramState.linesChecked} | Boxes checked: ${nonogramState.boxesChecked} | Actual boxes checked: ${nonogramState.actualBoxesChecked} | Other boxes checked: ${nonogramState.otherBoxesChecked} | Total cache data: ${nonogramState.cachedBoxSolutions.length}'),
-            ],
-          ),
-          // Text('nonogramState.solutionSteps.length: ${nonogramState.solutionSteps.length}'),
-          // Text('nonogramState.stepNumber: ${nonogramState.stepNumber}'),
-
-          NonogramGridAndClues(
-            // nonogram: nonogram,
-            clues: nonogram.clues!,
-            solution: nonogramState.solutionSteps.elementAt(nonogramState.stepNumber).currentSolution,
-            padding: const EdgeInsets.all(32),
-            maxSize: Size(
-              MediaQuery.of(context).size.width,
-              MediaQuery.of(context).size.height * 0.8,
             ),
-          ),
-        ],
-      ),
-    ]);
+            ConstrainedBox(
+              constraints: BoxConstraints(
+                maxWidth: 380,
+              ),
+              child: Column(
+                children: [
+                  Text('${nonogramState.nonogram.info?.title} #${nonogramState.nonogram.id}'),
+                  // Text('nonogramState.activeSolution from page:'),
+                  // Text('${nonogramState.activeSolution.solution}'),
+                  // Text('solutionSteps.last.currentSolution from page:'),
+                  // Text('${nonogramState.solutionSteps.last.currentSolution}'),
+                  // Text('solutionSteps.length from page:'),
+                  // Text('${nonogramState.solutionSteps.length}'),
+                  // Text('stack.length from page:'),
+                  // Text('${nonogramState.stack.length}'),
+                  InkWell(
+                    onTap: () {
+                      LineSolver().solve(nonogramState);
+                      // todo: build draft/empty solver structure #17 https://github.com/stefaniamak/nonogram/issues/17
+                      // var solution = Solver().solve(nonogramState);
+                    },
+                    child: const SizedBox(
+                      height: 50,
+                      width: 80,
+                      child: Center(child: Text('SOLVE')),
+                    ),
+                  ),
+                  AnimatedOpacity(
+                    duration: const Duration(milliseconds: 200),
+                    opacity: nonogramState.solutionSteps.length <= 1 ? 0.5 : 1,
+                    child: Slider(
+                      value: nonogramState.stepNumber + 0.0,
+                      min: 0,
+                      max: nonogramState.solutionSteps.length - 1,
+                      divisions: nonogramState.solutionSteps.length,
+                      onChanged: (value) {
+                        nonogramState.updateStepNumber(value.ceil());
+                      },
+                    ),
+                  ),
+                  Text(nonogramState.solutionSteps.elementAt(nonogramState.stepNumber).explanation),
+                  if (nonogramState.startDateTime != null && nonogramState.endingDateTime != null)
+                    Text('Puzzle duration: ${nonogramState.endingDateTime!.difference(nonogramState.startDateTime!)}'),
+                  Text(
+                      'Lines checked: ${nonogramState.linesChecked} | Boxes checked: ${nonogramState.boxesChecked} | Actual boxes checked: ${nonogramState.actualBoxesChecked} | Other boxes checked: ${nonogramState.otherBoxesChecked} | Total cache data: ${nonogramState.cachedBoxSolutions.length}'),
+                ],
+              ),
+            ),
+            // Text('nonogramState.solutionSteps.length: ${nonogramState.solutionSteps.length}'),
+            // Text('nonogramState.stepNumber: ${nonogramState.stepNumber}'),
+          ],
+        ),
+      ],
+    );
   }
 }
