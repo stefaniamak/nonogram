@@ -16,11 +16,12 @@ class NonogramPage extends HookWidget {
   @override
   Widget build(BuildContext context) {
     var nonogramState = useNonogramState(nonogram);
+    final bool isLargeScreen = MediaQuery.of(context).size.width > 1200;
 
     return AppPage(
       children: [
         Flex(
-          direction: MediaQuery.of(context).size.width > 1200 ? Axis.horizontal : Axis.vertical,
+          direction: isLargeScreen ? Axis.horizontal : Axis.vertical,
           // verticalDirection: VerticalDirection.up,
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -36,9 +37,7 @@ class NonogramPage extends HookWidget {
               ),
             ),
             ConstrainedBox(
-              constraints: BoxConstraints(
-                maxWidth: 380,
-              ),
+              constraints: const BoxConstraints(maxWidth: 380),
               child: Column(
                 children: [
                   Text('${nonogramState.nonogram.info?.title} #${nonogramState.nonogram.id}'),
@@ -75,7 +74,7 @@ class NonogramPage extends HookWidget {
                       },
                     ),
                   ),
-                  Text(nonogramState.solutionSteps.elementAt(nonogramState.stepNumber).explanation),
+                  SizedBox(height: 50, child: Text(nonogramState.solutionSteps.elementAt(nonogramState.stepNumber).explanation)),
                   if (nonogramState.startDateTime != null && nonogramState.endingDateTime != null)
                     Text('Puzzle duration: ${nonogramState.endingDateTime!.difference(nonogramState.startDateTime!)}'),
                   Text(
