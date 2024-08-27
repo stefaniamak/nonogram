@@ -14,6 +14,16 @@ class NonogramListPage extends HookWidget {
   Widget build(BuildContext context) {
     final NonogramListState nonogramListState = useNonogramList();
     return Scaffold(
+      appBar: AppBar(
+        title: Text('Nonogram Solver'),
+        forceMaterialTransparency: true,
+      ),
+      extendBody: true,
+      bottomNavigationBar: Container(
+        color: Colors.white.withOpacity(0.8),
+        padding: EdgeInsets.all(16),
+        child: Text('Designed and Developed by Stefania Mak'),
+      ),
       floatingActionButton: Ink(
         width: 56,
         height: 56,
@@ -34,26 +44,42 @@ class NonogramListPage extends HookWidget {
           },
         ),
       ),
-      body: CustomScrollView(slivers: [
-        if (nonogramListState.nonograms.isNotEmpty)
-          SliverGrid(
-            delegate: SliverChildBuilderDelegate(
-              (context, index) {
-                Nonogram nonogram = nonogramListState.nonograms[index];
-                return NonogramListItem(nonogram: nonogram);
-              },
-              childCount: nonogramListState.nonograms.length,
+      body: CustomScrollView(
+        slivers: [
+          SliverToBoxAdapter(child: SizedBox(height: 32)),
+          if (nonogramListState.nonograms.isNotEmpty)
+            SliverGrid(
+              delegate: SliverChildBuilderDelegate(
+                (context, index) {
+                  Nonogram nonogram = nonogramListState.nonograms[index];
+                  return NonogramListItem(nonogram: nonogram);
+                },
+                childCount: nonogramListState.nonograms.length,
+              ),
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 3,
+                mainAxisSpacing: 24,
+                crossAxisSpacing: 24,
+              ),
             ),
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 3,
-              mainAxisSpacing: 24,
-              crossAxisSpacing: 24,
-            ),
-          ),
-      ]),
+          SliverToBoxAdapter(child: SizedBox(height: 32)),
+          SliverToBoxAdapter(child: BottomNavigationPadding()),
+        ],
+      ),
       // body: NonogramPage(
       //   nonogram: Nonograms().dancer,
       // ),
     );
+  }
+}
+
+class BottomNavigationPadding extends StatelessWidget {
+  const BottomNavigationPadding({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(height: MediaQuery.of(context).padding.bottom);
   }
 }
