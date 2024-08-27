@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:nonogram/backend/models/nonogram.dart';
 import 'package:nonogram/game_loop/nonogram_list_state.dart';
+import 'package:nonogram/pages/app_page.dart';
 import 'package:nonogram/pages/game/create_nonogram_page.dart';
 import 'package:nonogram/pages/game/nonogram_list_item.dart';
 
@@ -13,17 +14,7 @@ class NonogramListPage extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final NonogramListState nonogramListState = useNonogramList();
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Nonogram Solver'),
-        forceMaterialTransparency: true,
-      ),
-      extendBody: true,
-      bottomNavigationBar: Container(
-        color: Colors.white.withOpacity(0.8),
-        padding: EdgeInsets.all(16),
-        child: Text('Designed and Developed by Stefania Mak'),
-      ),
+    return AppPage(
       floatingActionButton: Ink(
         width: 56,
         height: 56,
@@ -44,31 +35,23 @@ class NonogramListPage extends HookWidget {
           },
         ),
       ),
-      body: CustomScrollView(
-        slivers: [
-          SliverToBoxAdapter(child: SizedBox(height: 32)),
-          if (nonogramListState.nonograms.isNotEmpty)
-            SliverGrid(
-              delegate: SliverChildBuilderDelegate(
-                (context, index) {
-                  Nonogram nonogram = nonogramListState.nonograms[index];
-                  return NonogramListItem(nonogram: nonogram);
-                },
-                childCount: nonogramListState.nonograms.length,
-              ),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 3,
-                mainAxisSpacing: 24,
-                crossAxisSpacing: 24,
-              ),
+      children: [
+        if (nonogramListState.nonograms.isNotEmpty)
+          SliverGrid(
+            delegate: SliverChildBuilderDelegate(
+              (context, index) {
+                Nonogram nonogram = nonogramListState.nonograms[index];
+                return NonogramListItem(nonogram: nonogram);
+              },
+              childCount: nonogramListState.nonograms.length,
             ),
-          SliverToBoxAdapter(child: SizedBox(height: 32)),
-          SliverToBoxAdapter(child: BottomNavigationPadding()),
-        ],
-      ),
-      // body: NonogramPage(
-      //   nonogram: Nonograms().dancer,
-      // ),
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 3,
+              mainAxisSpacing: 24,
+              crossAxisSpacing: 24,
+            ),
+          ),
+      ],
     );
   }
 }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:nonogram/backend/models/nonogram.dart';
 import 'package:nonogram/game_loop/nonogram_state.dart';
+import 'package:nonogram/pages/app_page.dart';
 import 'package:nonogram/pages/game/nonogram_grid_and_clues.dart';
 import 'package:nonogram/solver/line_solver.dart';
 
@@ -16,9 +17,9 @@ class NonogramPage extends HookWidget {
   Widget build(BuildContext context) {
     var nonogramState = useNonogramState(nonogram);
 
-    return Scaffold(
-      body: Flex(
-        direction: MediaQuery.of(context).size.width > 1000 ? Axis.horizontal : Axis.vertical,
+    return AppPage(children: [
+      Flex(
+        direction: MediaQuery.of(context).size.width > 1200 ? Axis.horizontal : Axis.vertical,
         verticalDirection: VerticalDirection.up,
         children: [
           Column(
@@ -79,6 +80,6 @@ class NonogramPage extends HookWidget {
           ),
         ],
       ),
-    );
+    ]);
   }
 }
