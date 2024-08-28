@@ -80,7 +80,18 @@ class NonogramListItem extends StatelessWidget {
                       spacing: 6,
                       runSpacing: 6,
                       children: [
-                        if (nonogram.note != null) ...nonogram.note!.split(',').map((e) => Chip(label: Text(e))),
+                        if (nonogram.note != null)
+                          ...nonogram.note!.split(',').map(
+                                (e) => Chip(
+                                  label: Text(e),
+                                  labelStyle: const TextStyle(color: Colors.white),
+                                  padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+                                  // color: MaterialStateProperty.all(Colors.black.withOpacity(0.8)),
+                                  backgroundColor: Colors.black.withOpacity(0.8),
+                                  side: BorderSide(color: Colors.black.withOpacity(0.8)),
+                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+                                ),
+                              ),
                       ],
                     ),
                   ],
