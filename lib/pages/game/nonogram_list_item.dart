@@ -1,11 +1,12 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:nonogram/backend/models/nonogram.dart';
 import 'package:nonogram/pages/game/nonogram_grid_and_clues.dart';
 import 'package:nonogram/pages/game/nonogram_page.dart';
 
-class NonogramListItem extends StatelessWidget {
+class NonogramListItem extends StatefulWidget {
   const NonogramListItem({
     super.key,
     required this.nonogram,
@@ -14,14 +15,40 @@ class NonogramListItem extends StatelessWidget {
   final Nonogram nonogram;
 
   @override
+  State<NonogramListItem> createState() => _NonogramListItemState();
+}
+
+class _NonogramListItemState extends State<NonogramListItem> {
+  final GlobalKey _puzzleKey = GlobalKey();
+  late Size? _puzzleSize = const Size(0, 0);
+  bool _isRendered = false;
+
+  // @override
+  // void initState() {
+  //   SchedulerBinding.instance.addPostFrameCallback((_) {
+  //     final RenderBox? renderBoxStickyBottom = _puzzleKey.currentContext?.findRenderObject() as RenderBox?;
+  //     _puzzleSize = renderBoxStickyBottom?.size ?? const Size(0, 0);
+  //     print('_puzzleSize: ${_puzzleSize}');
+  //     setState(() {});
+  //   });
+  //   super.initState();
+  // }
+
+  void refresh() {
+    setState(() => _isRendered = false);
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final double width = (min(1200, MediaQuery.of(context).size.width) - 48) / 3.8;
+    final double divider = MediaQuery.of(context).size.width < 1200 ? 1 : 3.8;
+    final double width = (min(1200, MediaQuery.of(context).size.width) - 48) / divider;
+
     return InkWell(
       onTap: () {
         Navigator.push(
           context,
           MaterialPageRoute<void>(
-            builder: (BuildContext context) => NonogramPage(nonogram: nonogram),
+            builder: (BuildContext context) => NonogramPage(nonogram: widget.nonogram),
           ),
         );
       },
@@ -36,13 +63,33 @@ class NonogramListItem extends StatelessWidget {
           children: [
             // if (false)
             Expanded(
-              flex: 3,
-              child: NonogramGridAndClues(
-                // nonogram: nonogram,
-                clues: nonogram.clues!,
-                maxSize: Size(width, width),
-              ),
-            ),
+                key: _puzzleKey,
+                flex: 3,
+                child: Builder(builder: (context) {
+                  if (!_isRendered) {
+                    SchedulerBinding.instance.addPostFrameCallback((_) {
+                      final RenderBox? renderBoxStickyBottom = _puzzleKey.currentContext?.findRenderObject() as RenderBox?;
+                      _puzzleSize = renderBoxStickyBottom?.size ?? const Size(0, 0);
+                      print('_puzzleSize: ${_puzzleSize}');
+                      setState(() {});
+                    });
+                    _isRendered = true;
+                  }
+
+                  if (_puzzleSize != Size(0, 0)) {
+                    return NonogramGridAndClues(
+                      // nonogram: nonogram,
+                      clues: widget.nonogram.clues!,
+                      maxSize: _puzzleSize, //Size(width, width),
+                    );
+                  }
+
+                  return const Row(
+                    children: [
+                      Expanded(child: SizedBox()),
+                    ],
+                  );
+                })),
             Expanded(
               flex: 2,
               child: Padding(
@@ -58,20 +105,20 @@ class NonogramListItem extends StatelessWidget {
                           children: [
                             Flexible(
                               child: Text(
-                                nonogram.info?.title ?? '-',
+                                widget.nonogram.info?.title ?? '-',
                                 style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w500),
                               ),
                             ),
                             const SizedBox(width: 2),
                             Text(
-                              '(${nonogram.width}x${nonogram.height})',
+                              '(${widget.nonogram.width}x${widget.nonogram.height})',
                               style: const TextStyle(fontSize: 16, color: Colors.black54),
                             ),
                           ],
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          nonogram.info?.description ?? '-',
+                          widget.nonogram.info?.description ?? '-',
                           style: const TextStyle(fontSize: 12, color: Colors.black54),
                         ),
                       ],
@@ -80,8 +127,8 @@ class NonogramListItem extends StatelessWidget {
                       spacing: 6,
                       runSpacing: 6,
                       children: [
-                        if (nonogram.note != null)
-                          ...nonogram.note!.split(',').map(
+                        if (widget.nonogram.note != null)
+                          ...widget.nonogram.note!.split(',').map(
                                 (e) => Chip(
                                   label: Text(e),
                                   labelStyle: const TextStyle(color: Colors.white),

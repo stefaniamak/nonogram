@@ -45,11 +45,11 @@ class NonogramListPage extends HookWidget {
               },
               childCount: nonogramListState.nonograms.length,
             ),
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 3,
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: MediaQuery.of(context).size.width > 1200 ? 3 : (MediaQuery.of(context).size.width > 700 ? 2 : 1),
               mainAxisSpacing: 24,
               crossAxisSpacing: 24,
-              childAspectRatio: 3.5 / 5,
+              childAspectRatio: 4 / 5,
             ),
           ),
       ],
