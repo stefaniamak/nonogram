@@ -12,9 +12,11 @@ class AppPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         title: Text('Nonogram Solver'),
         forceMaterialTransparency: true,
+        // backgroundColor: Colors.white.withOpacity(0.8),
       ),
       extendBody: true,
       bottomNavigationBar: Container(
