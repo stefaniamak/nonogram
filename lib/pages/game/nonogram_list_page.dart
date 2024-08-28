@@ -49,6 +49,7 @@ class NonogramListPage extends HookWidget {
               crossAxisCount: 3,
               mainAxisSpacing: 24,
               crossAxisSpacing: 24,
+              childAspectRatio: 3.5 / 5,
             ),
           ),
       ],
