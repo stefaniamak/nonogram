@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:nonogram/backend/models/nonogram.dart';
 import 'package:nonogram/pages/game/nonogram_grid_and_clues.dart';
@@ -13,7 +15,7 @@ class NonogramListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final double width = (MediaQuery.of(context).size.width - 48) / 3.5;
+    final double width = (min(1200, MediaQuery.of(context).size.width) - 48) / 3.5;
     return InkWell(
       onTap: () {
         Navigator.push(
