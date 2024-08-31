@@ -95,7 +95,7 @@ class _NonogramListItemState extends State<NonogramListItem> {
             // if (false)
             Expanded(
                 key: _puzzleKey,
-                flex: 3,
+                flex: 4,
                 child: Builder(builder: (context) {
                   double width = MediaQuery.of(context).size.width;
                   // if (screenWidth != null && screenWidth != MediaQuery.of(context).size.width && mounted) {
@@ -124,7 +124,7 @@ class _NonogramListItemState extends State<NonogramListItem> {
                   );
                 })),
             Expanded(
-              flex: 2,
+              flex: 3,
               child: Padding(
                 padding: const EdgeInsets.all(24),
                 child: Column(
