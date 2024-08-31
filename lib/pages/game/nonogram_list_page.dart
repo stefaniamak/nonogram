@@ -14,6 +14,7 @@ class NonogramListPage extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final NonogramListState nonogramListState = useNonogramList();
+    double width = MediaQuery.of(context).size.width;
     return AppPage(
       floatingActionButton: Ink(
         width: 56,
@@ -46,7 +47,7 @@ class NonogramListPage extends HookWidget {
               childCount: nonogramListState.nonograms.length,
             ),
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: MediaQuery.of(context).size.width > 1200 ? 3 : (MediaQuery.of(context).size.width > 700 ? 2 : 1),
+              crossAxisCount: width > 1200 ? 3 : (width > 700 ? 2 : 1),
               mainAxisSpacing: 24,
               crossAxisSpacing: 24,
               childAspectRatio: 4 / 5,

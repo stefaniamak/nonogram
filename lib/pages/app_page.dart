@@ -32,7 +32,7 @@ class AppPage extends StatelessWidget {
             alignment: 0,
             child: SliverPadding(
               padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 16),
-              sliver: MultiSliver(children: children),
+              sliver: MultiSliver(children: [...children]),
             ),
           ),
           const SliverToBoxAdapter(child: BottomNavigationPadding()),

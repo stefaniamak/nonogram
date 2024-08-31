@@ -1,7 +1,6 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:nonogram/backend/models/nonogram.dart';
 import 'package:nonogram/pages/game/nonogram_grid_and_clues.dart';
 import 'package:nonogram/pages/game/nonogram_page.dart';
@@ -20,8 +19,9 @@ class NonogramListItem extends StatefulWidget {
 
 class _NonogramListItemState extends State<NonogramListItem> {
   final GlobalKey _puzzleKey = GlobalKey();
-  late Size? _puzzleSize = const Size(0, 0);
-  bool _isRendered = false;
+  late Size? _puzzleSize = Size(50, 50); // const Size(0, 0);
+  bool _isRendered = true;
+  double? screenWidth;
 
   // @override
   // void initState() {
@@ -29,19 +29,50 @@ class _NonogramListItemState extends State<NonogramListItem> {
   //     final RenderBox? renderBoxStickyBottom = _puzzleKey.currentContext?.findRenderObject() as RenderBox?;
   //     _puzzleSize = renderBoxStickyBottom?.size ?? const Size(0, 0);
   //     print('_puzzleSize: ${_puzzleSize}');
+  //     _isRendered = true;
+  //     screenWidth = MediaQuery.of(context).size.width;
   //     setState(() {});
   //   });
   //   super.initState();
   // }
 
-  void refresh() {
-    setState(() => _isRendered = false);
-  }
+  // void refresh() {
+  //   setState(() => _isRendered = false);
+  // }
+
+  // static bool get isBuilding => [
+  //       SchedulerPhase.transientCallbacks,
+  //       SchedulerPhase.midFrameMicrotasks,
+  //       SchedulerPhase.persistentCallbacks,
+  //     ].contains(WidgetsBinding.instance.schedulerPhase);
+  // ||  WidgetsBinding.instance.renderViewElement == null;
+
+  // @override
+  // void didUpdateWidget(covariant NonogramListItem oldWidget) {
+  //   super.didUpdateWidget(oldWidget);
+  //
+  //   if (mounted) {
+  //     //MediaQuery.of(context).size.width != oldWidget.createState().context.size?.width
+  //     // if (mounted) {
+  //     SchedulerBinding.instance.addPersistentFrameCallback((_) {
+  //       final RenderBox? renderBoxStickyBottom = _puzzleKey.currentContext?.findRenderObject() as RenderBox?;
+  //       _puzzleSize = renderBoxStickyBottom?.size ?? const Size(0, 0);
+  //       setState(() {});
+  //       // print('configuration changed');
+  //     });
+  //     // _isRendered = tru
+  //     // }
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
+    final double width = MediaQuery.of(context).size.width;
     final double divider = MediaQuery.of(context).size.width < 1200 ? 1 : 3.8;
-    final double width = (min(1200, MediaQuery.of(context).size.width) - 48) / divider;
+    final int columns = width > 1200 ? 3 : (width > 700 ? 2 : 1);
+    final double cardWidth = (min(1200, width) * 0.65) / columns;
+
+    _puzzleSize = Size(cardWidth, cardWidth);
 
     return InkWell(
       onTap: () {
@@ -66,15 +97,17 @@ class _NonogramListItemState extends State<NonogramListItem> {
                 key: _puzzleKey,
                 flex: 3,
                 child: Builder(builder: (context) {
-                  if (!_isRendered) {
-                    SchedulerBinding.instance.addPostFrameCallback((_) {
-                      final RenderBox? renderBoxStickyBottom = _puzzleKey.currentContext?.findRenderObject() as RenderBox?;
-                      _puzzleSize = renderBoxStickyBottom?.size ?? const Size(0, 0);
-                      print('_puzzleSize: ${_puzzleSize}');
-                      setState(() {});
-                    });
-                    _isRendered = true;
-                  }
+                  double width = MediaQuery.of(context).size.width;
+                  // if (screenWidth != null && screenWidth != MediaQuery.of(context).size.width && mounted) {
+                  //   SchedulerBinding.instance.addPostFrameCallback((_) {
+                  //     final RenderBox? renderBoxStickyBottom = _puzzleKey.currentContext?.findRenderObject() as RenderBox?;
+                  //     _puzzleSize = renderBoxStickyBottom?.size ?? const Size(0, 0);
+                  //     // print('_puzzleSize: ${_puzzleSize}');
+                  //     screenWidth = MediaQuery.of(context).size.width;
+                  //   });
+                  //   _isRendered = true;
+                  //   setState(() {});
+                  // }
 
                   if (_puzzleSize != Size(0, 0)) {
                     return NonogramGridAndClues(
