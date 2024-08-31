@@ -4,6 +4,7 @@ import 'package:nonogram/backend/models/nonogram.dart';
 import 'package:nonogram/game_loop/nonogram_state.dart';
 import 'package:nonogram/pages/app_page.dart';
 import 'package:nonogram/pages/game/nonogram_grid_and_clues.dart';
+import 'package:nonogram/pages/game/widgets/nonogram_title.dart';
 import 'package:nonogram/solver/line_solver.dart';
 
 class NonogramPage extends HookWidget {
@@ -40,26 +41,18 @@ class NonogramPage extends HookWidget {
               constraints: const BoxConstraints(maxWidth: 380),
               child: Column(
                 children: [
-                  Text('${nonogramState.nonogram.info?.title} #${nonogramState.nonogram.id}'),
-                  // Text('nonogramState.activeSolution from page:'),
-                  // Text('${nonogramState.activeSolution.solution}'),
-                  // Text('solutionSteps.last.currentSolution from page:'),
-                  // Text('${nonogramState.solutionSteps.last.currentSolution}'),
-                  // Text('solutionSteps.length from page:'),
-                  // Text('${nonogramState.solutionSteps.length}'),
-                  // Text('stack.length from page:'),
-                  // Text('${nonogramState.stack.length}'),
-                  InkWell(
-                    onTap: () {
-                      LineSolver().solve(nonogramState);
-                      // todo: build draft/empty solver structure #17 https://github.com/stefaniamak/nonogram/issues/17
-                      // var solution = Solver().solve(nonogramState);
-                    },
-                    child: const SizedBox(
-                      height: 50,
-                      width: 80,
-                      child: Center(child: Text('SOLVE')),
-                    ),
+                  NonogramTitle(nonogram: nonogram, showDescription: false),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: FilledButton(
+                          onPressed: () {
+                            LineSolver().solve(nonogramState);
+                          },
+                          child: const Text('SOLVE'),
+                        ),
+                      ),
+                    ],
                   ),
                   AnimatedOpacity(
                     duration: const Duration(milliseconds: 200),
