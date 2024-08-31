@@ -82,7 +82,7 @@ class CreateNonogramPage extends HookWidget {
               },
             ),
           ),
-          ElevatedButton(
+          OutlinedButton(
             onPressed: () {
               Navigator.push(
                 context,
@@ -101,7 +101,7 @@ class CreateNonogramPage extends HookWidget {
                 ),
               );
             },
-            child: const Text('Solve'),
+            child: const Text('SOLVE'),
           ),
           SizedBox(height: MediaQuery.of(context).padding.bottom + 12),
         ],

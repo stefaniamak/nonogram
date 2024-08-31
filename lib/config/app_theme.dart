@@ -52,6 +52,35 @@ class AppTheme {
           }),
         ),
       ),
+      outlinedButtonTheme: OutlinedButtonThemeData(
+        style: ButtonStyle(
+          elevation: MaterialStateProperty.all<double>(0),
+          foregroundColor: MaterialStateProperty.resolveWith<Color>((Set<MaterialState> states) {
+            if (states.contains(MaterialState.disabled)) {
+              return AppColor.black20;
+            }
+            return AppColor.black90;
+          }),
+          backgroundColor: MaterialStateProperty.resolveWith<Color>((Set<MaterialState> states) {
+            if (states.contains(MaterialState.disabled)) {
+              return AppColor.black20;
+            }
+            return Colors.white;
+          }),
+          overlayColor: MaterialStateProperty.all<Color>(Colors.black12.withOpacity(.025)),
+          padding: MaterialStateProperty.all<EdgeInsets>(const EdgeInsets.symmetric(horizontal: 8, vertical: 12)),
+          // textStyle: MaterialStateProperty.all<TextStyle>(AppTextStyle.BOLD14),
+          shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(2.0)),
+          ),
+          side: MaterialStateProperty.resolveWith<BorderSide>((Set<MaterialState> states) {
+            if (states.contains(MaterialState.disabled)) {
+              return const BorderSide(color: AppColor.disabled, width: 2);
+            }
+            return const BorderSide(color: Colors.black, width: 2);
+          }),
+        ),
+      ),
       sliderTheme: SliderThemeData(
         trackHeight: 6,
         activeTickMarkColor: Colors.white,
