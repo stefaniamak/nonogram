@@ -4,10 +4,16 @@ import 'package:sliver_tools/sliver_tools.dart';
 import 'game/nonogram_list_page.dart';
 
 class AppPage extends StatelessWidget {
-  const AppPage({required this.children, this.floatingActionButton, super.key});
+  const AppPage({
+    required this.children,
+    this.floatingActionButton,
+    this.hasVerticalPadding = true,
+    super.key,
+  });
 
   final List<Widget> children;
   final Widget? floatingActionButton;
+  final bool hasVerticalPadding;
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +37,7 @@ class AppPage extends StatelessWidget {
             maxCrossAxisExtent: 1200,
             alignment: 0,
             child: SliverPadding(
-              padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 16),
+              padding: EdgeInsets.symmetric(vertical: hasVerticalPadding ? 32 : 0, horizontal: 16),
               sliver: MultiSliver(children: [...children]),
             ),
           ),

@@ -20,6 +20,7 @@ class NonogramPage extends HookWidget {
     final bool isLargeScreen = MediaQuery.of(context).size.width > 1200;
 
     return AppPage(
+      hasVerticalPadding: false,
       children: [
         Flex(
           direction: isLargeScreen ? Axis.horizontal : Axis.vertical,
@@ -34,7 +35,7 @@ class NonogramPage extends HookWidget {
               padding: const EdgeInsets.all(32),
               maxSize: Size(
                 MediaQuery.of(context).size.width,
-                MediaQuery.of(context).size.height * 0.8,
+                MediaQuery.of(context).size.height * 0.9,
               ),
             ),
             ConstrainedBox(
@@ -70,8 +71,11 @@ class NonogramPage extends HookWidget {
                   SizedBox(height: 50, child: Text(nonogramState.solutionSteps.elementAt(nonogramState.stepNumber).explanation)),
                   if (nonogramState.startDateTime != null && nonogramState.endingDateTime != null)
                     Text('Puzzle duration: ${nonogramState.endingDateTime!.difference(nonogramState.startDateTime!)}'),
-                  Text(
-                      'Lines checked: ${nonogramState.linesChecked} | Boxes checked: ${nonogramState.boxesChecked} | Actual boxes checked: ${nonogramState.actualBoxesChecked} | Other boxes checked: ${nonogramState.otherBoxesChecked} | Total cache data: ${nonogramState.cachedBoxSolutions.length}'),
+                  Text('Lines checked: ${nonogramState.linesChecked}'),
+                  Text(' Boxes checked: ${nonogramState.boxesChecked}'),
+                  Text('Actual boxes checked: ${nonogramState.actualBoxesChecked}'),
+                  Text('Other boxes checked: ${nonogramState.otherBoxesChecked}'),
+                  Text('Total cache data: ${nonogramState.cachedBoxSolutions.length}'),
                 ],
               ),
             ),
