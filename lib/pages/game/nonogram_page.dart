@@ -56,10 +56,14 @@ class NonogramPage extends HookWidget {
                           child: const Text('SOLVE'),
                         ),
                       ),
-                      // IconButton(
-                      //   onPressed: nonogramState.solutionSteps.length > 1 ? () {} : null,
-                      //   icon: const Icon(Icons.restart_alt),
-                      // )
+                      IconButton(
+                        onPressed: nonogramState.solutionSteps.length > 1
+                            ? () {
+                                nonogramState.resetPuzzle();
+                              }
+                            : null,
+                        icon: const Icon(Icons.restart_alt),
+                      )
                     ],
                   ),
                   Row(
