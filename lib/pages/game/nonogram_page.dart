@@ -18,6 +18,7 @@ class NonogramPage extends HookWidget {
   Widget build(BuildContext context) {
     var nonogramState = useNonogramState(nonogram);
     final bool isLargeScreen = MediaQuery.of(context).size.width > 1200;
+    final double infoMaxWidth = 460;
 
     return AppPage(
       hasVerticalPadding: false,
@@ -35,7 +36,8 @@ class NonogramPage extends HookWidget {
               solution: nonogramState.solutionSteps.elementAt(nonogramState.stepNumber).currentSolution,
               padding: const EdgeInsets.all(32),
               maxSize: Size(
-                MediaQuery.of(context).size.width,
+                MediaQuery.of(context).size.width -
+                    (MediaQuery.of(context).size.width - infoMaxWidth - 50 > 0 ? infoMaxWidth - 50 : 0),
                 MediaQuery.of(context).size.height * 0.9,
               ),
             ),
