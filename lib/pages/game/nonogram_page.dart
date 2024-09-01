@@ -72,19 +72,39 @@ class NonogramPage extends HookWidget {
                   const Text('--Stats--'),
                   if (nonogramState.startDateTime != null && nonogramState.endingDateTime != null)
                     Text('Puzzle duration: ${nonogramState.endingDateTime!.difference(nonogramState.startDateTime!)}'),
-                  Switch(value: nonogramState.groupSteps, onChanged: (_) => nonogramState.updateGroupSteps()),
-                  Switch(value: nonogramState.countCheckedBoxes, onChanged: (_) => nonogramState.updateCountCheckedBoxes()),
+                  Row(
+                    children: [
+                      Switch(value: nonogramState.groupSteps, onChanged: (_) => nonogramState.updateGroupSteps()),
+                      const Text('Group steps via clues'),
+                    ],
+                  ),
+                  Text('Lines checked: ${nonogramState.linesChecked}'),
+                  Row(
+                    children: [
+                      Switch(value: nonogramState.countCheckedBoxes, onChanged: (_) => nonogramState.updateCountCheckedBoxes()),
+                      const Text('Count boxes checked in recursive algorithm'),
+                    ],
+                  ),
                   AnimatedOpacity(
                     duration: const Duration(milliseconds: 200),
                     opacity: nonogramState.countCheckedBoxes ? 1 : 0.4,
                     child: Column(children: [
-                      Text('Lines checked: ${nonogramState.linesChecked}'),
-                      Text(' Boxes checked: ${nonogramState.boxesChecked}'),
+                      Text('Boxes checked: ${nonogramState.boxesChecked}'),
                       Text('Actual boxes checked: ${nonogramState.actualBoxesChecked}'),
                       Text('Other boxes checked: ${nonogramState.otherBoxesChecked}'),
-                      Text('Total cache data: ${nonogramState.cachedBoxSolutions.length}'),
                     ]),
-                  )
+                  ),
+                  Row(
+                    children: [
+                      Switch(value: nonogramState.keepCacheData, onChanged: (_) => nonogramState.updateKeepCacheData()),
+                      const Text('Keep cache data of box solutions'),
+                    ],
+                  ),
+                  AnimatedOpacity(
+                    duration: const Duration(milliseconds: 200),
+                    opacity: nonogramState.keepCacheData ? 1 : 0.4,
+                    child: Text('Total cache data: ${nonogramState.cachedBoxSolutions.length}'),
+                  ),
                 ],
               ),
             ),

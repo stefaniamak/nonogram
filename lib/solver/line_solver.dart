@@ -326,14 +326,14 @@ class LineSolver {
           ? line.length
           : line.length - clues.sublist(clueIndex + 1).reduce((int value, int element) => value + element + 1) - clues[clueIndex];
       for (int charIndex = minStartingPoint; charIndex < maxStartingPoint; charIndex++) {
-        bool? cache = state.cachedBoxSolutions['$clues,$clueIndex,$line,$charIndex'];
+        bool? cache = state.keepCacheData ? state.cachedBoxSolutions['$clues,$clueIndex,$line,$charIndex'] : null;
         bool isInCache = cache != null;
         bool result;
         if (isInCache) {
           result = cache;
         } else {
           result = canCluesFit(state, clues, line, charIndex, clueIndex);
-          state.updateCachedBoxSolutions(clues, clueIndex, line, charIndex, result);
+          if (state.keepCacheData) state.updateCachedBoxSolutions(clues, clueIndex, line, charIndex, result);
           if (result == false) {}
           if (state.countCheckedBoxes) state.updateBoxesChecked();
         }
@@ -388,7 +388,7 @@ class LineSolver {
         if (kPrintComments && kDebugMode) print('It does fit. Return `true`.');
 
         // return solutionSide.isSolutionValid(solution, solutionIndex);
-        state.updateCachedBoxSolutions(cluesSublist, 0, solutionSublist, solutionSublistIndex, true);
+        if (state.keepCacheData) state.updateCachedBoxSolutions(cluesSublist, 0, solutionSublist, solutionSublistIndex, true);
         return true;
       }
     }

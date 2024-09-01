@@ -12,6 +12,7 @@ enum PointState { unknown, filled, cross }
 class NonogramState {
   final Nonogram nonogram;
   final bool groupSteps;
+  final bool keepCacheData;
   final bool countCheckedBoxes;
 
   final Solution activeSolution;
@@ -38,6 +39,7 @@ class NonogramState {
   final Function() updateLinesChecked;
   final Function() updateCountCheckedBoxes;
   final Function() updateGroupSteps;
+  final Function() updateKeepCacheData;
   final Function() updateBoxesChecked;
   final Function() updateActualBoxesChecked;
   final Function() updateOtherBoxesChecked;
@@ -47,6 +49,7 @@ class NonogramState {
   NonogramState({
     required this.nonogram,
     required this.groupSteps,
+    required this.keepCacheData,
     required this.countCheckedBoxes,
     required this.activeSolution,
     required this.solutionSteps,
@@ -70,6 +73,7 @@ class NonogramState {
     required this.otherBoxesChecked,
     required this.updateLinesChecked,
     required this.updateGroupSteps,
+    required this.updateKeepCacheData,
     required this.updateCountCheckedBoxes,
     required this.updateBoxesChecked,
     required this.updateActualBoxesChecked,
@@ -100,6 +104,7 @@ NonogramState useNonogramState(Nonogram nonogram) {
   final linesChecked$ = useState(0);
 
   final groupSteps$ = useState(true);
+  final keepCacheData$ = useState(true);
   final countCheckedBoxes$ = useState(true);
   final boxesChecked$ = useState(0);
   final actualBoxesChecked$ = useState(0);
@@ -116,6 +121,9 @@ NonogramState useNonogramState(Nonogram nonogram) {
 
   final updateGroupSteps = useCallback(() {
     groupSteps$.value = !groupSteps$.value;
+  });
+  final updateKeepCacheData = useCallback(() {
+    keepCacheData$.value = !keepCacheData$.value;
   });
   final updateCountCheckedBoxes = useCallback(() {
     countCheckedBoxes$.value = !countCheckedBoxes$.value;
@@ -166,6 +174,7 @@ NonogramState useNonogramState(Nonogram nonogram) {
   return NonogramState(
     nonogram: nonogram,
     groupSteps: groupSteps$.value,
+    keepCacheData: keepCacheData$.value,
     countCheckedBoxes: countCheckedBoxes$.value,
     activeSolution: Solution((s) => s
       ..type = SolutionType.saved
@@ -191,6 +200,7 @@ NonogramState useNonogramState(Nonogram nonogram) {
     otherBoxesChecked: otherBoxesChecked$.value,
     updateLinesChecked: updateLinesChecked,
     updateGroupSteps: updateGroupSteps,
+    updateKeepCacheData: updateKeepCacheData,
     updateCountCheckedBoxes: updateCountCheckedBoxes,
     updateBoxesChecked: updateBoxesChecked,
     updateActualBoxesChecked: updateActualBoxesChecked,
