@@ -5,6 +5,7 @@ import 'package:nonogram/game_loop/nonogram_list_state.dart';
 import 'package:nonogram/pages/app_page.dart';
 import 'package:nonogram/pages/game/create_nonogram_page.dart';
 import 'package:nonogram/pages/game/nonogram_list_item.dart';
+import 'package:nonogram/pages/widgets/blur_container.dart';
 
 class NonogramListPage extends HookWidget {
   static const String route = '/puzzles';
@@ -16,24 +17,27 @@ class NonogramListPage extends HookWidget {
     final NonogramListState nonogramListState = useNonogramList();
     double width = MediaQuery.of(context).size.width;
     return AppPage(
-      floatingActionButton: Ink(
-        width: 56,
-        height: 56,
-        decoration: const ShapeDecoration(
-          color: Colors.yellowAccent,
-          shape: CircleBorder(),
-        ),
-        child: IconButton(
-          icon: const Icon(Icons.add),
-          color: Colors.black,
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute<void>(
-                builder: (BuildContext context) => const CreateNonogramPage(),
-              ),
-            );
-          },
+      floatingActionButton: BlurContainer(
+        color: Colors.yellowAccent,
+        borderRadius: 32,
+        child: Ink(
+          width: 56,
+          height: 56,
+          decoration: const ShapeDecoration(
+            shape: CircleBorder(),
+          ),
+          child: IconButton(
+            icon: const Icon(Icons.add),
+            color: Colors.black,
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute<void>(
+                  builder: (BuildContext context) => const CreateNonogramPage(),
+                ),
+              );
+            },
+          ),
         ),
       ),
       children: [
