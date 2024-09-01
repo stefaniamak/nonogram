@@ -11,6 +11,10 @@ enum PointState { unknown, filled, cross }
 
 class NonogramState {
   final Nonogram nonogram;
+  final bool groupSteps;
+  final bool keepCacheData;
+  final bool countCheckedBoxes;
+
   final Solution activeSolution;
   final List<SolutionStep> solutionSteps;
   final int stepNumber;
@@ -33,14 +37,22 @@ class NonogramState {
   final int actualBoxesChecked;
   final int otherBoxesChecked;
   final Function() updateLinesChecked;
+  final Function() updateCountCheckedBoxes;
+  final Function() updateGroupSteps;
+  final Function() updateKeepCacheData;
   final Function() updateBoxesChecked;
   final Function() updateActualBoxesChecked;
   final Function() updateOtherBoxesChecked;
   final Map<String, bool> cachedBoxSolutions;
   final Function(List<int> clues, int clueIndex, String solution, int solutionIndex, bool value) updateCachedBoxSolutions;
 
+  final Function() resetPuzzle;
+
   NonogramState({
     required this.nonogram,
+    required this.groupSteps,
+    required this.keepCacheData,
+    required this.countCheckedBoxes,
     required this.activeSolution,
     required this.solutionSteps,
     required this.stack,
@@ -62,20 +74,26 @@ class NonogramState {
     required this.actualBoxesChecked,
     required this.otherBoxesChecked,
     required this.updateLinesChecked,
+    required this.updateGroupSteps,
+    required this.updateKeepCacheData,
+    required this.updateCountCheckedBoxes,
     required this.updateBoxesChecked,
     required this.updateActualBoxesChecked,
     required this.updateOtherBoxesChecked,
     required this.cachedBoxSolutions,
     required this.updateCachedBoxSolutions,
+    required this.resetPuzzle,
   });
 }
 
 String getUpdatedActiveSolution(String activeSol, int index, String char) => activeSol.replaceRange(index, index + 1, char);
 
 NonogramState useNonogramState(Nonogram nonogram) {
+  final String emptySolution = Iterable.generate(nonogram.height * nonogram.width, (_) => '?').join();
+
   final activeSolution$ = useState(
     // Initialization code made inspired from https://stackoverflow.com/a/61929967
-    Iterable.generate(nonogram.height * nonogram.width, (_) => '?').join(),
+    emptySolution,
     // '123456789qwertyuiopasdfghjklzxcvbnmερτυθιοπασδφγηξκλζχψωβνμQWERTYUIOPASDFGHJKLZXCVBNM',
   );
 
@@ -83,12 +101,17 @@ NonogramState useNonogramState(Nonogram nonogram) {
     initializeStepsList(nonogram.clues!),
   );
 
+  final SolutionStep initialSolutionStep = SolutionStep(currentSolution: activeSolution$.value, explanation: 'Empty nonogram');
   final ValueNotifier<List<SolutionStep>> solutionSteps$ = useState(
-    <SolutionStep>[SolutionStep(currentSolution: activeSolution$.value, explanation: 'Empty nonogram')],
+    <SolutionStep>[initialSolutionStep],
   );
 
   final stepNumber$ = useState(0);
   final linesChecked$ = useState(0);
+
+  final groupSteps$ = useState(true);
+  final keepCacheData$ = useState(true);
+  final countCheckedBoxes$ = useState(true);
   final boxesChecked$ = useState(0);
   final actualBoxesChecked$ = useState(0);
   final otherBoxesChecked$ = useState(0);
@@ -101,6 +124,16 @@ NonogramState useNonogramState(Nonogram nonogram) {
   final serUnknown = useCallback(
       (int index) => activeSolution$.value = getUpdatedActiveSolution(activeSolution$.value, index, '?'),
       [activeSolution$.value]);
+
+  final updateGroupSteps = useCallback(() {
+    groupSteps$.value = !groupSteps$.value;
+  });
+  final updateKeepCacheData = useCallback(() {
+    keepCacheData$.value = !keepCacheData$.value;
+  });
+  final updateCountCheckedBoxes = useCallback(() {
+    countCheckedBoxes$.value = !countCheckedBoxes$.value;
+  });
 
   final updateStepNumber = useCallback((int index) {
     stepNumber$.value = index;
@@ -144,8 +177,25 @@ NonogramState useNonogramState(Nonogram nonogram) {
     cachedBoxSolutions$.value['$clues,$clueIndex,$solution,$solutionIndex'] = value;
   });
 
+  final resetPuzzle = useCallback(() {
+    activeSolution$.value = emptySolution;
+    stack$.value = initializeStepsList(nonogram.clues!);
+    solutionSteps$.value = <SolutionStep>[initialSolutionStep];
+    stepNumber$.value = 0;
+    linesChecked$.value = 0;
+    boxesChecked$.value = 0;
+    actualBoxesChecked$.value = 0;
+    otherBoxesChecked$.value = 0;
+    startingDateTime$.value = null;
+    endingDateTime$.value = null;
+    cachedBoxSolutions$.value = {};
+  });
+
   return NonogramState(
     nonogram: nonogram,
+    groupSteps: groupSteps$.value,
+    keepCacheData: keepCacheData$.value,
+    countCheckedBoxes: countCheckedBoxes$.value,
     activeSolution: Solution((s) => s
       ..type = SolutionType.saved
       ..solution = activeSolution$.value),
@@ -169,11 +219,15 @@ NonogramState useNonogramState(Nonogram nonogram) {
     actualBoxesChecked: actualBoxesChecked$.value,
     otherBoxesChecked: otherBoxesChecked$.value,
     updateLinesChecked: updateLinesChecked,
+    updateGroupSteps: updateGroupSteps,
+    updateKeepCacheData: updateKeepCacheData,
+    updateCountCheckedBoxes: updateCountCheckedBoxes,
     updateBoxesChecked: updateBoxesChecked,
     updateActualBoxesChecked: updateActualBoxesChecked,
     updateOtherBoxesChecked: updateOtherBoxesChecked,
     cachedBoxSolutions: cachedBoxSolutions$.value,
     updateCachedBoxSolutions: updateCachedBoxSolutions,
+    resetPuzzle: resetPuzzle,
   );
 }
 
