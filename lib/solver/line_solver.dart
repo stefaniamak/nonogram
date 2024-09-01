@@ -13,10 +13,10 @@ import '../backend/type_extensions/nono_direction_extension.dart';
 class LineSolver {
   bool kPrintComments = false;
   bool activateReturnOnNotEnoughSolvedLines = false;
-  bool countBoxes = true;
-  bool countActualBoxes = true;
-  bool countOtherBoxes = true;
-  bool groupSteps = true;
+  // bool countBoxes = true;
+  // bool countActualBoxes = true;
+  // bool countOtherBoxes = true;
+  // bool groupSteps = true;
 
   void solve(NonogramState state) async {
     state.updateStartingDateTime(DateTime.now());
@@ -199,7 +199,7 @@ class LineSolver {
 
       String updatedSolution = '';
 
-      if (groupSteps) {
+      if (state.groupSteps) {
         // Generate a regex pattern to match any number except those in the exclusion list
         String inclusionPattern = charIndexesOfQMarks.map((e) => e).join('|');
         // Precompile regex patterns
@@ -335,7 +335,7 @@ class LineSolver {
           result = canCluesFit(state, clues, line, charIndex, clueIndex);
           state.updateCachedBoxSolutions(clues, clueIndex, line, charIndex, result);
           if (result == false) {}
-          if (countBoxes) state.updateBoxesChecked();
+          if (state.countCheckedBoxes) state.updateBoxesChecked();
         }
         String solutionNumb = result ? '${clueIndex + 2}' : '0';
         // print('can fit: $result');
@@ -359,7 +359,7 @@ class LineSolver {
       NonogramState state, NonoDirection solutionSide, List<int> clues, int clueIndex, String solution, int solutionIndex) {
     int clue = clues.elementAt(clueIndex);
 
-    if (countOtherBoxes) state.updateOtherBoxesChecked();
+    if (state.countCheckedBoxes) state.updateOtherBoxesChecked();
 
     if (kPrintComments && kDebugMode) print('Does clue have clues ${solutionSide.name}?');
     if (!solutionSide.hasOtherClues(clueIndex, clues.length)) {
@@ -427,7 +427,7 @@ class LineSolver {
 
     if (kPrintComments && kDebugMode)
       print('Do both clues before and clues after fit? Answer: ${cluesBeforeGood && cluesAfterGood}');
-    if (countActualBoxes) state.updateActualBoxesChecked();
+    if (state.countCheckedBoxes) state.updateActualBoxesChecked();
     return cluesBeforeGood && cluesAfterGood;
   }
 

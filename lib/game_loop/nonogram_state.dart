@@ -11,6 +11,9 @@ enum PointState { unknown, filled, cross }
 
 class NonogramState {
   final Nonogram nonogram;
+  final bool groupSteps;
+  final bool countCheckedBoxes;
+
   final Solution activeSolution;
   final List<SolutionStep> solutionSteps;
   final int stepNumber;
@@ -33,6 +36,8 @@ class NonogramState {
   final int actualBoxesChecked;
   final int otherBoxesChecked;
   final Function() updateLinesChecked;
+  final Function() updateCountCheckedBoxes;
+  final Function() updateGroupSteps;
   final Function() updateBoxesChecked;
   final Function() updateActualBoxesChecked;
   final Function() updateOtherBoxesChecked;
@@ -41,6 +46,8 @@ class NonogramState {
 
   NonogramState({
     required this.nonogram,
+    required this.groupSteps,
+    required this.countCheckedBoxes,
     required this.activeSolution,
     required this.solutionSteps,
     required this.stack,
@@ -62,6 +69,8 @@ class NonogramState {
     required this.actualBoxesChecked,
     required this.otherBoxesChecked,
     required this.updateLinesChecked,
+    required this.updateGroupSteps,
+    required this.updateCountCheckedBoxes,
     required this.updateBoxesChecked,
     required this.updateActualBoxesChecked,
     required this.updateOtherBoxesChecked,
@@ -89,6 +98,9 @@ NonogramState useNonogramState(Nonogram nonogram) {
 
   final stepNumber$ = useState(0);
   final linesChecked$ = useState(0);
+
+  final groupSteps$ = useState(true);
+  final countCheckedBoxes$ = useState(true);
   final boxesChecked$ = useState(0);
   final actualBoxesChecked$ = useState(0);
   final otherBoxesChecked$ = useState(0);
@@ -101,6 +113,13 @@ NonogramState useNonogramState(Nonogram nonogram) {
   final serUnknown = useCallback(
       (int index) => activeSolution$.value = getUpdatedActiveSolution(activeSolution$.value, index, '?'),
       [activeSolution$.value]);
+
+  final updateGroupSteps = useCallback(() {
+    groupSteps$.value = !groupSteps$.value;
+  });
+  final updateCountCheckedBoxes = useCallback(() {
+    countCheckedBoxes$.value = !countCheckedBoxes$.value;
+  });
 
   final updateStepNumber = useCallback((int index) {
     stepNumber$.value = index;
@@ -146,6 +165,8 @@ NonogramState useNonogramState(Nonogram nonogram) {
 
   return NonogramState(
     nonogram: nonogram,
+    groupSteps: groupSteps$.value,
+    countCheckedBoxes: countCheckedBoxes$.value,
     activeSolution: Solution((s) => s
       ..type = SolutionType.saved
       ..solution = activeSolution$.value),
@@ -169,6 +190,8 @@ NonogramState useNonogramState(Nonogram nonogram) {
     actualBoxesChecked: actualBoxesChecked$.value,
     otherBoxesChecked: otherBoxesChecked$.value,
     updateLinesChecked: updateLinesChecked,
+    updateGroupSteps: updateGroupSteps,
+    updateCountCheckedBoxes: updateCountCheckedBoxes,
     updateBoxesChecked: updateBoxesChecked,
     updateActualBoxesChecked: updateActualBoxesChecked,
     updateOtherBoxesChecked: updateOtherBoxesChecked,

@@ -94,6 +94,36 @@ class AppTheme {
         trackShape: const AppSliderTrackShape(),
         thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 12),
       ),
+      switchTheme: SwitchThemeData(
+        thumbColor: WidgetStateProperty.resolveWith((Set<WidgetState> states) {
+          if (states.contains(WidgetState.disabled)) {
+            return AppColor.black40;
+          } else {
+            return states.contains(WidgetState.selected) ? AppColor.white : AppColor.black;
+          }
+        }),
+        thumbIcon: WidgetStateProperty.resolveWith<Icon>(
+          (Set<WidgetState> states) {
+            final Color thumbColor;
+            if (states.contains(WidgetState.disabled)) {
+              thumbColor = AppColor.black40;
+            } else {
+              thumbColor = states.contains(WidgetState.selected) ? AppColor.white : AppColor.black;
+            }
+            return Icon(Icons.circle, color: thumbColor);
+          },
+        ),
+        trackColor: WidgetStateProperty.resolveWith((Set<WidgetState> states) {
+          if (states.contains(WidgetState.disabled)) {
+            return states.contains(WidgetState.selected) ? AppColor.black20 : Colors.transparent;
+          } else {
+            return states.contains(WidgetState.selected) ? AppColor.black : AppColor.white;
+          }
+        }),
+        trackOutlineColor: WidgetStateProperty.resolveWith((Set<WidgetState> states) {
+          return states.contains(WidgetState.disabled) ? AppColor.black20 : AppColor.black;
+        }),
+      ),
     );
   }
 }

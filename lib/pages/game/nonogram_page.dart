@@ -69,13 +69,22 @@ class NonogramPage extends HookWidget {
                     ),
                   ),
                   SizedBox(height: 50, child: Text(nonogramState.solutionSteps.elementAt(nonogramState.stepNumber).explanation)),
+                  const Text('--Stats--'),
                   if (nonogramState.startDateTime != null && nonogramState.endingDateTime != null)
                     Text('Puzzle duration: ${nonogramState.endingDateTime!.difference(nonogramState.startDateTime!)}'),
-                  Text('Lines checked: ${nonogramState.linesChecked}'),
-                  Text(' Boxes checked: ${nonogramState.boxesChecked}'),
-                  Text('Actual boxes checked: ${nonogramState.actualBoxesChecked}'),
-                  Text('Other boxes checked: ${nonogramState.otherBoxesChecked}'),
-                  Text('Total cache data: ${nonogramState.cachedBoxSolutions.length}'),
+                  Switch(value: nonogramState.groupSteps, onChanged: (_) => nonogramState.updateGroupSteps()),
+                  Switch(value: nonogramState.countCheckedBoxes, onChanged: (_) => nonogramState.updateCountCheckedBoxes()),
+                  AnimatedOpacity(
+                    duration: const Duration(milliseconds: 200),
+                    opacity: nonogramState.countCheckedBoxes ? 1 : 0.4,
+                    child: Column(children: [
+                      Text('Lines checked: ${nonogramState.linesChecked}'),
+                      Text(' Boxes checked: ${nonogramState.boxesChecked}'),
+                      Text('Actual boxes checked: ${nonogramState.actualBoxesChecked}'),
+                      Text('Other boxes checked: ${nonogramState.otherBoxesChecked}'),
+                      Text('Total cache data: ${nonogramState.cachedBoxSolutions.length}'),
+                    ]),
+                  )
                 ],
               ),
             ),
