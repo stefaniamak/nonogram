@@ -1,6 +1,9 @@
+import 'dart:ui' as ui;
+
 import 'package:flutter/material.dart';
 import 'package:sliver_tools/sliver_tools.dart';
 
+import '../config/app_color.dart';
 import 'game/nonogram_list_page.dart';
 
 class AppPage extends StatelessWidget {
@@ -27,11 +30,7 @@ class AppPage extends StatelessWidget {
         // backgroundColor: Colors.white.withOpacity(0.8),
       ),
       extendBody: true,
-      bottomNavigationBar: Container(
-        color: Colors.white.withOpacity(0.8),
-        padding: EdgeInsets.all(16),
-        child: Text('Designed and Developed by Stefania Mak'),
-      ),
+      bottomNavigationBar: const AppBottomNavigationBar(),
       floatingActionButton: floatingActionButton,
       body: CustomScrollView(
         slivers: [
@@ -46,6 +45,43 @@ class AppPage extends StatelessWidget {
           const SliverToBoxAdapter(child: BottomNavigationPadding()),
         ],
       ),
+    );
+  }
+}
+
+class AppBottomNavigationBar extends StatelessWidget {
+  const AppBottomNavigationBar({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      children: <Widget>[
+        Container(
+          decoration: BoxDecoration(
+            color: AppColor.white.withOpacity(.86),
+          ),
+          child: ClipRect(
+            child: BackdropFilter(
+              filter: ui.ImageFilter.blur(sigmaX: 4, sigmaY: 4),
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: SizedBox(
+                  width: MediaQuery.of(context).size.width,
+                  child: Text('Designed and Developed by Stefania Mak'),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+
+    return Container(
+      color: Colors.white.withOpacity(0.8),
+      padding: EdgeInsets.all(16),
+      child: Text('Designed and Developed by Stefania Mak'),
     );
   }
 }
