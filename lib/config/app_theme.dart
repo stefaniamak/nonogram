@@ -25,27 +25,27 @@ class AppTheme {
       colorScheme: ColorScheme.fromSeed(seedColor: Colors.black),
       filledButtonTheme: FilledButtonThemeData(
         style: ButtonStyle(
-          elevation: MaterialStateProperty.all<double>(0),
-          foregroundColor: MaterialStateProperty.resolveWith<Color>((Set<MaterialState> states) {
-            if (states.contains(MaterialState.disabled)) {
-              return AppColor.black20;
+          elevation: WidgetStateProperty.all<double>(0),
+          foregroundColor: WidgetStateProperty.resolveWith<Color>((Set<WidgetState> states) {
+            if (states.contains(WidgetState.disabled)) {
+              return AppColor.disabled;
             }
             return AppColor.black90;
           }),
-          backgroundColor: MaterialStateProperty.resolveWith<Color>((Set<MaterialState> states) {
-            if (states.contains(MaterialState.disabled)) {
+          backgroundColor: WidgetStateProperty.resolveWith<Color>((Set<WidgetState> states) {
+            if (states.contains(WidgetState.disabled)) {
               return AppColor.black20;
             }
             return Colors.yellowAccent;
           }),
-          overlayColor: MaterialStateProperty.all<Color>(Colors.black12.withOpacity(.025)),
-          padding: MaterialStateProperty.all<EdgeInsets>(const EdgeInsets.symmetric(horizontal: 8, vertical: 12)),
-          // textStyle: MaterialStateProperty.all<TextStyle>(AppTextStyle.BOLD14),
-          shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+          overlayColor: WidgetStateProperty.all<Color>(Colors.black12.withOpacity(.025)),
+          padding: WidgetStateProperty.all<EdgeInsets>(const EdgeInsets.symmetric(horizontal: 8, vertical: 12)),
+          // textStyle: WidgetStateProperty.all<TextStyle>(AppTextStyle.BOLD14),
+          shape: WidgetStateProperty.all<RoundedRectangleBorder>(
             RoundedRectangleBorder(borderRadius: BorderRadius.circular(2.0)),
           ),
-          side: MaterialStateProperty.resolveWith<BorderSide>((Set<MaterialState> states) {
-            if (states.contains(MaterialState.disabled)) {
+          side: WidgetStateProperty.resolveWith<BorderSide>((Set<WidgetState> states) {
+            if (states.contains(WidgetState.disabled)) {
               return const BorderSide(color: AppColor.disabled, width: 2);
             }
             return const BorderSide(color: Colors.black, width: 2);
@@ -54,27 +54,27 @@ class AppTheme {
       ),
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: ButtonStyle(
-          elevation: MaterialStateProperty.all<double>(0),
-          foregroundColor: MaterialStateProperty.resolveWith<Color>((Set<MaterialState> states) {
-            if (states.contains(MaterialState.disabled)) {
+          elevation: WidgetStateProperty.all<double>(0),
+          foregroundColor: WidgetStateProperty.resolveWith<Color>((Set<WidgetState> states) {
+            if (states.contains(WidgetState.disabled)) {
               return AppColor.black20;
             }
             return AppColor.black90;
           }),
-          backgroundColor: MaterialStateProperty.resolveWith<Color>((Set<MaterialState> states) {
-            if (states.contains(MaterialState.disabled)) {
+          backgroundColor: WidgetStateProperty.resolveWith<Color>((Set<WidgetState> states) {
+            if (states.contains(WidgetState.disabled)) {
               return AppColor.black20;
             }
             return Colors.white;
           }),
-          overlayColor: MaterialStateProperty.all<Color>(Colors.black12.withOpacity(.025)),
-          padding: MaterialStateProperty.all<EdgeInsets>(const EdgeInsets.symmetric(horizontal: 8, vertical: 12)),
-          // textStyle: MaterialStateProperty.all<TextStyle>(AppTextStyle.BOLD14),
-          shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+          overlayColor: WidgetStateProperty.all<Color>(Colors.black12.withOpacity(.025)),
+          padding: WidgetStateProperty.all<EdgeInsets>(const EdgeInsets.symmetric(horizontal: 8, vertical: 12)),
+          // textStyle: WidgetStateProperty.all<TextStyle>(AppTextStyle.BOLD14),
+          shape: WidgetStateProperty.all<RoundedRectangleBorder>(
             RoundedRectangleBorder(borderRadius: BorderRadius.circular(2.0)),
           ),
-          side: MaterialStateProperty.resolveWith<BorderSide>((Set<MaterialState> states) {
-            if (states.contains(MaterialState.disabled)) {
+          side: WidgetStateProperty.resolveWith<BorderSide>((Set<WidgetState> states) {
+            if (states.contains(WidgetState.disabled)) {
               return const BorderSide(color: AppColor.disabled, width: 2);
             }
             return const BorderSide(color: Colors.black, width: 2);

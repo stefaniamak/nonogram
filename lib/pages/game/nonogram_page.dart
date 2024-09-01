@@ -47,12 +47,18 @@ class NonogramPage extends HookWidget {
                     children: [
                       Expanded(
                         child: FilledButton(
-                          onPressed: () {
-                            LineSolver().solve(nonogramState);
-                          },
+                          onPressed: nonogramState.solutionSteps.length > 1
+                              ? null
+                              : () {
+                                  LineSolver().solve(nonogramState);
+                                },
                           child: const Text('SOLVE'),
                         ),
                       ),
+                      // IconButton(
+                      //   onPressed: nonogramState.solutionSteps.length > 1 ? () {} : null,
+                      //   icon: const Icon(Icons.restart_alt),
+                      // )
                     ],
                   ),
                   AnimatedOpacity(
@@ -70,21 +76,17 @@ class NonogramPage extends HookWidget {
                   ),
                   SizedBox(height: 50, child: Text(nonogramState.solutionSteps.elementAt(nonogramState.stepNumber).explanation)),
                   const Text('--Stats--'),
-                  if (nonogramState.startDateTime != null && nonogramState.endingDateTime != null)
-                    Text('Puzzle duration: ${nonogramState.endingDateTime!.difference(nonogramState.startDateTime!)}'),
-                  Row(
-                    children: [
-                      Switch(value: nonogramState.groupSteps, onChanged: (_) => nonogramState.updateGroupSteps()),
-                      const Text('Group steps via clues'),
-                    ],
+                  const SizedBox(height: 8),
+                  Text(
+                    'Puzzle duration: ${nonogramState.startDateTime != null && nonogramState.endingDateTime != null ? (nonogramState.endingDateTime!.difference(nonogramState.startDateTime!)) : '-'}',
+                  ),
+                  Text('Total steps: ${nonogramState.solutionSteps.length}'),
+                  AnimatedOpacity(
+                    duration: const Duration(milliseconds: 200),
+                    opacity: nonogramState.keepCacheData ? 1 : 0.4,
+                    child: Text('Total cache data: ${nonogramState.cachedBoxSolutions.length}'),
                   ),
                   Text('Lines checked: ${nonogramState.linesChecked}'),
-                  Row(
-                    children: [
-                      Switch(value: nonogramState.countCheckedBoxes, onChanged: (_) => nonogramState.updateCountCheckedBoxes()),
-                      const Text('Count boxes checked in recursive algorithm'),
-                    ],
-                  ),
                   AnimatedOpacity(
                     duration: const Duration(milliseconds: 200),
                     opacity: nonogramState.countCheckedBoxes ? 1 : 0.4,
@@ -94,16 +96,25 @@ class NonogramPage extends HookWidget {
                       Text('Other boxes checked: ${nonogramState.otherBoxesChecked}'),
                     ]),
                   ),
+                  const SizedBox(height: 24),
+                  const Text('--Settings--'),
+                  Row(
+                    children: [
+                      Switch(value: nonogramState.groupSteps, onChanged: (_) => nonogramState.updateGroupSteps()),
+                      const Text('Group steps via clues'),
+                    ],
+                  ),
                   Row(
                     children: [
                       Switch(value: nonogramState.keepCacheData, onChanged: (_) => nonogramState.updateKeepCacheData()),
                       const Text('Keep cache data of box solutions'),
                     ],
                   ),
-                  AnimatedOpacity(
-                    duration: const Duration(milliseconds: 200),
-                    opacity: nonogramState.keepCacheData ? 1 : 0.4,
-                    child: Text('Total cache data: ${nonogramState.cachedBoxSolutions.length}'),
+                  Row(
+                    children: [
+                      Switch(value: nonogramState.countCheckedBoxes, onChanged: (_) => nonogramState.updateCountCheckedBoxes()),
+                      const Text('Count boxes checked in recursive algorithm'),
+                    ],
                   ),
                 ],
               ),
