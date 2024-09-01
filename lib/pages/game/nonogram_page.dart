@@ -61,18 +61,41 @@ class NonogramPage extends HookWidget {
                       // )
                     ],
                   ),
-                  AnimatedOpacity(
-                    duration: const Duration(milliseconds: 200),
-                    opacity: nonogramState.solutionSteps.length <= 1 ? 0.5 : 1,
-                    child: Slider(
-                      value: nonogramState.stepNumber + 0.0,
-                      min: 0,
-                      max: nonogramState.solutionSteps.length - 1,
-                      divisions: nonogramState.solutionSteps.length,
-                      onChanged: (value) {
-                        nonogramState.updateStepNumber(value.ceil());
-                      },
-                    ),
+                  Row(
+                    children: [
+                      IconButton(
+                        onPressed: nonogramState.solutionSteps.length > 1 && nonogramState.stepNumber > 0
+                            ? () {
+                                nonogramState.updateStepNumber(nonogramState.stepNumber - 1);
+                              }
+                            : null,
+                        icon: const Icon(Icons.arrow_back_ios_new_sharp),
+                      ),
+                      Expanded(
+                        child: AnimatedOpacity(
+                          duration: const Duration(milliseconds: 200),
+                          opacity: nonogramState.solutionSteps.length <= 1 ? 0.5 : 1,
+                          child: Slider(
+                            value: nonogramState.stepNumber + 0.0,
+                            min: 0,
+                            max: nonogramState.solutionSteps.length - 1,
+                            divisions: nonogramState.solutionSteps.length,
+                            onChanged: (value) {
+                              nonogramState.updateStepNumber(value.ceil());
+                            },
+                          ),
+                        ),
+                      ),
+                      IconButton(
+                        onPressed: nonogramState.solutionSteps.length > 1 &&
+                                nonogramState.stepNumber < nonogramState.solutionSteps.length - 1
+                            ? () {
+                                nonogramState.updateStepNumber(nonogramState.stepNumber + 1);
+                              }
+                            : null,
+                        icon: const Icon(Icons.arrow_forward_ios_sharp),
+                      ),
+                    ],
                   ),
                   SizedBox(height: 50, child: Text(nonogramState.solutionSteps.elementAt(nonogramState.stepNumber).explanation)),
                   const Text('--Stats--'),
