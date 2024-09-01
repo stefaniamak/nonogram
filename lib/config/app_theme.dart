@@ -93,6 +93,7 @@ class AppTheme {
         overlayColor: Colors.grey.withOpacity(0.25),
         trackShape: const AppSliderTrackShape(),
         thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 12),
+        overlayShape: SliderComponentShape.noOverlay,
       ),
       switchTheme: SwitchThemeData(
         thumbColor: WidgetStateProperty.resolveWith((Set<WidgetState> states) {

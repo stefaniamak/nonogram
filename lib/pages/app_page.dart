@@ -8,12 +8,14 @@ class AppPage extends StatelessWidget {
     required this.children,
     this.floatingActionButton,
     this.hasVerticalPadding = true,
+    this.hasMaxCrossAxisExtend = true,
     super.key,
   });
 
   final List<Widget> children;
   final Widget? floatingActionButton;
   final bool hasVerticalPadding;
+  final bool hasMaxCrossAxisExtend;
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +36,7 @@ class AppPage extends StatelessWidget {
       body: CustomScrollView(
         slivers: [
           SliverCrossAxisConstrained(
-            maxCrossAxisExtent: 1200,
+            maxCrossAxisExtent: hasMaxCrossAxisExtend ? 1200 : MediaQuery.of(context).size.width,
             alignment: 0,
             child: SliverPadding(
               padding: EdgeInsets.symmetric(vertical: hasVerticalPadding ? 32 : 0, horizontal: 16),

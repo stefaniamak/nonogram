@@ -21,6 +21,7 @@ class NonogramPage extends HookWidget {
 
     return AppPage(
       hasVerticalPadding: false,
+      hasMaxCrossAxisExtend: false,
       children: [
         Flex(
           direction: isLargeScreen ? Axis.horizontal : Axis.vertical,
@@ -102,7 +103,7 @@ class NonogramPage extends HookWidget {
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
-                        Text('Step #${nonogramState.stepNumber}:'),
+                        Text('Step #${nonogramState.stepNumber + 1}:'),
                         const SizedBox(width: 4),
                         Expanded(child: Text(nonogramState.solutionSteps.elementAt(nonogramState.stepNumber).explanation)),
                       ],
