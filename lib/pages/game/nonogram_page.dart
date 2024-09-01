@@ -97,7 +97,17 @@ class NonogramPage extends HookWidget {
                       ),
                     ],
                   ),
-                  SizedBox(height: 50, child: Text(nonogramState.solutionSteps.elementAt(nonogramState.stepNumber).explanation)),
+                  SizedBox(
+                    height: 50,
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Text('Step #${nonogramState.stepNumber}:'),
+                        const SizedBox(width: 4),
+                        Expanded(child: Text(nonogramState.solutionSteps.elementAt(nonogramState.stepNumber).explanation)),
+                      ],
+                    ),
+                  ),
                   const Text('--Stats--'),
                   const SizedBox(height: 8),
                   Text(
