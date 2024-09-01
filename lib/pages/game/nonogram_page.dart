@@ -40,7 +40,7 @@ class NonogramPage extends HookWidget {
               ),
             ),
             ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 380),
+              constraints: const BoxConstraints(maxWidth: 460),
               child: Column(
                 children: [
                   NonogramTitle(nonogram: nonogram, showDescription: false),
