@@ -177,7 +177,10 @@ class LineSolver {
             currentSolution: fullUpdatedSolution,
             axis: lineType,
             lineIndex: lineIndex,
-            explanation: 'Cross out all remaining empty boxes of ${lineType.name} with index $lineIndex.',
+            explanation: 'Cross out all remaining empty boxes of ${lineType.name} with index $lineIndex. '
+                'charIndexesOfQMarks: $charIndexesOfQMarks '
+                'lookbehinds: $lookbehinds '
+                'fullUpdatedSolution: $fullUpdatedSolution ',
           ));
 
           state.stack.updateStack(charIndexesOfQMarks, lineType, state);

@@ -104,8 +104,8 @@ class NonogramPage extends HookWidget {
                       ),
                     ],
                   ),
-                  SizedBox(
-                    height: 50,
+                  ConstrainedBox(
+                    constraints: const BoxConstraints(minHeight: 50),
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
