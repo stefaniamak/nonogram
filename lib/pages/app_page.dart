@@ -32,7 +32,7 @@ class AppPage extends StatelessWidget {
         child: Padding(
           padding: EdgeInsets.all(16),
           child: Row(
-            children: [Expanded(child: Text('Designed and Developed by Stefania Mak | v0.3.1'))],
+            children: [Expanded(child: Text('Designed and Developed by Stefania Mak | v0.3.2'))],
           ),
         ),
       ),
