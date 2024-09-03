@@ -104,67 +104,84 @@ class LineSolver {
     if (isLineCompleted) {
       if (kPrintComments && kDebugMode) print('It is. Shall cross out remaining empty boxes if any left.');
       if (initialSolution.characters.contains('?')) {
-        int charStart = initialSolution.characters.findFirst(Characters('?'))!.stringBeforeLength;
-        int charEnd = initialSolution.characters.findLast(Characters('?'))!.stringBeforeLength + 1;
-        if (kPrintComments && kDebugMode) {
-          print('charStart: $charStart');
-          print('charEnd: $charEnd');
+        if (!state.groupSteps) {
+          for (int charIndex = 0; charIndex < initialSolution.length; charIndex++) {
+            if (initialSolution.characterAt(charIndex) == '?') {
+              int indexSol = lineType.getSolutionPosition(lineIndex, charIndex, state.nonogram.width);
+              var fullUpdatedSolution = state.solutionSteps.last.getUpdatedSolution(indexSol, '0');
+              if (kPrintComments && kDebugMode) print('fullUpdatedSolution: $fullUpdatedSolution');
+              state.addStep(SolutionStep(
+                currentSolution: fullUpdatedSolution,
+                axis: lineType,
+                lineIndex: lineIndex,
+                explanation: 'Cross out remaining empty boxes of ${lineType.name} with index $lineIndex.',
+              ));
+              state.stack.updateStack([charIndex], lineType, state);
+            }
+          }
+        } else {
+          int charStart = initialSolution.characters.findFirst(Characters('?'))!.stringBeforeLength;
+          int charEnd = initialSolution.characters.findLast(Characters('?'))!.stringBeforeLength + 1;
+          if (kPrintComments && kDebugMode) {
+            print('charStart: $charStart');
+            print('charEnd: $charEnd');
+          }
+
+          /// The following 3 lines use the list of indexes of "?" in the line solution to find and replace them
+          /// with "0"s in the entire puzzle solution String.
+          ///
+          /// We use RegEx for this task because the positions of a column in the solution String are spread out,
+          /// unlike those of a row, which are contiguous.
+          ///
+          /// To find the global positions of each column index in the entire puzzle solution, we convert the local
+          /// indexes from the line solution String to global indexes, taking into account the line we are searching.
+          ///
+          /// We create a RegEx to find and replace the specific characters in the global solution with "0".
+          ///
+          /// The RegEx searches for single character Strings with a specific number of characters before them.
+          /// We generate the required number of characters based on the list of indexes from the local solution,
+          /// and the RegEx matches Strings with exactly that many characters before them.
+          ///
+          /// The RegEx is `(?<=lookbehinds).` where [lookbehinds] is another RegEx String, generated from the local positions list.
+          /// This String consists of multiple RegEx patterns like `(?<=^.{7}).` (where "7" is any number 0 or above),
+          /// grouped and separated by "|". Let's break down the parts of the RegEx:
+          ///
+          /// Explaining `(?<=lookbehinds).`:
+          ///   (?<=lookbehinds): Matches where [lookbehinds] is true.
+          ///   .               : Matches the next character after the lookbehind condition.
+          ///
+          /// Explaining `lookbehinds`, e.g. ((?<=^.{7}).)|(?<=^.{10}).):
+          ///   (?<=^.{7}).    :
+          ///     (?<= : Lookbehind assertion to ensure what precedes the match...
+          ///     ^    : Is the start of the String...
+          ///     .    : Followed by any single character...
+          ///     {7}  : Previous case repeated exactly 7 times (where "7" is any number 0 or above)...
+          ///     .    : Matches the character immediately following this sequence.
+          ///   |    : Or (alternates between the above generated number conditions).
+          ///
+          /// e.g. RegEx `((?<=^.{7}).)|(?<=^.{10}).)` applied to a String will return the 8th and 11th
+          /// characters, as they have exactly 7 and 10 characters before them, respectively.
+          ///
+          /// We use this regex with replaceAllMapped to change the "?" characters to "0".
+          ///
+          String lookbehinds = charIndexesOfQMarks
+              .map((pos) => '^.{${lineType.getSolutionPosition(lineIndex, pos, state.nonogram.width)}}')
+              .join('|');
+          final solutionIndexesRegexp = RegExp(r'(?<=' + lookbehinds + r').');
+
+          var fullUpdatedSolution =
+              state.solutionSteps.last.currentSolution.replaceAllMapped(solutionIndexesRegexp, (match) => '0');
+          if (kPrintComments && kDebugMode) print('fullUpdatedSolution: $fullUpdatedSolution');
+
+          state.addStep(SolutionStep(
+            currentSolution: fullUpdatedSolution,
+            axis: lineType,
+            lineIndex: lineIndex,
+            explanation: 'Cross out all remaining empty boxes of ${lineType.name} with index $lineIndex.',
+          ));
+
+          state.stack.updateStack(charIndexesOfQMarks, lineType, state);
         }
-
-        /// The following 3 lines use the list of indexes of "?" in the line solution to find and replace them
-        /// with "0"s in the entire puzzle solution String.
-        ///
-        /// We use RegEx for this task because the positions of a column in the solution String are spread out,
-        /// unlike those of a row, which are contiguous.
-        ///
-        /// To find the global positions of each column index in the entire puzzle solution, we convert the local
-        /// indexes from the line solution String to global indexes, taking into account the line we are searching.
-        ///
-        /// We create a RegEx to find and replace the specific characters in the global solution with "0".
-        ///
-        /// The RegEx searches for single character Strings with a specific number of characters before them.
-        /// We generate the required number of characters based on the list of indexes from the local solution,
-        /// and the RegEx matches Strings with exactly that many characters before them.
-        ///
-        /// The RegEx is `(?<=lookbehinds).` where [lookbehinds] is another RegEx String, generated from the local positions list.
-        /// This String consists of multiple RegEx patterns like `(?<=^.{7}).` (where "7" is any number 0 or above),
-        /// grouped and separated by "|". Let's break down the parts of the RegEx:
-        ///
-        /// Explaining `(?<=lookbehinds).`:
-        ///   (?<=lookbehinds): Matches where [lookbehinds] is true.
-        ///   .               : Matches the next character after the lookbehind condition.
-        ///
-        /// Explaining `lookbehinds`, e.g. ((?<=^.{7}).)|(?<=^.{10}).):
-        ///   (?<=^.{7}).    :
-        ///     (?<= : Lookbehind assertion to ensure what precedes the match...
-        ///     ^    : Is the start of the String...
-        ///     .    : Followed by any single character...
-        ///     {7}  : Previous case repeated exactly 7 times (where "7" is any number 0 or above)...
-        ///     .    : Matches the character immediately following this sequence.
-        ///   |    : Or (alternates between the above generated number conditions).
-        ///
-        /// e.g. RegEx `((?<=^.{7}).)|(?<=^.{10}).)` applied to a String will return the 8th and 11th
-        /// characters, as they have exactly 7 and 10 characters before them, respectively.
-        ///
-        /// We use this regex with replaceAllMapped to change the "?" characters to "0".
-        ///
-        String lookbehinds = charIndexesOfQMarks
-            .map((pos) => '^.{${lineType.getSolutionPosition(lineIndex, pos, state.nonogram.width)}}')
-            .join('|');
-        final solutionIndexesRegexp = RegExp(r'(?<=' + lookbehinds + r').');
-
-        var fullUpdatedSolution =
-            state.solutionSteps.last.currentSolution.replaceAllMapped(solutionIndexesRegexp, (match) => '0');
-        if (kPrintComments && kDebugMode) print('fullUpdatedSolution: $fullUpdatedSolution');
-
-        state.addStep(SolutionStep(
-          currentSolution: fullUpdatedSolution,
-          axis: lineType,
-          lineIndex: lineIndex,
-          explanation: 'Cross out all remaining empty boxes of ${lineType.name} with index $lineIndex.',
-        ));
-
-        state.stack.updateStack(charIndexesOfQMarks, lineType, state);
       }
     } else {
       if (activateReturnOnNotEnoughSolvedLines && filledBoxes < (clues.sum / 4) && (state.nonogram.width / 4) > clues.sum) {
