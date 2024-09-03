@@ -37,7 +37,7 @@ class NonogramPage extends HookWidget {
               padding: const EdgeInsets.all(32),
               maxSize: Size(
                 MediaQuery.of(context).size.width -
-                    (MediaQuery.of(context).size.width - infoMaxWidth - 50 > 0 ? infoMaxWidth - 50 : 0),
+                    (MediaQuery.of(context).size.width - infoMaxWidth - 50 > 0 ? infoMaxWidth - 50 : 48),
                 MediaQuery.of(context).size.height * 0.9,
               ),
             ),
