@@ -63,12 +63,7 @@ class NonogramListItem extends StatelessWidget {
                           ...nonogram.note!.split(',').map(
                                 (e) => Chip(
                                   label: Text(e),
-                                  labelStyle: const TextStyle(color: Colors.white),
-                                  padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
-                                  // color: MaterialStateProperty.all(Colors.black.withOpacity(0.8)),
-                                  backgroundColor: Colors.black.withOpacity(0.8),
-                                  side: BorderSide(color: Colors.black.withOpacity(0.8)),
-                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+                                  materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                                 ),
                               ),
                       ],

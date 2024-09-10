@@ -125,6 +125,14 @@ class AppTheme {
           return states.contains(WidgetState.disabled) ? AppColor.black20 : AppColor.black;
         }),
       ),
+      chipTheme: ChipThemeData(
+        labelStyle: const TextStyle(color: Colors.white),
+        padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+        backgroundColor: Colors.black.withOpacity(0.8),
+        side: BorderSide(color: Colors.black.withOpacity(0.8)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+        // materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+      ),
     );
   }
 }
