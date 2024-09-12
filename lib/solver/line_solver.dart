@@ -255,12 +255,25 @@ class LineSolver {
           List<int> charIndexes = result[clueKey]!;
           int clueIndex = clueKey == 0 ? 0 : clueKey - 2;
 
-          String lookbehinds =
-              charIndexes.map((pos) => '^.{${lineType.getSolutionPosition(lineIndex, pos, state.nonogram.width)}}').join('|');
-          final solutionIndexesRegexp = RegExp(r'(?<=' + lookbehinds + r').');
+          var fullUpdatedSolution = state.solutionSteps.last.currentSolution;
 
-          var fullUpdatedSolution = state.solutionSteps.last.currentSolution
-              .replaceAllMapped(solutionIndexesRegexp, (match) => clueKey == 0 ? '0' : '1');
+          // TODO(stef): add "useLookbehind" variable
+          if (false) {
+            String lookbehinds =
+                charIndexes.map((pos) => '^.{${lineType.getSolutionPosition(lineIndex, pos, state.nonogram.width)}}').join('|');
+            final solutionIndexesRegexp = RegExp(r'(?<=' + lookbehinds + r').');
+
+            fullUpdatedSolution = state.solutionSteps.last.currentSolution
+                .replaceAllMapped(solutionIndexesRegexp, (match) => clueKey == 0 ? '0' : '1');
+          } else {
+            for (int charIndex in charIndexes) {
+              var tempPos = lineType.getSolutionPosition(lineIndex, charIndex, state.nonogram.width);
+              fullUpdatedSolution = fullUpdatedSolution.substring(0, tempPos) +
+                  (clueKey == 0 ? '0' : '1') +
+                  fullUpdatedSolution.substring(tempPos + 1);
+            }
+          }
+
           if (kPrintComments && kDebugMode) print('fullUpdatedSolution: $fullUpdatedSolution');
 
           if (result.isNotEmpty) {
