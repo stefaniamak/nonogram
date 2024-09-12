@@ -164,14 +164,27 @@ class LineSolver {
           ///
           /// We use this regex with replaceAllMapped to change the "?" characters to "0".
           ///
-          String lookbehinds = charIndexesOfQMarks
-              .map((pos) => '^.{${lineType.getSolutionPosition(lineIndex, pos, state.nonogram.width)}}')
-              .join('|');
-          final solutionIndexesRegexp = RegExp(r'(?<=' + lookbehinds + r').');
+          var fullUpdatedSolution = state.solutionSteps.last.currentSolution;
 
-          var fullUpdatedSolution =
-              state.solutionSteps.last.currentSolution.replaceAllMapped(solutionIndexesRegexp, (match) => '0');
-          if (kPrintComments && kDebugMode) print('fullUpdatedSolution: $fullUpdatedSolution');
+          // TODO(stef): add "useLookbehind" variable
+          if (false) {
+            String lookbehinds = charIndexesOfQMarks
+                .map((pos) => '^.{${lineType.getSolutionPosition(lineIndex, pos, state.nonogram.width)}}')
+                .join('|');
+            final solutionIndexesRegexp = RegExp(r'(?<=' + lookbehinds + r').');
+
+            fullUpdatedSolution =
+                state.solutionSteps.last.currentSolution.replaceAllMapped(solutionIndexesRegexp, (match) => '0');
+            if (kPrintComments && kDebugMode) print('fullUpdatedSolution: $fullUpdatedSolution');
+          } else {
+            for (int charIndex in charIndexesOfQMarks) {
+              var tempPos = lineType.getSolutionPosition(lineIndex, charIndex, state.nonogram.width);
+              fullUpdatedSolution = fullUpdatedSolution.characters.getRange(0, tempPos).toString() + // .substring(0, tempPos) +
+                  '0' +
+                  fullUpdatedSolution.characters.getRange(tempPos + 1).toString(); //.substring(tempPos + 1);
+            }
+          }
+          // here
 
           state.addStep(SolutionStep(
             currentSolution: fullUpdatedSolution,
@@ -268,9 +281,9 @@ class LineSolver {
           } else {
             for (int charIndex in charIndexes) {
               var tempPos = lineType.getSolutionPosition(lineIndex, charIndex, state.nonogram.width);
-              fullUpdatedSolution = fullUpdatedSolution.substring(0, tempPos) +
+              fullUpdatedSolution = fullUpdatedSolution.characters.getRange(0, tempPos).toString() + // .substring(0, tempPos) +
                   (clueKey == 0 ? '0' : '1') +
-                  fullUpdatedSolution.substring(tempPos + 1);
+                  fullUpdatedSolution.characters.getRange(tempPos + 1).toString(); //.substring(tempPos + 1);
             }
           }
 
