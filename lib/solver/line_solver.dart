@@ -179,9 +179,7 @@ class LineSolver {
           } else {
             for (int charIndex in charIndexesOfQMarks) {
               var tempPos = lineType.getSolutionPosition(lineIndex, charIndex, state.nonogram.width);
-              fullUpdatedSolution = fullUpdatedSolution.characters.getRange(0, tempPos).toString() + // .substring(0, tempPos) +
-                  '0' +
-                  fullUpdatedSolution.characters.getRange(tempPos + 1).toString(); //.substring(tempPos + 1);
+              fullUpdatedSolution = fullUpdatedSolution.substring(0, tempPos) + '0' + fullUpdatedSolution.substring(tempPos + 1);
             }
           }
           // here
@@ -281,9 +279,9 @@ class LineSolver {
           } else {
             for (int charIndex in charIndexes) {
               var tempPos = lineType.getSolutionPosition(lineIndex, charIndex, state.nonogram.width);
-              fullUpdatedSolution = fullUpdatedSolution.characters.getRange(0, tempPos).toString() + // .substring(0, tempPos) +
+              fullUpdatedSolution = fullUpdatedSolution.substring(0, tempPos) +
                   (clueKey == 0 ? '0' : '1') +
-                  fullUpdatedSolution.characters.getRange(tempPos + 1).toString(); //.substring(tempPos + 1);
+                  fullUpdatedSolution.substring(tempPos + 1);
             }
           }
 
