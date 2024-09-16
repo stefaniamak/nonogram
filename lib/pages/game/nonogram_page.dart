@@ -5,7 +5,6 @@ import 'package:nonogram/game_loop/nonogram_state.dart';
 import 'package:nonogram/pages/app_page.dart';
 import 'package:nonogram/pages/game/nonogram_grid_and_clues.dart';
 import 'package:nonogram/pages/game/widgets/nonogram_title.dart';
-import 'package:nonogram/solver/line_solver.dart';
 
 class NonogramPage extends HookWidget {
   final Nonogram nonogram;
@@ -16,7 +15,7 @@ class NonogramPage extends HookWidget {
   });
   @override
   Widget build(BuildContext context) {
-    var nonogramState = useNonogramState(nonogram);
+    NonogramState nonogramState = useNonogramState(nonogram);
     final bool isLargeScreen = MediaQuery.of(context).size.width > 1200;
     const double infoMaxWidth = 460;
 
@@ -53,7 +52,19 @@ class NonogramPage extends HookWidget {
                           onPressed: nonogramState.solutionSteps.length > 1
                               ? null
                               : () {
-                                  LineSolver().solve(nonogramState);
+                                  // compute(LineSolver().solve, nonogramState);
+                                  // LineSolver().solve(nonogramState);
+
+                                  // Cancelable<String> cancelable = workerManager.execute<String>(
+                                  //   () async {
+                                  //     // Your CPU-intensive function here
+                                  //     LineSolver().solve(nonogramState);
+                                  //     return 'success cancelable';
+                                  //   },
+                                  //   priority: WorkPriority.immediately,
+                                  // );
+                                  //
+                                  // print('cancelable: ${cancelable}');
                                 },
                           child: const Text('SOLVE'),
                         ),

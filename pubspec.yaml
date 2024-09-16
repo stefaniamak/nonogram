@@ -21,6 +21,8 @@ dependencies:
   provider: ^6.0.5
   rxdart: ^0.27.7
   sliver_tools: ^0.2.12
+  isolate_manager: ^5.2.1+1
+#  worker_manager: ^7.1.1
 
 dev_dependencies:
   flutter_test:
