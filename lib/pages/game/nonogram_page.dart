@@ -5,6 +5,7 @@ import 'package:nonogram/game_loop/nonogram_state.dart';
 import 'package:nonogram/pages/app_page.dart';
 import 'package:nonogram/pages/game/nonogram_grid_and_clues.dart';
 import 'package:nonogram/pages/game/widgets/nonogram_title.dart';
+import 'package:nonogram/solver/line_solver_simpler.dart';
 
 class NonogramPage extends HookWidget {
   final Nonogram nonogram;
@@ -51,10 +52,12 @@ class NonogramPage extends HookWidget {
                         child: FilledButton(
                           onPressed: nonogramState.solutionSteps.length > 1
                               ? null
-                              : () {
+                              : () async {
+                                  // Test 1: Compute. Failed on both Web and Mobile because it contained unsoported types.
                                   // compute(LineSolver().solve, nonogramState);
                                   // LineSolver().solve(nonogramState);
 
+                                  // Test 2: Cancelable. Run on web, but without using another thread. Failed on mobile
                                   // Cancelable<String> cancelable = workerManager.execute<String>(
                                   //   () async {
                                   //     // Your CPU-intensive function here
@@ -65,6 +68,16 @@ class NonogramPage extends HookWidget {
                                   // );
                                   //
                                   // print('cancelable: ${cancelable}');
+
+                                  // Test 3: Starting slow with fibonacci algorithm to test the isolates
+
+                                  print('fibonacci started');
+                                  String result = '';
+
+                                  // Test 3.1: Simple call
+                                  // var result = await fibonacci(40);
+
+                                  print('fibonacci result: $result');
                                 },
                           child: const Text('SOLVE'),
                         ),

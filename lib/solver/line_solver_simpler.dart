@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
+import 'package:isolate_manager/isolate_manager.dart';
 import 'package:nonogram/backend/models/solution.dart';
 import 'package:nonogram/backend/models/solution_step.dart';
 import 'package:nonogram/backend/type_extensions/nono_axis_alignment_extension.dart';
@@ -10,6 +11,14 @@ import 'package:nonogram/game_loop/nonogram_state.dart';
 import '../backend/models/nonogram.dart';
 import '../backend/type_extensions/nono_axis_extension.dart';
 import '../backend/type_extensions/nono_direction_extension.dart';
+
+@isolateManagerWorker // Remove this annotation if you don't want to use the Worker
+int fibonacci(int n) {
+  if (n == 0) return 0;
+  if (n == 1) return 1;
+
+  return fibonacci(n - 1) + fibonacci(n - 2);
+}
 
 class LineSolverSimpler {
   bool kPrintComments = false;
