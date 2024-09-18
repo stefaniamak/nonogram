@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:isolate_manager/isolate_manager.dart';
 
 @isolateManagerWorker // Remove this annotation if you don't want to use the Worker
@@ -9,6 +11,6 @@ int fibonacci(int n) {
 }
 
 @isolateManagerWorker // Remove this annotation if you don't want to use the Worker
-int lineSolver(int n, Map<String, dynamic> nonogram) {
+int lineSolver(int n) {
   return fibonacci(n);
 }
