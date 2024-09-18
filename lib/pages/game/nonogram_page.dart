@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:isolate_manager/isolate_manager.dart';
 import 'package:nonogram/backend/models/nonogram.dart';
 import 'package:nonogram/game_loop/nonogram_state.dart';
 import 'package:nonogram/pages/app_page.dart';
@@ -77,7 +78,23 @@ class NonogramPage extends HookWidget {
                                   // Test 3.1: Simple call
                                   // var result = await fibonacci(40);
 
+                                  final isolate = IsolateManager.create(
+                                    fibonacci,
+
+                                    // And the name of the function if you want to use the Worker.
+                                    // Otherwise, you can ignore this parameter.
+                                    workerName: 'fibonacci',
+                                    concurrent: 2,
+                                  );
+
+                                  isolate.stream.listen((value) {
+                                    print('value from isolate.stream.listen: $value');
+                                  });
+
+                                  final fibo = await isolate(40);
+
                                   print('fibonacci result: $result');
+                                  print('fibonacci fibo: $fibo');
                                 },
                           child: const Text('SOLVE'),
                         ),
