@@ -72,29 +72,47 @@ class NonogramPage extends HookWidget {
 
                                   // Test 3: Starting slow with fibonacci algorithm to test the isolates
 
-                                  print('fibonacci started');
-                                  String result = '';
+                                  // print('fibonacci started');
+                                  // String result = '';
 
                                   // Test 3.1: Simple call
                                   // var result = await fibonacci(40);
 
-                                  final isolate = IsolateManager.create(
-                                    fibonacci,
+                                  // final isolate = IsolateManager.create(
+                                  //   fibonacci,
+                                  //
+                                  //   // And the name of the function if you want to use the Worker.
+                                  //   // Otherwise, you can ignore this parameter.
+                                  //   workerName: 'fibonacci',
+                                  //   concurrent: 2,
+                                  // );
+                                  //
+                                  // isolate.stream.listen((value) {
+                                  //   print('value from isolate.stream.listen: $value');
+                                  // });
+                                  //
+                                  // final fibo = await isolate(40);
+                                  //
+                                  // print('fibonacci result: $result');
+                                  // print('fibonacci fibo: $fibo');
+
+                                  // Test 4: Slowly building the solver
+                                  final solverIsolate = IsolateManager.create(
+                                    lineSolver,
 
                                     // And the name of the function if you want to use the Worker.
                                     // Otherwise, you can ignore this parameter.
-                                    workerName: 'fibonacci',
+                                    workerName: 'lineSolver',
                                     concurrent: 2,
                                   );
 
-                                  isolate.stream.listen((value) {
-                                    print('value from isolate.stream.listen: $value');
+                                  solverIsolate.stream.listen((value) {
+                                    print('solution from isolate.stream.listen: $value');
                                   });
 
-                                  final fibo = await isolate(40);
+                                  final solution = await solverIsolate(40);
 
-                                  print('fibonacci result: $result');
-                                  print('fibonacci fibo: $fibo');
+                                  print('solution: $solution');
                                 },
                           child: const Text('SOLVE'),
                         ),

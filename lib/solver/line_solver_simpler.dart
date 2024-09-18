@@ -7,3 +7,8 @@ int fibonacci(int n) {
 
   return fibonacci(n - 1) + fibonacci(n - 2);
 }
+
+@isolateManagerWorker // Remove this annotation if you don't want to use the Worker
+int lineSolver(int n, Map<String, dynamic> nonogram) {
+  return fibonacci(n);
+}
