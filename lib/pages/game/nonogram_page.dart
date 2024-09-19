@@ -1,10 +1,14 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:isolate_manager/isolate_manager.dart';
 import 'package:nonogram/backend/models/nonogram.dart';
 import 'package:nonogram/game_loop/nonogram_state.dart';
 import 'package:nonogram/pages/app_page.dart';
 import 'package:nonogram/pages/game/nonogram_grid_and_clues.dart';
 import 'package:nonogram/pages/game/widgets/nonogram_title.dart';
+import 'package:nonogram/solver/line_solver_simpler.dart';
 
 class NonogramPage extends HookWidget {
   final Nonogram nonogram;
@@ -111,6 +115,30 @@ class NonogramPage extends HookWidget {
                                   // final solution = await solverIsolate(40);
                                   //
                                   // print('solution: $solution');
+
+                                  // Test 5: Custom functions with progress message
+                                  // Create an IsolateManager instance.
+                                  final isolateManager = IsolateManager.createCustom(progressFunction);
+
+                                  // Get the result.
+                                  final result = await isolateManager.compute(100, callback: (value) {
+                                    // Condition to recognize the progress value. Ex:
+                                    final data = jsonDecode(value);
+
+                                    if (data.containsKey('progress')) {
+                                      print('This is a progress value: ${data['progress']}');
+
+                                      // Return `false` to mark this value is not the final.
+                                      return false;
+                                    }
+
+                                    print('This is a final value: ${data['result']}');
+
+                                    // Return `true` to mark this value is the final.
+                                    return true;
+                                  });
+
+                                  print(result); // 100
                                 },
                           child: const Text('SOLVE'),
                         ),
