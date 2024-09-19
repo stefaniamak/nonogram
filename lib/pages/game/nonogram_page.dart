@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:isolate_manager/isolate_manager.dart';
 import 'package:nonogram/backend/models/nonogram.dart';
 import 'package:nonogram/game_loop/nonogram_state.dart';
 import 'package:nonogram/pages/app_page.dart';
 import 'package:nonogram/pages/game/nonogram_grid_and_clues.dart';
 import 'package:nonogram/pages/game/widgets/nonogram_title.dart';
-import 'package:nonogram/solver/line_solver_simpler.dart';
 
 class NonogramPage extends HookWidget {
   final Nonogram nonogram;
@@ -97,22 +95,22 @@ class NonogramPage extends HookWidget {
                                   // print('fibonacci fibo: $fibo');
 
                                   // Test 4: Slowly building the solver
-                                  final solverIsolate = IsolateManager.create(
-                                    lineSolver,
-
-                                    // And the name of the function if you want to use the Worker.
-                                    // Otherwise, you can ignore this parameter.
-                                    workerName: 'lineSolver',
-                                    concurrent: 2,
-                                  );
-
-                                  solverIsolate.stream.listen((value) {
-                                    print('solution from isolate.stream.listen: $value');
-                                  });
-
-                                  final solution = await solverIsolate(40);
-
-                                  print('solution: $solution');
+                                  // final solverIsolate = IsolateManager.create(
+                                  //   lineSolver,
+                                  //
+                                  //   // And the name of the function if you want to use the Worker.
+                                  //   // Otherwise, you can ignore this parameter.
+                                  //   workerName: 'lineSolver',
+                                  //   concurrent: 2,
+                                  // );
+                                  //
+                                  // solverIsolate.stream.listen((value) {
+                                  //   print('solution from isolate.stream.listen: $value');
+                                  // });
+                                  //
+                                  // final solution = await solverIsolate(40);
+                                  //
+                                  // print('solution: $solution');
                                 },
                           child: const Text('SOLVE'),
                         ),
