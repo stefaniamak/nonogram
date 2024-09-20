@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:isolate_manager/isolate_manager.dart';
+import 'package:nonogram/backend/models/isolate/isolate_input.dart';
 import 'package:nonogram/backend/models/nonogram.dart';
 import 'package:nonogram/game_loop/nonogram_state.dart';
 import 'package:nonogram/pages/app_page.dart';
@@ -151,11 +152,11 @@ class NonogramPage extends HookWidget {
 
                                   // Get the result.
                                   final result = await isolateManager.compute(
-                                    jsonEncode({
-                                      'rows': [...nonogram.clues!.rows],
-                                      'columns': [...nonogram.clues!.columns],
-                                      // 'stack': nonogramState.stack,
-                                    }),
+                                    jsonEncode(IsolateInput(
+                                      rows: [...nonogram.clues!.rows],
+                                      columns: [...nonogram.clues!.columns],
+                                      stack: nonogramState.stack,
+                                    ).toJson()),
                                     callback: (value) {
                                       // Condition to recognize the progress value. Ex:
                                       final data = jsonDecode(value);

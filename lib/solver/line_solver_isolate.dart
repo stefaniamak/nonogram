@@ -1,9 +1,13 @@
 import 'dart:convert';
 
 import 'package:isolate_manager/isolate_manager.dart';
+import 'package:nonogram/backend/models/isolate/isolate_input.dart';
+
+import '../backend/type_extensions/nono_axis_extension.dart';
 
 @isolateManagerWorker // Remove this annotation if you don't want to use the Worker
 int fibonacci(int n) {
+  print('n: $n');
   if (n == 0) return 0;
   if (n == 1) return 1;
 
@@ -40,18 +44,21 @@ void lineSolverIsolate(dynamic params) {
     params,
     onEvent: (controller, message) {
       print('message: $message');
-      final data = jsonDecode(message);
-      List<dynamic> stack = data['stack'] ?? [];
+      final IsolateInput data = IsolateInput.fromJson(jsonDecode(message));
+      List<dynamic> stack = data.stack ?? [];
+
+      // lineSolver(10);
+
       while (stack.isNotEmpty) {
-        // Map<int, NonoAxis> line = stack.first;
-        //
-        // print('line: $line');
+        Map<int, NonoAxis> line = stack.first;
+
+        print('line: $line');
 
         controller.sendResult(
           jsonEncode(
             {
               'progress': {
-                'stack': 'progress thingy',
+                'stack': stack.isNotEmpty,
               }
             },
           ),
