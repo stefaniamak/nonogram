@@ -1,0 +1,35 @@
+import 'package:json_annotation/json_annotation.dart';
+import 'package:nonogram/backend/models/isolate/isolate_clues.dart';
+
+part 'isolate_nonogram.g.dart';
+
+@JsonSerializable()
+class IsolateNonogram {
+  const IsolateNonogram({
+    required this.id,
+    // this.info,
+    this.note,
+    required this.clues,
+    // this.solutions,
+  });
+
+  final String id;
+  // final NonogramInfo? info;
+  final String? note;
+  final IsolateClues clues;
+  // final List<Solution>? solutions;
+
+  int get width => clues.columns.length;
+  int get height => clues.rows.length;
+
+  bool? get isPublished => note?.contains('published');
+  bool? get isUnique => note?.contains('definitely unique');
+  bool? get isLineSolvable => note?.contains('definitely line/color solvable');
+
+  factory IsolateNonogram.fromJson(final Map<String, dynamic> json) => _$IsolateNonogramFromJson(json);
+
+  Map<String, dynamic> toJson() => _$IsolateNonogramToJson(this);
+
+  static List<IsolateNonogram> fromJsonList(final List<dynamic> json) =>
+      List<Map<String, dynamic>>.from(json).map((Map<String, dynamic> item) => IsolateNonogram.fromJson(item)).toList();
+}

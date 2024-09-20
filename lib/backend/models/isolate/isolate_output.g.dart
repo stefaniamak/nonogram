@@ -14,6 +14,9 @@ IsolateOutput _$IsolateOutputFromJson(Map<String, dynamic> json) =>
                     MapEntry(int.parse(k), $enumDecode(_$NonoAxisEnumMap, e)),
               ))
           .toList(),
+      solutionSteps: (json['solutionSteps'] as List<dynamic>)
+          .map((e) => SolutionStep.fromJson(e as Map<String, dynamic>))
+          .toList(),
     );
 
 Map<String, dynamic> _$IsolateOutputToJson(IsolateOutput instance) =>
@@ -22,6 +25,7 @@ Map<String, dynamic> _$IsolateOutputToJson(IsolateOutput instance) =>
           .map((e) =>
               e.map((k, e) => MapEntry(k.toString(), _$NonoAxisEnumMap[e]!)))
           .toList(),
+      'solutionSteps': instance.solutionSteps,
     };
 
 const _$NonoAxisEnumMap = {

@@ -1,5 +1,3 @@
-import 'package:flutter/cupertino.dart';
-
 enum NonoDirection { before, after }
 
 extension NonoDirectionExtension on NonoDirection {
@@ -18,12 +16,12 @@ extension NonoDirectionExtension on NonoDirection {
         if (charIndex == 0) {
           return true;
         }
-        return !solution.substring(0, charIndex - 1).characters.contains('1');
+        return !solution.substring(0, charIndex - 1).split('').toList().contains('1');
       case NonoDirection.after:
         if (charIndex + clue == solution.length) {
           return true;
         }
-        return !solution.substring(charIndex + clue + 1).characters.contains('1');
+        return !solution.substring(charIndex + clue + 1).split('').toList().contains('1');
     }
   }
 

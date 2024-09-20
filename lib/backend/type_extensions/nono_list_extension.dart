@@ -1,6 +1,4 @@
-import 'package:flutter/foundation.dart';
 import 'package:nonogram/game_loop/nonogram_state.dart';
-import 'package:nonogram/solver/line_solver.dart';
 
 import 'nono_axis_extension.dart';
 
@@ -13,7 +11,7 @@ extension NonoListExtension on List {
     return contains({charIndex: lineType});
   }
 
-  void updateStack(List<int> charIndexes, NonoAxis lineType, NonogramState state) {
+  List<Map<int, NonoAxis>> updateStack(List<int> charIndexes, NonoAxis lineType, [NonogramState? state]) {
     NonoAxis newAxis = lineType == NonoAxis.row ? NonoAxis.column : NonoAxis.row;
     List<Map<int, NonoAxis>> newStackElements = charIndexes.map((charIndex) => {charIndex: newAxis}).toList();
     List<Map<int, NonoAxis>> finalStackElements = newStackElements;
@@ -25,8 +23,12 @@ extension NonoListExtension on List {
     }
 
     if (finalStackElements.isNotEmpty) {
-      state.pushStack(newStackElements);
+      if (state != null) {
+        state.pushStack(newStackElements);
+      }
     }
+
+    return newStackElements;
 
     // if (!isInStack(charIndexes, newAxis)) {
     //   state.pushStack({charIndexes: newAxis});

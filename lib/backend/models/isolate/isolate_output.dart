@@ -1,4 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:nonogram/backend/models/solution_step.dart';
 
 import '../../type_extensions/nono_axis_extension.dart';
 
@@ -8,9 +9,11 @@ part 'isolate_output.g.dart';
 class IsolateOutput {
   const IsolateOutput({
     required this.stack,
+    required this.solutionSteps,
   });
 
   final List<Map<int, NonoAxis>> stack;
+  final List<SolutionStep> solutionSteps;
 
   factory IsolateOutput.fromJson(final Map<String, dynamic> json) => _$IsolateOutputFromJson(json);
 

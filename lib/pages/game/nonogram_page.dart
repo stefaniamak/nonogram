@@ -3,7 +3,9 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:isolate_manager/isolate_manager.dart';
+import 'package:nonogram/backend/database/nonograms_for_isolate/cat_isolate.dart';
 import 'package:nonogram/backend/models/isolate/isolate_input.dart';
+import 'package:nonogram/backend/models/isolate/isolate_output.dart';
 import 'package:nonogram/backend/models/nonogram.dart';
 import 'package:nonogram/game_loop/nonogram_state.dart';
 import 'package:nonogram/pages/app_page.dart';
@@ -156,6 +158,8 @@ class NonogramPage extends HookWidget {
                                       rows: [...nonogram.clues!.rows],
                                       columns: [...nonogram.clues!.columns],
                                       stack: nonogramState.stack,
+                                      solutionSteps: nonogramState.solutionSteps,
+                                      nonogram: kCatIsolate,
                                     ).toJson()),
                                     callback: (value) {
                                       // Condition to recognize the progress value. Ex:
@@ -164,7 +168,12 @@ class NonogramPage extends HookWidget {
                                       if (data.containsKey('progress')) {
                                         print('This is a progress value: ${data['progress']}');
 
-                                        // Return `false` to mark this value is not the final.
+                                        IsolateOutput progress = IsolateOutput.fromJson(data['progress']);
+
+                                        // Return `false` to mark this value is not the final.a
+                                        print('progress.solutionSteps.last: ${progress.solutionSteps.last.currentSolution}');
+                                        nonogramState.addStep(progress.solutionSteps.last);
+                                        nonogramState.updateStepNumber(nonogramState.solutionSteps.length - 1);
                                         return false;
                                       }
 
@@ -175,6 +184,7 @@ class NonogramPage extends HookWidget {
                                     },
                                   );
 
+                                  nonogramState.updateStepNumber(nonogramState.solutionSteps.length - 1);
                                   print(result); // 100
                                 },
                           child: const Text('SOLVE'),

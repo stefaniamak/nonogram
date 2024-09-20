@@ -21,6 +21,11 @@ IsolateInput _$IsolateInputFromJson(Map<String, dynamic> json) => IsolateInput(
                     MapEntry(int.parse(k), $enumDecode(_$NonoAxisEnumMap, e)),
               ))
           .toList(),
+      solutionSteps: (json['solutionSteps'] as List<dynamic>)
+          .map((e) => SolutionStep.fromJson(e as Map<String, dynamic>))
+          .toList(),
+      nonogram:
+          IsolateNonogram.fromJson(json['nonogram'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$IsolateInputToJson(IsolateInput instance) =>
@@ -31,6 +36,8 @@ Map<String, dynamic> _$IsolateInputToJson(IsolateInput instance) =>
           .map((e) =>
               e.map((k, e) => MapEntry(k.toString(), _$NonoAxisEnumMap[e]!)))
           .toList(),
+      'solutionSteps': instance.solutionSteps,
+      'nonogram': instance.nonogram,
     };
 
 const _$NonoAxisEnumMap = {
