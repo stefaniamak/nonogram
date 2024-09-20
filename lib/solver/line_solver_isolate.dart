@@ -130,6 +130,11 @@ IsolateOutput? loopSides(List<SolutionStep> solutionSteps, int lineIndex, List<i
   // print('initialSolution: $initialSolution');
   int filledBoxes = initialSolution.sumFilledBoxes;
   bool isLineCompleted = filledBoxes == clues.sum;
+
+  if (lineIndex == 18) {
+    print('filledBoxes: $filledBoxes k clues.sum: ${clues.sum}');
+  }
+
   if (printPrints) print('Are filled boxes ($filledBoxes) equal with clue\'s sum (${clues.sum})?');
 
   /// In the following 4 lines, we create a List<int> with all the index positions
@@ -332,11 +337,13 @@ IsolateOutput? loopSides(List<SolutionStep> solutionSteps, int lineIndex, List<i
       // Convert the sets to lists and print the final map
       Map<int, List<int>> result = matchMap.map((key, value) => MapEntry(key, value.toList()));
 
+      List<Map<int, NonoAxis>> finalStack = stack;
+
       for (int clueKey in result.keys) {
         List<int> charIndexes = result[clueKey]!;
         int clueIndex = clueKey == 0 ? 0 : clueKey - 2;
 
-        var fullUpdatedSolution = solutionSteps.last.currentSolution;
+        String fullUpdatedSolution = solutionSteps.last.currentSolution;
 
         // TODO(stef): add "useLookbehind" variable
         if (false) {
@@ -359,8 +366,49 @@ IsolateOutput? loopSides(List<SolutionStep> solutionSteps, int lineIndex, List<i
 
         if (result.isNotEmpty) {
           // TODO(stef): restore these two bellow
+
+          String initialSolution2; // = solutionSteps.last.currentSolution.getLine(lineIndex, nonogram, lineType);
+          switch (lineType) {
+            case NonoAxis.row:
+              initialSolution2 = fullUpdatedSolution
+                  .split('')
+                  .toList()
+                  .getRange(lineIndex * nonogram.width, nonogram.width * (lineIndex + 1))
+                  .join()
+                  .replaceAll(' ', '')
+                  .replaceAll('(', '')
+                  .replaceAll(')', '')
+                  .replaceAll(',', '');
+              break;
+            case NonoAxis.column:
+              String columnSol = '';
+              for (var solChar = lineIndex;
+                  solChar < solutionSteps.last.currentSolution.split('').toList().length;
+                  solChar = solChar + nonogram.width) {
+                columnSol = '$columnSol${solutionSteps.last.currentSolution.split('').toList().elementAt(solChar)}';
+              }
+              initialSolution2 = columnSol;
+              break;
+          }
+
+          filledBoxes = initialSolution2.sumFilledBoxes;
+          isLineCompleted = filledBoxes == clues.sum;
+          // finalStack = finalStack.updateStack(charIndexes, lineType);
+          if (clues.elementAt(clueIndex) == 14 && clueIndex == 1 && lineIndex == 18) {
+            print('initialSolution2.sumFilledBoxes: ${initialSolution2.sumFilledBoxes} and clues.sum: ${clues.sum}');
+            print('isLineCompleted: $isLineCompleted && initialSolution2: $initialSolution2');
+            print(
+                'isLineCompleted && fullUpdatedSolution.split(\'\').contains(\'?\'): ${isLineCompleted && fullUpdatedSolution.split('').contains('?')}');
+          }
+          if (isLineCompleted && fullUpdatedSolution.split('').contains('?')) {
+            var tempStack = finalStack;
+            print('runs..????');
+            print('finalStack before: ${tempStack.length} - $tempStack');
+            finalStack.addAll(tempStack.updateStack([lineIndex], lineType == NonoAxis.row ? NonoAxis.column : NonoAxis.row));
+            print('finalStack after: ${finalStack.length} - $finalStack');
+          }
           return IsolateOutput(
-            stack: stack.updateStack(charIndexes, lineType),
+            stack: finalStack.updateStack(charIndexes, lineType),
             solutionSteps: [
               SolutionStep(
                 currentSolution: fullUpdatedSolution,
