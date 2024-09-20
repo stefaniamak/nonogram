@@ -153,6 +153,7 @@ class NonogramPage extends HookWidget {
                                     {
                                       'rows': [...nonogram.clues!.rows],
                                       'columns': [...nonogram.clues!.columns],
+                                      'stack': nonogramState.stack,
                                     },
                                     callback: (value) {
                                       // Condition to recognize the progress value. Ex:

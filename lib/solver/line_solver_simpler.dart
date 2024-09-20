@@ -40,11 +40,20 @@ void lineSolverIsolate(dynamic params) {
     params,
     onEvent: (controller, message) {
       print('message: $message');
-      // This value is sent as the progress values.
-      // for (int i = 0; i < message; i++) {
-      //   final progress = jsonEncode({'progress': i});
-      //   controller.sendResult(progress);
-      // }
+      List<dynamic> stack = message['stack'] ?? [];
+      while (stack.isNotEmpty) {
+        print('stack from isolate: $stack');
+        controller.sendResult(
+          jsonEncode(
+            {
+              'progress': {
+                'stack': 'progress thingy',
+              }
+            },
+          ),
+        );
+        stack.removeLast();
+      }
 
       // This is a final value.
       return jsonEncode({'result': message});
