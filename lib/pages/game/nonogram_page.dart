@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:isolate_manager/isolate_manager.dart';
@@ -9,7 +8,7 @@ import 'package:nonogram/game_loop/nonogram_state.dart';
 import 'package:nonogram/pages/app_page.dart';
 import 'package:nonogram/pages/game/nonogram_grid_and_clues.dart';
 import 'package:nonogram/pages/game/widgets/nonogram_title.dart';
-import 'package:nonogram/solver/line_solver_simpler.dart';
+import 'package:nonogram/solver/line_solver_isolate.dart';
 
 class NonogramPage extends HookWidget {
   final Nonogram nonogram;
