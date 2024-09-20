@@ -116,7 +116,7 @@ class LineSolver {
                 lineIndex: lineIndex,
                 explanation: 'Cross out remaining empty boxes of ${lineType.name} with index $lineIndex.',
               ));
-              state.stack.updateStack([charIndex], lineType, state);
+              state.stack.updateStack([charIndex], lineType); //, state);
             }
           }
         } else {
@@ -191,7 +191,7 @@ class LineSolver {
             explanation: 'Cross out all remaining empty boxes of ${lineType.name} with index $lineIndex.',
           ));
 
-          state.stack.updateStack(charIndexesOfQMarks, lineType, state);
+          state.stack.updateStack(charIndexesOfQMarks, lineType); //, state);
         }
       }
     } else {
@@ -295,7 +295,7 @@ class LineSolver {
               explanation:
                   '${clueKey == 0 ? 'Cross out' : 'Fill in'} sure boxes for clue ${clues.elementAt(clueIndex)} with index $clueIndex of ${lineType.name} with index $lineIndex.',
             ));
-            state.stack.updateStack(charIndexes, lineType, state);
+            state.stack.updateStack(charIndexes, lineType); //, state);
           }
         }
       } else {
@@ -321,7 +321,7 @@ class LineSolver {
                 lineIndex: lineIndex,
                 explanation: 'Cross out box.',
               ));
-              state.stack.updateStack([charIndex], lineType, state);
+              state.stack.updateStack([charIndex], lineType); //, state);
             } else {
               if (kPrintComments && kDebugMode) print('No.');
               var startingSolutionIndex = startingMostSolution.elementAt(charIndex).toString();
@@ -344,7 +344,7 @@ class LineSolver {
                   lineIndex: lineIndex,
                   explanation: 'Fill in box.',
                 ));
-                state.stack.updateStack([charIndex], lineType, state);
+                state.stack.updateStack([charIndex], lineType); //, state);
               } else {
                 if (kPrintComments && kDebugMode) print('No. It contains different indexes.');
               }
