@@ -166,18 +166,23 @@ class NonogramPage extends HookWidget {
                                       final data = jsonDecode(value);
 
                                       if (data.containsKey('progress')) {
-                                        print('This is a progress value: ${data['progress']}');
+                                        // print('This is a progress value: ${data['progress']}');
 
                                         IsolateOutput progress = IsolateOutput.fromJson(data['progress']);
 
                                         // Return `false` to mark this value is not the final.a
-                                        print('progress.solutionSteps.last: ${progress.solutionSteps.last.currentSolution}');
+                                        // print('progress.solutionSteps.last: ${progress.solutionSteps.last.currentSolution}');
                                         nonogramState.addStep(progress.solutionSteps.last);
                                         nonogramState.updateStepNumber(nonogramState.solutionSteps.length - 1);
                                         return false;
                                       }
 
-                                      print('This is a final value: ${data['result']}');
+                                      // print('This is a final value: ${data['result']}');
+
+                                      IsolateOutput result = IsolateOutput.fromJson(data['result']);
+
+                                      nonogramState.addStep(result.solutionSteps.last);
+                                      nonogramState.updateStepNumber(nonogramState.solutionSteps.length - 1);
 
                                       // Return `true` to mark this value is the final.
                                       return true;
