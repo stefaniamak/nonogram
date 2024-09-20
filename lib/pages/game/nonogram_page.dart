@@ -147,7 +147,7 @@ class NonogramPage extends HookWidget {
                                   final isolateManager = IsolateManager.createCustom(
                                     lineSolverIsolate,
                                     workerName: 'lineSolverIsolate',
-                                    isDebug: kDebugMode,
+                                    // isDebug: kDebugMode,
                                   );
 
                                   // Get the result.

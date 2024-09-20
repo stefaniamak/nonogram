@@ -59,8 +59,13 @@ void lineSolverIsolate(dynamic params) {
         stack.removeLast();
       }
 
+      String test = 'asdf';
+      print('test.characters: ${test.split('').toList()}');
+
+      List<String> testList = test.split('').toList();
+
       // This is a final value.
-      return jsonEncode({'result': message});
+      return jsonEncode({'result': testList});
     },
   );
 }
