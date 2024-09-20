@@ -56,7 +56,7 @@ void lineSolverIsolate(dynamic params) {
       );
 
       while (stack.isNotEmpty) {
-        print('stack: $stack');
+        // print('stack: $stack');
         Map<int, NonoAxis> line = stack.first;
 
         List<int> clues = (line.values.first == NonoAxis.row ? input.rows : input.columns).elementAt(line.keys.first);
@@ -106,7 +106,7 @@ IsolateOutput? loopSides(List<SolutionStep> solutionSteps, int lineIndex, List<i
           .split('')
           .toList()
           .getRange(lineIndex * nonogram.width, nonogram.width * (lineIndex + 1))
-          .toString()
+          .join()
           .replaceAll(' ', '')
           .replaceAll('(', '')
           .replaceAll(')', '')
@@ -123,8 +123,11 @@ IsolateOutput? loopSides(List<SolutionStep> solutionSteps, int lineIndex, List<i
       break;
   }
 
+  // print('solutionSteps.last.currentSolution: ${solutionSteps.last.currentSolution}');
+
   if (printPrints) print('${lineType.name}\'s initialSolution: $initialSolution');
 
+  // print('initialSolution: $initialSolution');
   int filledBoxes = initialSolution.sumFilledBoxes;
   bool isLineCompleted = filledBoxes == clues.sum;
   if (printPrints) print('Are filled boxes ($filledBoxes) equal with clue\'s sum (${clues.sum})?');
