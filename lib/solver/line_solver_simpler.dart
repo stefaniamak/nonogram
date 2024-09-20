@@ -36,13 +36,17 @@ void progressFunction(dynamic params) {
 // This is a progress function
 @isolateManagerCustomWorker // Add this anotation for a custom function
 void lineSolverIsolate(dynamic params) {
-  IsolateManagerFunction.customFunction<String, Map<String, dynamic>>(
+  IsolateManagerFunction.customFunction<String, String>(
     params,
     onEvent: (controller, message) {
       print('message: $message');
-      List<dynamic> stack = message['stack'] ?? [];
+      final data = jsonDecode(message);
+      List<dynamic> stack = data['stack'] ?? [];
       while (stack.isNotEmpty) {
-        print('stack from isolate: $stack');
+        // Map<int, NonoAxis> line = stack.first;
+        //
+        // print('line: $line');
+
         controller.sendResult(
           jsonEncode(
             {
