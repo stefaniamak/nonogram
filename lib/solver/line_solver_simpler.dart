@@ -14,3 +14,40 @@ int fibonacci(int n) {
 int lineSolver(int n) {
   return fibonacci(n);
 }
+
+// This is a progress function
+@isolateManagerCustomWorker // Add this anotation for a custom function
+void progressFunction(dynamic params) {
+  IsolateManagerFunction.customFunction<String, int>(
+    params,
+    onEvent: (controller, message) {
+      // This value is sent as the progress values.
+      for (int i = 0; i < message; i++) {
+        final progress = jsonEncode({'progress': i});
+        controller.sendResult(progress);
+      }
+
+      // This is a final value.
+      return jsonEncode({'result': message});
+    },
+  );
+}
+
+// This is a progress function
+@isolateManagerCustomWorker // Add this anotation for a custom function
+void lineSolverIsolate(dynamic params) {
+  IsolateManagerFunction.customFunction<String, Map<String, dynamic>>(
+    params,
+    onEvent: (controller, message) {
+      print('message: $message');
+      // This value is sent as the progress values.
+      // for (int i = 0; i < message; i++) {
+      //   final progress = jsonEncode({'progress': i});
+      //   controller.sendResult(progress);
+      // }
+
+      // This is a final value.
+      return jsonEncode({'result': message});
+    },
+  );
+}

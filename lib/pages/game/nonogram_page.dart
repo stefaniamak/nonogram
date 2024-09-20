@@ -118,25 +118,59 @@ class NonogramPage extends HookWidget {
 
                                   // Test 5: Custom functions with progress message
                                   // Create an IsolateManager instance.
-                                  final isolateManager = IsolateManager.createCustom(progressFunction);
+                                  // final isolateManager =
+                                  //     IsolateManager.createCustom(progressFunction, workerName: 'progressFunction');
+                                  //
+                                  // // Get the result.
+                                  // final result = await isolateManager.compute(nonogram.toJson(), callback: (value) {
+                                  //   // Condition to recognize the progress value. Ex:
+                                  //   final data = jsonDecode(value);
+                                  //
+                                  //   if (data.containsKey('progress')) {
+                                  //     print('This is a progress value: ${data['progress']}');
+                                  //
+                                  //     // Return `false` to mark this value is not the final.
+                                  //     return false;
+                                  //   }
+                                  //
+                                  //   print('This is a final value: ${data['result']}');
+                                  //
+                                  //   // Return `true` to mark this value is the final.
+                                  //   return true;
+                                  // });
+                                  //
+                                  // print(result); // 100
+
+                                  // Test 6: Line solver
+                                  // Create an IsolateManager instance.
+                                  final isolateManager = IsolateManager.createCustom(
+                                    lineSolverIsolate,
+                                    workerName: 'lineSolverIsolate',
+                                  );
 
                                   // Get the result.
-                                  final result = await isolateManager.compute(100, callback: (value) {
-                                    // Condition to recognize the progress value. Ex:
-                                    final data = jsonDecode(value);
+                                  final result = await isolateManager.compute(
+                                    {
+                                      'rows': [...nonogram.clues!.rows],
+                                      'columns': [...nonogram.clues!.columns],
+                                    },
+                                    callback: (value) {
+                                      // Condition to recognize the progress value. Ex:
+                                      final data = jsonDecode(value);
 
-                                    if (data.containsKey('progress')) {
-                                      print('This is a progress value: ${data['progress']}');
+                                      if (data.containsKey('progress')) {
+                                        print('This is a progress value: ${data['progress']}');
 
-                                      // Return `false` to mark this value is not the final.
-                                      return false;
-                                    }
+                                        // Return `false` to mark this value is not the final.
+                                        return false;
+                                      }
 
-                                    print('This is a final value: ${data['result']}');
+                                      print('This is a final value: ${data['result']}');
 
-                                    // Return `true` to mark this value is the final.
-                                    return true;
-                                  });
+                                      // Return `true` to mark this value is the final.
+                                      return true;
+                                    },
+                                  );
 
                                   print(result); // 100
                                 },
