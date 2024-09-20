@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:isolate_manager/isolate_manager.dart';
 import 'package:nonogram/backend/models/isolate/isolate_input.dart';
 
+import '../backend/models/isolate/isolate_output.dart';
 import '../backend/type_extensions/nono_axis_extension.dart';
 
 @isolateManagerWorker // Remove this annotation if you don't want to use the Worker
@@ -44,22 +45,24 @@ void lineSolverIsolate(dynamic params) {
     params,
     onEvent: (controller, message) {
       print('message: $message');
-      final IsolateInput data = IsolateInput.fromJson(jsonDecode(message));
-      List<dynamic> stack = data.stack ?? [];
+      final IsolateInput input = IsolateInput.fromJson(jsonDecode(message));
+      List<Map<int, NonoAxis>> stack = input.stack;
+      IsolateOutput output = IsolateOutput(stack: stack);
 
       // lineSolver(10);
 
       while (stack.isNotEmpty) {
         Map<int, NonoAxis> line = stack.first;
 
-        print('line: $line');
+        List<int> clues = (line.values.first == NonoAxis.row ? input.rows : input.columns).elementAt(line.keys.first);
+        // loopSides(state, line.keys.first, clues, line.values.first);
+
+        stack.removeAt(0);
 
         controller.sendResult(
           jsonEncode(
             {
-              'progress': {
-                'stack': stack.isNotEmpty,
-              }
+              'progress': output.toJson(),
             },
           ),
         );
