@@ -1,8 +1,14 @@
+import 'dart:convert';
+
 import 'package:bloc/bloc.dart';
+import 'package:isolate_manager/isolate_manager.dart';
 import 'package:nonogram/backend/models/isolate/isolate_clues.dart';
+import 'package:nonogram/backend/models/isolate/isolate_input.dart';
 import 'package:nonogram/backend/models/isolate/isolate_nonogram.dart';
+import 'package:nonogram/backend/models/isolate/isolate_output.dart';
 import 'package:nonogram/backend/models/solution_step.dart';
 import 'package:nonogram/backend/type_extensions/nono_axis_extension.dart';
+import 'package:nonogram/solver/line_solver_isolate.dart';
 
 part 'nonogram_solver_state.dart';
 
@@ -31,6 +37,55 @@ class NonogramSolverCubit extends Cubit<NonogramSolverState> {
     _resetStartDateTime();
     _resetEndingDateTime();
     _resetCachedBoxSolutions();
+  }
+
+  void solvePuzzle() async {
+    final isolateManager = IsolateManager.createCustom(
+      lineSolverIsolate,
+      workerName: 'lineSolverIsolate',
+      // isDebug: kDebugMode,
+      // concurrent: 4,
+    );
+
+    // Get the result.
+    final result = await isolateManager.compute(
+      jsonEncode(IsolateInput(
+        rows: [...state.nonogram!.clues.rows],
+        columns: [...state.nonogram!.clues.columns],
+        // stack: state.stack,
+        solutionSteps: state.solutionSteps,
+        nonogram: state.nonogram!, // kCatIsolate,
+      ).toJson()),
+      callback: (value) {
+        // Condition to recognize the progress value. Ex:
+        final data = jsonDecode(value);
+
+        if (data.containsKey('progress')) {
+          // print('This is a progress value: ${data['progress']}');
+
+          IsolateOutput progress = IsolateOutput.fromJson(data['progress']);
+
+          // Return `false` to mark this value is not the final.a
+          // print('progress.solutionSteps.last: ${progress.solutionSteps.last.currentSolution}');
+          addSolutionSteps([progress.solutionSteps.last]);
+          updateStepNumber(state.solutionSteps.length - 1);
+          return false;
+        }
+
+        // print('This is a final value: ${data['result']}');
+
+        IsolateOutput result = IsolateOutput.fromJson(data['result']);
+
+        addSolutionSteps([result.solutionSteps.last]);
+        updateStepNumber(state.solutionSteps.length - 1);
+
+        // Return `true` to mark this value is the final.
+        return true;
+      },
+    );
+
+    updateStepNumber(state.solutionSteps.length - 1);
+    print(result); // 100
   }
 
   void updateNonogram(IsolateNonogram nonogram) {

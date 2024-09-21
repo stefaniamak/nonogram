@@ -1,16 +1,10 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:isolate_manager/isolate_manager.dart';
 import 'package:nonogram/backend/cubits/nonogram_solver_cubit/nonogram_solver_cubit.dart';
-import 'package:nonogram/backend/models/isolate/isolate_input.dart';
 import 'package:nonogram/backend/models/isolate/isolate_nonogram.dart';
-import 'package:nonogram/backend/models/isolate/isolate_output.dart';
 import 'package:nonogram/pages/app_page.dart';
 import 'package:nonogram/pages/game/nonogram_grid_and_clues.dart';
 import 'package:nonogram/pages/game/widgets/nonogram_title.dart';
-import 'package:nonogram/solver/line_solver_isolate.dart';
 
 class NonogramPage extends StatelessWidget {
   final IsolateNonogram nonogram;
@@ -63,62 +57,8 @@ class NonogramPage extends StatelessWidget {
                               child: FilledButton(
                                 onPressed: state.solutionSteps.length > 1
                                     ? null
-                                    : () async {
-                                        final isolateManager = IsolateManager.createCustom(
-                                          lineSolverIsolate,
-                                          workerName: 'lineSolverIsolate',
-                                          // isDebug: kDebugMode,
-                                          // concurrent: 4,
-                                        );
-
-                                        // print('state.stack: ${state.stack}');
-                                        // print('state.stack: ${state.stack}');
-                                        // print('state.stack: ${state.stack}');
-                                        // print('state.stack: ${state.stack}');
-                                        // print('state.stack: ${state.stack}');
-                                        // print('state.stack: ${state.stack}');
-
-                                        // Get the result.
-                                        final result = await isolateManager.compute(
-                                          jsonEncode(IsolateInput(
-                                            rows: [...state.nonogram!.clues.rows],
-                                            columns: [...state.nonogram!.clues.columns],
-                                            // stack: state.stack,
-                                            solutionSteps: state.solutionSteps,
-                                            nonogram: state.nonogram!, // kCatIsolate,
-                                          ).toJson()),
-                                          callback: (value) {
-                                            // Condition to recognize the progress value. Ex:
-                                            final data = jsonDecode(value);
-
-                                            if (data.containsKey('progress')) {
-                                              // print('This is a progress value: ${data['progress']}');
-
-                                              IsolateOutput progress = IsolateOutput.fromJson(data['progress']);
-
-                                              // Return `false` to mark this value is not the final.a
-                                              // print('progress.solutionSteps.last: ${progress.solutionSteps.last.currentSolution}');
-                                              context.read<NonogramSolverCubit>().addSolutionSteps([progress.solutionSteps.last]);
-                                              context
-                                                  .read<NonogramSolverCubit>()
-                                                  .updateStepNumber(state.solutionSteps.length - 1);
-                                              return false;
-                                            }
-
-                                            // print('This is a final value: ${data['result']}');
-
-                                            IsolateOutput result = IsolateOutput.fromJson(data['result']);
-
-                                            context.read<NonogramSolverCubit>().addSolutionSteps([result.solutionSteps.last]);
-                                            context.read<NonogramSolverCubit>().updateStepNumber(state.solutionSteps.length - 1);
-
-                                            // Return `true` to mark this value is the final.
-                                            return true;
-                                          },
-                                        );
-
-                                        context.read<NonogramSolverCubit>().updateStepNumber(state.solutionSteps.length - 1);
-                                        print(result); // 100
+                                    : () {
+                                        context.read<NonogramSolverCubit>().solvePuzzle();
                                       },
                                 child: const Text('SOLVE'),
                               ),
