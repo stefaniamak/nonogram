@@ -52,6 +52,8 @@ class NonogramSolverCubit extends Cubit<NonogramSolverState> {
       // concurrent: 4,
     );
 
+    print('state.keepCacheData: ${state.keepCacheData}');
+
     // Get the result.
     final result = await isolateManager.compute(
       jsonEncode(IsolateInput(
@@ -59,6 +61,7 @@ class NonogramSolverCubit extends Cubit<NonogramSolverState> {
         columns: [...state.nonogram!.clues.columns],
         solutionSteps: state.solutionSteps,
         nonogram: state.nonogram!,
+        keepCacheData: state.keepCacheData,
       ).toJson()),
       callback: (value) {
         // Condition to recognize the progress value. Ex:

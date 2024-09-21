@@ -20,6 +20,7 @@ IsolateInput _$IsolateInputFromJson(Map<String, dynamic> json) => IsolateInput(
           .toList(),
       nonogram:
           IsolateNonogram.fromJson(json['nonogram'] as Map<String, dynamic>),
+      keepCacheData: json['keepCacheData'] as bool? ?? true,
     );
 
 Map<String, dynamic> _$IsolateInputToJson(IsolateInput instance) =>
@@ -28,4 +29,5 @@ Map<String, dynamic> _$IsolateInputToJson(IsolateInput instance) =>
       'columns': instance.columns,
       'solutionSteps': instance.solutionSteps,
       'nonogram': instance.nonogram,
+      'keepCacheData': instance.keepCacheData,
     };

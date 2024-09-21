@@ -2,8 +2,6 @@ import 'package:json_annotation/json_annotation.dart';
 import 'package:nonogram/backend/models/isolate/isolate_nonogram.dart';
 import 'package:nonogram/backend/models/solution_step.dart';
 
-import '../../type_extensions/nono_axis_extension.dart';
-
 part 'isolate_input.g.dart';
 
 @JsonSerializable()
@@ -14,6 +12,7 @@ class IsolateInput {
     // required this.stack,
     required this.solutionSteps,
     required this.nonogram,
+    this.keepCacheData = true,
   });
 
   final List<List<int>> rows;
@@ -21,6 +20,7 @@ class IsolateInput {
   // final List<Map<int, NonoAxis>> stack;
   final List<SolutionStep> solutionSteps;
   final IsolateNonogram nonogram;
+  final bool keepCacheData;
 
   factory IsolateInput.fromJson(final Map<String, dynamic> json) => _$IsolateInputFromJson(json);
 
