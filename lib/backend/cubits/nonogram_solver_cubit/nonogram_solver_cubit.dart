@@ -21,23 +21,27 @@ class NonogramSolverCubit extends Cubit<NonogramSolverState> {
   }
 
   void resetPuzzle() {
-    emit(state.copyWith(solverStatus: SolverStatus.initial));
-    initializeStackList(state.nonogram!.clues);
-    _resetSolutionSteps();
-    // addSolutionSteps([SolutionStep(currentSolution: state.nonogram!.emptySolution, explanation: 'Empty nonogram')]);
+    emit(
+      state.copyWith(
+        solverStatus: SolverStatus.initial,
+        solutionSteps: [],
+        stack: initializeStackList(state.nonogram!.clues),
+        stepNumber: 0,
+        linesChecked: 0,
+        boxesChecked: 0,
+        otherBoxesChecked: 0,
+        startDateTime: null,
+        endingDateTime: null,
+        cachedBoxSolutions: {},
+      ),
+    );
+
     addSolutionSteps([
       SolutionStep(
         currentSolution: Iterable.generate(state.nonogram!.height * state.nonogram!.width, (_) => '?').join(),
         explanation: 'Empty nonogram',
       )
     ]);
-    _resetStepNumber();
-    _resetLinesChecked();
-    _resetBoxesChecked();
-    _resetOtherBoxesChecked();
-    _resetStartDateTime();
-    _resetEndingDateTime();
-    _resetCachedBoxSolutions();
   }
 
   void solvePuzzle() async {
@@ -131,37 +135,5 @@ class NonogramSolverCubit extends Cubit<NonogramSolverState> {
     }
 
     return lineStack;
-  }
-
-  void _resetSolutionSteps() {
-    emit(state.copyWith(solutionSteps: []));
-  }
-
-  void _resetStepNumber() {
-    emit(state.copyWith(stepNumber: 0));
-  }
-
-  void _resetLinesChecked() {
-    emit(state.copyWith(linesChecked: 0));
-  }
-
-  void _resetBoxesChecked() {
-    emit(state.copyWith(boxesChecked: 0));
-  }
-
-  void _resetOtherBoxesChecked() {
-    emit(state.copyWith(otherBoxesChecked: 0));
-  }
-
-  void _resetStartDateTime() {
-    emit(state.copyWith(startDateTime: null));
-  }
-
-  void _resetEndingDateTime() {
-    emit(state.copyWith(endingDateTime: null));
-  }
-
-  void _resetCachedBoxSolutions() {
-    emit(state.copyWith(cachedBoxSolutions: {}));
   }
 }
