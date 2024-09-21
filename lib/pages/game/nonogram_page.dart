@@ -62,11 +62,7 @@ class NonogramPage extends StatelessWidget {
                               ),
                             ),
                             IconButton(
-                              onPressed: state.solutionSteps.length > 1
-                                  ? () {
-                                      context.read<NonogramSolverCubit>().resetPuzzle();
-                                    }
-                                  : null,
+                              onPressed: state.solverStatus.isCompleted ? context.read<NonogramSolverCubit>().resetPuzzle : null,
                               icon: const Icon(Icons.restart_alt),
                             )
                           ],
@@ -74,7 +70,7 @@ class NonogramPage extends StatelessWidget {
                         Row(
                           children: [
                             IconButton(
-                              onPressed: state.solutionSteps.length > 1 && state.stepNumber > 0
+                              onPressed: state.solverStatus.isCompleted && state.stepNumber > 0
                                   ? () {
                                       context.read<NonogramSolverCubit>().updateStepNumber(state.stepNumber - 1);
                                     }
@@ -82,22 +78,18 @@ class NonogramPage extends StatelessWidget {
                               icon: const Icon(Icons.arrow_back_ios_new_sharp),
                             ),
                             Expanded(
-                              child: AnimatedOpacity(
-                                duration: const Duration(milliseconds: 200),
-                                opacity: state.solutionSteps.length <= 1 ? 0.5 : 1,
-                                child: Slider(
-                                  value: state.stepNumber + 0.0,
-                                  min: 0,
-                                  max: state.solutionSteps.length - 1,
-                                  divisions: state.solutionSteps.length,
-                                  onChanged: (value) {
-                                    context.read<NonogramSolverCubit>().updateStepNumber(value.ceil());
-                                  },
-                                ),
+                              child: Slider(
+                                value: state.stepNumber + 0.0,
+                                min: 0,
+                                max: state.solutionSteps.length - 1,
+                                divisions: state.solutionSteps.length,
+                                onChanged: state.solverStatus.isCompleted
+                                    ? (value) => context.read<NonogramSolverCubit>().updateStepNumber(value.ceil())
+                                    : null,
                               ),
                             ),
                             IconButton(
-                              onPressed: state.solutionSteps.length > 1 && state.stepNumber < state.solutionSteps.length - 1
+                              onPressed: state.solverStatus.isCompleted && state.stepNumber < state.solutionSteps.length - 1
                                   ? () {
                                       context.read<NonogramSolverCubit>().updateStepNumber(state.stepNumber + 1);
                                     }

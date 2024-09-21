@@ -21,6 +21,7 @@ class NonogramSolverCubit extends Cubit<NonogramSolverState> {
   }
 
   void resetPuzzle() {
+    emit(state.copyWith(solverStatus: SolverStatus.initial));
     initializeStackList(state.nonogram!.clues);
     _resetSolutionSteps();
     // addSolutionSteps([SolutionStep(currentSolution: state.nonogram!.emptySolution, explanation: 'Empty nonogram')]);
@@ -40,6 +41,8 @@ class NonogramSolverCubit extends Cubit<NonogramSolverState> {
   }
 
   void solvePuzzle() async {
+    emit(state.copyWith(solverStatus: SolverStatus.solving));
+
     final isolateManager = IsolateManager.createCustom(
       lineSolverIsolate,
       workerName: 'lineSolverIsolate',
@@ -80,6 +83,8 @@ class NonogramSolverCubit extends Cubit<NonogramSolverState> {
         updateStepNumber(state.solutionSteps.length - 1);
 
         // Return `true` to mark this value is the final.
+
+        emit(state.copyWith(solverStatus: SolverStatus.solved));
         return true;
       },
     );

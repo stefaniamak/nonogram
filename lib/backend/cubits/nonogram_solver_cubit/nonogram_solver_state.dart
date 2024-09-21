@@ -2,9 +2,13 @@ part of 'nonogram_solver_cubit.dart';
 
 enum SolverStatus { initial, solving, solved, notSolved }
 
+extension SolverStatusExtension on SolverStatus {
+  bool get isCompleted => this == SolverStatus.solved || this == SolverStatus.notSolved;
+}
+
 class NonogramSolverState {
   const NonogramSolverState({
-    this.nonogramSolverStatus = SolverStatus.initial,
+    this.solverStatus = SolverStatus.initial,
     this.nonogram,
     this.groupSteps = true,
     this.keepCacheData = true,
@@ -22,7 +26,7 @@ class NonogramSolverState {
   });
 
   // Main variables
-  final SolverStatus nonogramSolverStatus;
+  final SolverStatus solverStatus;
   final IsolateNonogram? nonogram;
 
   // Settings
@@ -43,7 +47,7 @@ class NonogramSolverState {
   final Map<String, bool> cachedBoxSolutions;
 
   NonogramSolverState copyWith({
-    final SolverStatus? nonogramSolverStatus,
+    final SolverStatus? solverStatus,
     final IsolateNonogram? nonogram,
     final bool? groupSteps,
     final bool? keepCacheData,
@@ -60,7 +64,7 @@ class NonogramSolverState {
     final Map<String, bool>? cachedBoxSolutions,
   }) {
     return NonogramSolverState(
-      nonogramSolverStatus: nonogramSolverStatus ?? this.nonogramSolverStatus,
+      solverStatus: solverStatus ?? this.solverStatus,
       nonogram: nonogram ?? this.nonogram,
       groupSteps: groupSteps ?? this.groupSteps,
       keepCacheData: keepCacheData ?? this.keepCacheData,
