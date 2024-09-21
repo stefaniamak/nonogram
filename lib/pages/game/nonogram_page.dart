@@ -57,9 +57,7 @@ class NonogramPage extends StatelessWidget {
                               child: FilledButton(
                                 onPressed: state.solutionSteps.length > 1
                                     ? null
-                                    : () {
-                                        context.read<NonogramSolverCubit>().solvePuzzle();
-                                      },
+                                    : () => context.read<NonogramSolverCubit>().solvePuzzle(),
                                 child: const Text('SOLVE'),
                               ),
                             ),
