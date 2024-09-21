@@ -113,7 +113,7 @@ class NonogramPage extends StatelessWidget {
                         const Text('--Stats--'),
                         const SizedBox(height: 8),
                         Text(
-                          'Puzzle duration: ${state.startDateTime != null && state.endingDateTime != null ? (state.endingDateTime!.difference(state.startDateTime!)) : '-'}',
+                          'Puzzle duration: ${state.startDateTime != null ? ((state.endingDateTime ?? DateTime.now()).difference(state.startDateTime!)) : '-'}',
                         ),
                         Text('Total steps: ${state.output.solutionSteps.length}'),
                         AnimatedOpacity(

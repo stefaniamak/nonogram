@@ -46,9 +46,11 @@ class NonogramSolverCubit extends Cubit<NonogramSolverState> {
   }
 
   void solvePuzzle() async {
-    emit(state.copyWith(solverStatus: SolverStatus.solving));
-
-    print(' state.solverSettings.isolateConcurrent: ${ state.solverSettings.isolateConcurrent}');
+    emit(state.copyWith(
+      solverStatus: SolverStatus.solving,
+      startDateTime: DateTime.now(),
+      endingDateTime: null,
+    ));
 
     final isolateManager = IsolateManager.createCustom(
       lineSolverIsolate,
@@ -100,6 +102,11 @@ class NonogramSolverCubit extends Cubit<NonogramSolverState> {
 
     updateStepNumber(state.output.solutionSteps.length - 1);
     print(result); // 100
+
+    emit(state.copyWith(
+      solverStatus: SolverStatus.solved,
+      endingDateTime: DateTime.now(),
+    ));
   }
 
   void updateNonogram(IsolateNonogram nonogram) {
