@@ -10,9 +10,7 @@ class NonogramSolverState {
   const NonogramSolverState({
     this.solverStatus = SolverStatus.initial,
     this.nonogram,
-    this.groupSteps = true,
-    this.keepCacheData = true,
-    this.countCheckedBoxes = true,
+    this.solverSettings = const SolverSettings(),
     this.solutionSteps = const <SolutionStep>[],
     this.stepNumber = 0,
     this.stack = const <Map<int, NonoAxis>>[],
@@ -30,9 +28,7 @@ class NonogramSolverState {
   final IsolateNonogram? nonogram;
 
   // Settings
-  final bool groupSteps;
-  final bool keepCacheData;
-  final bool countCheckedBoxes;
+  final SolverSettings solverSettings;
 
   // Results
   final List<SolutionStep> solutionSteps;
@@ -49,9 +45,7 @@ class NonogramSolverState {
   NonogramSolverState copyWith({
     final SolverStatus? solverStatus,
     final IsolateNonogram? nonogram,
-    final bool? groupSteps,
-    final bool? keepCacheData,
-    final bool? countCheckedBoxes,
+    final SolverSettings? solverSettings,
     final List<SolutionStep>? solutionSteps,
     final int? stepNumber,
     final List<Map<int, NonoAxis>>? stack,
@@ -66,9 +60,7 @@ class NonogramSolverState {
     return NonogramSolverState(
       solverStatus: solverStatus ?? this.solverStatus,
       nonogram: nonogram ?? this.nonogram,
-      groupSteps: groupSteps ?? this.groupSteps,
-      keepCacheData: keepCacheData ?? this.keepCacheData,
-      countCheckedBoxes: countCheckedBoxes ?? this.countCheckedBoxes,
+      solverSettings: solverSettings ?? this.solverSettings,
       solutionSteps: solutionSteps ?? this.solutionSteps,
       stepNumber: stepNumber ?? this.stepNumber,
       stack: stack ?? this.stack,

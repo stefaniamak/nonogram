@@ -117,13 +117,13 @@ class NonogramPage extends StatelessWidget {
                         Text('Total steps: ${state.solutionSteps.length}'),
                         AnimatedOpacity(
                           duration: const Duration(milliseconds: 200),
-                          opacity: state.keepCacheData ? 1 : 0.4,
+                          opacity: state.solverSettings.keepCacheData ? 1 : 0.4,
                           child: Text('Total cache data: ${state.cachedBoxSolutions.length}'),
                         ),
                         Text('Lines checked: ${state.linesChecked}'),
                         AnimatedOpacity(
                           duration: const Duration(milliseconds: 200),
-                          opacity: state.countCheckedBoxes ? 1 : 0.4,
+                          opacity: state.solverSettings.countCheckedBoxes ? 1 : 0.4,
                           child: Column(children: [
                             Text('Boxes checked: ${state.boxesChecked}'),
                             Text('Actual boxes checked: ${state.actualBoxesChecked}'),
@@ -135,7 +135,7 @@ class NonogramPage extends StatelessWidget {
                         Row(
                           children: [
                             Switch(
-                                value: state.groupSteps,
+                                value: state.solverSettings.groupSteps,
                                 onChanged: (_) => context.read<NonogramSolverCubit>().updateGroupSteps()),
                             const Text('Group steps via clues'),
                           ],
@@ -143,7 +143,7 @@ class NonogramPage extends StatelessWidget {
                         Row(
                           children: [
                             Switch(
-                                value: state.keepCacheData,
+                                value: state.solverSettings.keepCacheData,
                                 onChanged: (_) => context.read<NonogramSolverCubit>().updateKeepCacheData()),
                             const Text('Keep cache data of box solutions'),
                           ],
@@ -151,7 +151,7 @@ class NonogramPage extends StatelessWidget {
                         Row(
                           children: [
                             Switch(
-                                value: state.countCheckedBoxes,
+                                value: state.solverSettings.countCheckedBoxes,
                                 onChanged: (_) => context.read<NonogramSolverCubit>().updateCountCheckedBoxes()),
                             const Text('Count boxes checked in recursive algorithm'),
                           ],

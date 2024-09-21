@@ -6,6 +6,7 @@ import 'package:nonogram/backend/models/isolate/isolate_clues.dart';
 import 'package:nonogram/backend/models/isolate/isolate_input.dart';
 import 'package:nonogram/backend/models/isolate/isolate_nonogram.dart';
 import 'package:nonogram/backend/models/isolate/isolate_output.dart';
+import 'package:nonogram/backend/models/isolate/solver_settings.dart';
 import 'package:nonogram/backend/models/solution_step.dart';
 import 'package:nonogram/backend/type_extensions/nono_axis_extension.dart';
 import 'package:nonogram/solver/line_solver_isolate.dart';
@@ -52,16 +53,14 @@ class NonogramSolverCubit extends Cubit<NonogramSolverState> {
       // concurrent: 4,
     );
 
-    print('state.keepCacheData: ${state.keepCacheData}');
+    print('state.keepCacheData: ${state.solverSettings.keepCacheData}');
 
     // Get the result.
     final result = await isolateManager.compute(
       jsonEncode(IsolateInput(
-        rows: [...state.nonogram!.clues.rows],
-        columns: [...state.nonogram!.clues.columns],
         solutionSteps: state.solutionSteps,
         nonogram: state.nonogram!,
-        keepCacheData: state.keepCacheData,
+        solverSettings: state.solverSettings,
       ).toJson()),
       callback: (value) {
         // Condition to recognize the progress value. Ex:
@@ -108,15 +107,16 @@ class NonogramSolverCubit extends Cubit<NonogramSolverState> {
   }
 
   void updateGroupSteps() {
-    emit(state.copyWith(groupSteps: !state.groupSteps));
+    emit(state.copyWith(solverSettings: state.solverSettings.copyWith(groupSteps: !state.solverSettings.groupSteps)));
   }
 
   void updateKeepCacheData() {
-    emit(state.copyWith(keepCacheData: !state.keepCacheData));
+    emit(state.copyWith(solverSettings: state.solverSettings.copyWith(keepCacheData: !state.solverSettings.keepCacheData)));
   }
 
   void updateCountCheckedBoxes() {
-    emit(state.copyWith(countCheckedBoxes: !state.countCheckedBoxes));
+    emit(state.copyWith(
+        solverSettings: state.solverSettings.copyWith(countCheckedBoxes: !state.solverSettings.countCheckedBoxes)));
   }
 
   void updateCachedBoxSolutions(Map<String, bool> cacheData) {

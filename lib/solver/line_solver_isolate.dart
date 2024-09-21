@@ -5,6 +5,7 @@ import 'package:nonogram/backend/models/isolate/isolate_clues.dart';
 import 'package:nonogram/backend/models/isolate/isolate_input.dart';
 import 'package:nonogram/backend/models/isolate/isolate_nonogram.dart';
 import 'package:nonogram/backend/models/isolate/isolate_output.dart';
+import 'package:nonogram/backend/models/isolate/solver_settings.dart';
 import 'package:nonogram/backend/models/solution_step.dart';
 import 'package:nonogram/backend/type_extensions/nono_axis_alignment_extension.dart';
 import 'package:nonogram/backend/type_extensions/nono_axis_extension.dart';
@@ -31,7 +32,8 @@ void lineSolverIsolate(dynamic params) {
         // print('stack: $stack');
         Map<int, NonoAxis> line = stack.first;
 
-        List<int> clues = (line.values.first == NonoAxis.row ? input.rows : input.columns).elementAt(line.keys.first);
+        List<int> clues = (line.values.first == NonoAxis.row ? input.nonogram.clues.rows : input.nonogram.clues.columns)
+            .elementAt(line.keys.first);
         progress = loopSides(
           solutionSteps,
           line.keys.first,
@@ -40,7 +42,7 @@ void lineSolverIsolate(dynamic params) {
           input.nonogram,
           stack,
           cachedBoxSolutions,
-          input.keepCacheData,
+          input.solverSettings,
         );
 
         if (progress != null) {
@@ -70,7 +72,7 @@ void lineSolverIsolate(dynamic params) {
 
 @isolateManagerCustomWorker
 IsolateOutput? loopSides(List<SolutionStep> solutionSteps, int lineIndex, List<int> clues, NonoAxis lineType,
-    IsolateNonogram nonogram, List<Map<int, NonoAxis>> stack, Map<String, bool> cachedBoxSolutions, bool keepCacheData,
+    IsolateNonogram nonogram, List<Map<int, NonoAxis>> stack, Map<String, bool> cachedBoxSolutions, SolverSettings settings,
     [bool printPrints = false]) {
   if (printPrints) print('Check ${lineType.name} with index $lineIndex.');
   if (printPrints) print('${lineType.name}\'s clues: $clues');
@@ -252,7 +254,7 @@ IsolateOutput? loopSides(List<SolutionStep> solutionSteps, int lineIndex, List<i
     // }
     if (printPrints) print('It is not. Starts to calculate all possible solutions...');
     // print('line type: $lineType + line index: $lineIndex');
-    List<List<String>> allLineSolutions = getAllLinePossibleSolutions(clues, initialSolution, cachedBoxSolutions, keepCacheData);
+    List<List<String>> allLineSolutions = getAllLinePossibleSolutions(clues, initialSolution, cachedBoxSolutions, settings);
     if (printPrints) print('All line solutions: $allLineSolutions');
 
     if (printPrints) print('Find starting solution of $allLineSolutions with clues $clues.');
@@ -458,7 +460,7 @@ IsolateOutput? loopSides(List<SolutionStep> solutionSteps, int lineIndex, List<i
 
 @isolateManagerCustomWorker
 List<List<String>> getAllLinePossibleSolutions(
-    List<int> clues, String line, Map<String, bool> cachedBoxSolutions, bool keepCacheData,
+    List<int> clues, String line, Map<String, bool> cachedBoxSolutions, SolverSettings settings,
     [bool printPrints = false]) {
   if (printPrints) print('Get all possible solutions of line $line with clues $clues');
   List<List<String>> possibleSolutions = Iterable.generate(line.length, (_) => <String>[]).toList();
@@ -468,14 +470,14 @@ List<List<String>> getAllLinePossibleSolutions(
         ? line.length
         : line.length - clues.sublist(clueIndex + 1).reduce((int value, int element) => value + element + 1) - clues[clueIndex];
     for (int charIndex = minStartingPoint; charIndex < maxStartingPoint; charIndex++) {
-      bool? cache = keepCacheData ? cachedBoxSolutions['$clues,$clueIndex,$line,$charIndex'] : null;
+      bool? cache = settings.keepCacheData ? cachedBoxSolutions['$clues,$clueIndex,$line,$charIndex'] : null;
       bool isInCache = cache != null;
       bool result;
       if (isInCache) {
         result = cache;
       } else {
-        result = canCluesFit(clues, line, charIndex, clueIndex, cachedBoxSolutions, keepCacheData);
-        if (keepCacheData) {
+        result = canCluesFit(clues, line, charIndex, clueIndex, cachedBoxSolutions, settings);
+        if (settings.keepCacheData) {
           cachedBoxSolutions.addAll(updateCachedBoxSolutions(clues, clueIndex, line, charIndex, result));
         }
         if (result == false) {}
@@ -500,7 +502,7 @@ List<List<String>> getAllLinePossibleSolutions(
 
 @isolateManagerCustomWorker
 bool doOtherCluesFit(NonoDirection solutionSide, List<int> clues, int clueIndex, String solution, int solutionIndex,
-    Map<String, bool> cachedBoxSolutions, bool keepCacheData,
+    Map<String, bool> cachedBoxSolutions, SolverSettings settings,
     [bool printPrints = false]) {
   int clue = clues.elementAt(clueIndex);
 
@@ -529,12 +531,12 @@ bool doOtherCluesFit(NonoDirection solutionSide, List<int> clues, int clueIndex,
   List<int> cluesSublist = solutionSide.getCluesSublist(clueIndex, clues);
   if (printPrints) print('Does solution sublist $solutionSublist fit clues $cluesSublist?');
   for (int solutionSublistIndex = 0; solutionSublistIndex < solutionSublist.length; solutionSublistIndex++) {
-    if (canCluesFit(cluesSublist, solutionSublist, solutionSublistIndex, 0, cachedBoxSolutions, keepCacheData)) {
+    if (canCluesFit(cluesSublist, solutionSublist, solutionSublistIndex, 0, cachedBoxSolutions, settings)) {
       if (printPrints) print('It does fit. Return `true`.');
 
       // return solutionSide.isSolutionValid(solution, solutionIndex);
       // TODO(stef): restore cache data here
-      if (keepCacheData) {
+      if (settings.keepCacheData) {
         cachedBoxSolutions.addAll(updateCachedBoxSolutions(cluesSublist, 0, solutionSublist, solutionSublistIndex, true));
       }
 
@@ -546,7 +548,7 @@ bool doOtherCluesFit(NonoDirection solutionSide, List<int> clues, int clueIndex,
 }
 
 @isolateManagerCustomWorker
-bool canCluesFit(List<int> clues, String solution, int s, int cl, Map<String, bool> cachedBoxSolutions, bool keepCacheData,
+bool canCluesFit(List<int> clues, String solution, int s, int cl, Map<String, bool> cachedBoxSolutions, SolverSettings settings,
     [bool printPrints = false]) {
   List<String> solutionList = solution.split('');
   int clue = clues.elementAt(cl);
@@ -573,8 +575,8 @@ bool canCluesFit(List<int> clues, String solution, int s, int cl, Map<String, bo
   }
   if (printPrints) print('true');
 
-  bool cluesBeforeGood = doOtherCluesFit(NonoDirection.before, clues, cl, solution, s, cachedBoxSolutions, keepCacheData);
-  bool cluesAfterGood = doOtherCluesFit(NonoDirection.after, clues, cl, solution, s, cachedBoxSolutions, keepCacheData);
+  bool cluesBeforeGood = doOtherCluesFit(NonoDirection.before, clues, cl, solution, s, cachedBoxSolutions, settings);
+  bool cluesAfterGood = doOtherCluesFit(NonoDirection.after, clues, cl, solution, s, cachedBoxSolutions, settings);
 
   if (printPrints) print('Do both clues before and clues after fit? Answer: ${cluesBeforeGood && cluesAfterGood}');
   // if (state.countCheckedBoxes) state.updateActualBoxesChecked();
