@@ -35,13 +35,15 @@ void lineSolverIsolate(dynamic params) {
         List<int> clues = (line.values.first == NonoAxis.row ? input.nonogram.clues.rows : input.nonogram.clues.columns)
             .elementAt(line.keys.first);
         progress = loopSides(
-          solutionSteps,
           line.keys.first,
           clues,
           line.values.first,
           input.nonogram,
-          stack,
-          cachedBoxSolutions,
+          IsolateOutput(
+            stack: stack,
+            cachedBoxSolutions: cachedBoxSolutions,
+            solutionSteps: solutionSteps,
+          ),
           input.solverSettings,
         );
 
@@ -70,16 +72,16 @@ void lineSolverIsolate(dynamic params) {
   );
 }
 
-@isolateManagerCustomWorker
-IsolateOutput? loopSides(List<SolutionStep> solutionSteps, int lineIndex, List<int> clues, NonoAxis lineType,
-    IsolateNonogram nonogram, List<Map<int, NonoAxis>> stack, Map<String, bool> cachedBoxSolutions, SolverSettings settings,
+// @isolateManagerCustomWorker
+IsolateOutput? loopSides(
+    int lineIndex, List<int> clues, NonoAxis lineType, IsolateNonogram nonogram, IsolateOutput output, SolverSettings settings,
     [bool printPrints = false]) {
   if (printPrints) print('Check ${lineType.name} with index $lineIndex.');
   if (printPrints) print('${lineType.name}\'s clues: $clues');
   String initialSolution; // = solutionSteps.last.currentSolution.getLine(lineIndex, nonogram, lineType);
   switch (lineType) {
     case NonoAxis.row:
-      initialSolution = solutionSteps.last.currentSolution
+      initialSolution = output.solutionSteps.last.currentSolution
           .split('')
           .toList()
           .getRange(lineIndex * nonogram.width, nonogram.width * (lineIndex + 1))
@@ -92,9 +94,9 @@ IsolateOutput? loopSides(List<SolutionStep> solutionSteps, int lineIndex, List<i
     case NonoAxis.column:
       String columnSol = '';
       for (var solChar = lineIndex;
-          solChar < solutionSteps.last.currentSolution.split('').toList().length;
+          solChar < output.solutionSteps.last.currentSolution.split('').toList().length;
           solChar = solChar + nonogram.width) {
-        columnSol = '$columnSol${solutionSteps.last.currentSolution.split('').toList().elementAt(solChar)}';
+        columnSol = '$columnSol${output.solutionSteps.last.currentSolution.split('').toList().elementAt(solChar)}';
       }
       initialSolution = columnSol;
       break;
@@ -160,7 +162,7 @@ IsolateOutput? loopSides(List<SolutionStep> solutionSteps, int lineIndex, List<i
         for (int charIndex = 0; charIndex < initialSolution.length; charIndex++) {
           if (initialSolution.characterAt(charIndex) == '?') {
             int indexSol = lineType.getSolutionPosition(lineIndex, charIndex, nonogram.width);
-            var fullUpdatedSolution = solutionSteps.last.getUpdatedSolution(indexSol, '0');
+            var fullUpdatedSolution = output.solutionSteps.last.getUpdatedSolution(indexSol, '0');
             if (printPrints) print('fullUpdatedSolution: $fullUpdatedSolution');
             // state.addStep(SolutionStep(
             //   currentSolution: fullUpdatedSolution,
@@ -216,7 +218,7 @@ IsolateOutput? loopSides(List<SolutionStep> solutionSteps, int lineIndex, List<i
         ///
         /// We use this regex with replaceAllMapped to change the "?" characters to "0".
         ///
-        var fullUpdatedSolution = solutionSteps.last.currentSolution;
+        var fullUpdatedSolution = output.solutionSteps.last.currentSolution;
 
         // TODO(stef): add "useLookbehind" variable
         if (false) {
@@ -224,7 +226,7 @@ IsolateOutput? loopSides(List<SolutionStep> solutionSteps, int lineIndex, List<i
               charIndexesOfQMarks.map((pos) => '^.{${lineType.getSolutionPosition(lineIndex, pos, nonogram.width)}}').join('|');
           final solutionIndexesRegexp = RegExp(r'(?<=' + lookbehinds + r').');
 
-          fullUpdatedSolution = solutionSteps.last.currentSolution.replaceAllMapped(solutionIndexesRegexp, (match) => '0');
+          fullUpdatedSolution = output.solutionSteps.last.currentSolution.replaceAllMapped(solutionIndexesRegexp, (match) => '0');
           if (printPrints) print('fullUpdatedSolution: $fullUpdatedSolution');
         } else {
           for (int charIndex in charIndexesOfQMarks) {
@@ -236,7 +238,7 @@ IsolateOutput? loopSides(List<SolutionStep> solutionSteps, int lineIndex, List<i
 
         // TODO(stef): restore these two bellow
         return IsolateOutput(
-          stack: stack.updateStack(charIndexesOfQMarks, lineType),
+          stack: output.stack.updateStack(charIndexesOfQMarks, lineType),
           solutionSteps: [
             SolutionStep(
               currentSolution: fullUpdatedSolution,
@@ -254,7 +256,7 @@ IsolateOutput? loopSides(List<SolutionStep> solutionSteps, int lineIndex, List<i
     // }
     if (printPrints) print('It is not. Starts to calculate all possible solutions...');
     // print('line type: $lineType + line index: $lineIndex');
-    List<List<String>> allLineSolutions = getAllLinePossibleSolutions(clues, initialSolution, cachedBoxSolutions, settings);
+    List<List<String>> allLineSolutions = getAllLinePossibleSolutions(clues, initialSolution, output, settings);
     if (printPrints) print('All line solutions: $allLineSolutions');
 
     if (printPrints) print('Find starting solution of $allLineSolutions with clues $clues.');
@@ -305,13 +307,13 @@ IsolateOutput? loopSides(List<SolutionStep> solutionSteps, int lineIndex, List<i
       // Convert the sets to lists and print the final map
       Map<int, List<int>> result = matchMap.map((key, value) => MapEntry(key, value.toList()));
 
-      List<Map<int, NonoAxis>> finalStack = stack;
+      List<Map<int, NonoAxis>> finalStack = output.stack;
 
       for (int clueKey in result.keys) {
         List<int> charIndexes = result[clueKey]!;
         int clueIndex = clueKey == 0 ? 0 : clueKey - 2;
 
-        String fullUpdatedSolution = solutionSteps.last.currentSolution;
+        String fullUpdatedSolution = output.solutionSteps.last.currentSolution;
 
         // TODO(stef): add "useLookbehind" variable
         if (false) {
@@ -319,8 +321,8 @@ IsolateOutput? loopSides(List<SolutionStep> solutionSteps, int lineIndex, List<i
               charIndexes.map((pos) => '^.{${lineType.getSolutionPosition(lineIndex, pos, nonogram.width)}}').join('|');
           final solutionIndexesRegexp = RegExp(r'(?<=' + lookbehinds + r').');
 
-          fullUpdatedSolution =
-              solutionSteps.last.currentSolution.replaceAllMapped(solutionIndexesRegexp, (match) => clueKey == 0 ? '0' : '1');
+          fullUpdatedSolution = output.solutionSteps.last.currentSolution
+              .replaceAllMapped(solutionIndexesRegexp, (match) => clueKey == 0 ? '0' : '1');
         } else {
           for (int charIndex in charIndexes) {
             var tempPos = lineType.getSolutionPosition(lineIndex, charIndex, nonogram.width);
@@ -351,9 +353,9 @@ IsolateOutput? loopSides(List<SolutionStep> solutionSteps, int lineIndex, List<i
             case NonoAxis.column:
               String columnSol = '';
               for (var solChar = lineIndex;
-                  solChar < solutionSteps.last.currentSolution.split('').toList().length;
+                  solChar < output.solutionSteps.last.currentSolution.split('').toList().length;
                   solChar = solChar + nonogram.width) {
-                columnSol = '$columnSol${solutionSteps.last.currentSolution.split('').toList().elementAt(solChar)}';
+                columnSol = '$columnSol${output.solutionSteps.last.currentSolution.split('').toList().elementAt(solChar)}';
               }
               initialSolution2 = columnSol;
               break;
@@ -453,14 +455,13 @@ IsolateOutput? loopSides(List<SolutionStep> solutionSteps, int lineIndex, List<i
     }
     if (printPrints) print('Overlapped solution: $updatedSolution');
     // TODO(stef): updateLinesChecked
-    // state.updateLinesChecked();
+    output = output.copyWith(linesChecked: output.linesChecked + 1);
   }
   return null;
 }
 
-@isolateManagerCustomWorker
-List<List<String>> getAllLinePossibleSolutions(
-    List<int> clues, String line, Map<String, bool> cachedBoxSolutions, SolverSettings settings,
+// @isolateManagerCustomWorker
+List<List<String>> getAllLinePossibleSolutions(List<int> clues, String line, IsolateOutput output, SolverSettings settings,
     [bool printPrints = false]) {
   if (printPrints) print('Get all possible solutions of line $line with clues $clues');
   List<List<String>> possibleSolutions = Iterable.generate(line.length, (_) => <String>[]).toList();
@@ -470,15 +471,15 @@ List<List<String>> getAllLinePossibleSolutions(
         ? line.length
         : line.length - clues.sublist(clueIndex + 1).reduce((int value, int element) => value + element + 1) - clues[clueIndex];
     for (int charIndex = minStartingPoint; charIndex < maxStartingPoint; charIndex++) {
-      bool? cache = settings.keepCacheData ? cachedBoxSolutions['$clues,$clueIndex,$line,$charIndex'] : null;
+      bool? cache = settings.keepCacheData ? output.cachedBoxSolutions['$clues,$clueIndex,$line,$charIndex'] : null;
       bool isInCache = cache != null;
       bool result;
       if (isInCache) {
         result = cache;
       } else {
-        result = canCluesFit(clues, line, charIndex, clueIndex, cachedBoxSolutions, settings);
+        result = canCluesFit(clues, line, charIndex, clueIndex, output, settings);
         if (settings.keepCacheData) {
-          cachedBoxSolutions.addAll(updateCachedBoxSolutions(clues, clueIndex, line, charIndex, result));
+          output.cachedBoxSolutions.addAll(updateCachedBoxSolutions(clues, clueIndex, line, charIndex, result));
         }
         if (result == false) {}
         // if (state.countCheckedBoxes) state.updateBoxesChecked();
@@ -500,9 +501,9 @@ List<List<String>> getAllLinePossibleSolutions(
   return possibleSolutions;
 }
 
-@isolateManagerCustomWorker
+// @isolateManagerCustomWorker
 bool doOtherCluesFit(NonoDirection solutionSide, List<int> clues, int clueIndex, String solution, int solutionIndex,
-    Map<String, bool> cachedBoxSolutions, SolverSettings settings,
+    IsolateOutput output, SolverSettings settings,
     [bool printPrints = false]) {
   int clue = clues.elementAt(clueIndex);
 
@@ -531,13 +532,13 @@ bool doOtherCluesFit(NonoDirection solutionSide, List<int> clues, int clueIndex,
   List<int> cluesSublist = solutionSide.getCluesSublist(clueIndex, clues);
   if (printPrints) print('Does solution sublist $solutionSublist fit clues $cluesSublist?');
   for (int solutionSublistIndex = 0; solutionSublistIndex < solutionSublist.length; solutionSublistIndex++) {
-    if (canCluesFit(cluesSublist, solutionSublist, solutionSublistIndex, 0, cachedBoxSolutions, settings)) {
+    if (canCluesFit(cluesSublist, solutionSublist, solutionSublistIndex, 0, output, settings)) {
       if (printPrints) print('It does fit. Return `true`.');
 
       // return solutionSide.isSolutionValid(solution, solutionIndex);
       // TODO(stef): restore cache data here
       if (settings.keepCacheData) {
-        cachedBoxSolutions.addAll(updateCachedBoxSolutions(cluesSublist, 0, solutionSublist, solutionSublistIndex, true));
+        output.cachedBoxSolutions.addAll(updateCachedBoxSolutions(cluesSublist, 0, solutionSublist, solutionSublistIndex, true));
       }
 
       return true;
@@ -547,8 +548,8 @@ bool doOtherCluesFit(NonoDirection solutionSide, List<int> clues, int clueIndex,
   return false;
 }
 
-@isolateManagerCustomWorker
-bool canCluesFit(List<int> clues, String solution, int s, int cl, Map<String, bool> cachedBoxSolutions, SolverSettings settings,
+// @isolateManagerCustomWorker
+bool canCluesFit(List<int> clues, String solution, int s, int cl, IsolateOutput output, SolverSettings settings,
     [bool printPrints = false]) {
   List<String> solutionList = solution.split('');
   int clue = clues.elementAt(cl);
@@ -575,15 +576,15 @@ bool canCluesFit(List<int> clues, String solution, int s, int cl, Map<String, bo
   }
   if (printPrints) print('true');
 
-  bool cluesBeforeGood = doOtherCluesFit(NonoDirection.before, clues, cl, solution, s, cachedBoxSolutions, settings);
-  bool cluesAfterGood = doOtherCluesFit(NonoDirection.after, clues, cl, solution, s, cachedBoxSolutions, settings);
+  bool cluesBeforeGood = doOtherCluesFit(NonoDirection.before, clues, cl, solution, s, output, settings);
+  bool cluesAfterGood = doOtherCluesFit(NonoDirection.after, clues, cl, solution, s, output, settings);
 
   if (printPrints) print('Do both clues before and clues after fit? Answer: ${cluesBeforeGood && cluesAfterGood}');
   // if (state.countCheckedBoxes) state.updateActualBoxesChecked();
   return cluesBeforeGood && cluesAfterGood;
 }
 
-@isolateManagerCustomWorker
+// @isolateManagerCustomWorker
 List<String> getSideMostSolution(List<List<String>> solution, List<int> clues, NonoAxisAlignment axis,
     [bool printPrints = false]) {
   if (printPrints) print('Get ${axis.name}ing most solution of solution $solution with clues $clues');

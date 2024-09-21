@@ -38,7 +38,7 @@ class NonogramPage extends StatelessWidget {
                   NonogramGridAndClues(
                     // nonogram: nonogram,
                     clues: state.nonogram!.clues,
-                    solution: state.solutionSteps.elementAt(state.stepNumber).currentSolution,
+                    solution: state.output.solutionSteps.elementAt(state.stepNumber).currentSolution,
                     padding: const EdgeInsets.all(32),
                     maxSize: Size(
                       MediaQuery.of(context).size.width -
@@ -55,7 +55,7 @@ class NonogramPage extends StatelessWidget {
                           children: [
                             Expanded(
                               child: FilledButton(
-                                onPressed: state.solutionSteps.length > 1
+                                onPressed: state.output.solutionSteps.length > 1
                                     ? null
                                     : () => context.read<NonogramSolverCubit>().solvePuzzle(),
                                 child: const Text('SOLVE'),
@@ -81,19 +81,20 @@ class NonogramPage extends StatelessWidget {
                               child: Slider(
                                 value: state.stepNumber + 0.0,
                                 min: 0,
-                                max: state.solutionSteps.length - 1,
-                                divisions: state.solutionSteps.length,
+                                max: state.output.solutionSteps.length - 1,
+                                divisions: state.output.solutionSteps.length,
                                 onChanged: state.solverStatus.isCompleted
                                     ? (value) => context.read<NonogramSolverCubit>().updateStepNumber(value.ceil())
                                     : null,
                               ),
                             ),
                             IconButton(
-                              onPressed: state.solverStatus.isCompleted && state.stepNumber < state.solutionSteps.length - 1
-                                  ? () {
-                                      context.read<NonogramSolverCubit>().updateStepNumber(state.stepNumber + 1);
-                                    }
-                                  : null,
+                              onPressed:
+                                  state.solverStatus.isCompleted && state.stepNumber < state.output.solutionSteps.length - 1
+                                      ? () {
+                                          context.read<NonogramSolverCubit>().updateStepNumber(state.stepNumber + 1);
+                                        }
+                                      : null,
                               icon: const Icon(Icons.arrow_forward_ios_sharp),
                             ),
                           ],
@@ -105,7 +106,7 @@ class NonogramPage extends StatelessWidget {
                             children: <Widget>[
                               Text('Step #${state.stepNumber + 1}:'),
                               const SizedBox(width: 4),
-                              Expanded(child: Text(state.solutionSteps.elementAt(state.stepNumber).explanation)),
+                              Expanded(child: Text(state.output.solutionSteps.elementAt(state.stepNumber).explanation)),
                             ],
                           ),
                         ),
@@ -114,20 +115,20 @@ class NonogramPage extends StatelessWidget {
                         Text(
                           'Puzzle duration: ${state.startDateTime != null && state.endingDateTime != null ? (state.endingDateTime!.difference(state.startDateTime!)) : '-'}',
                         ),
-                        Text('Total steps: ${state.solutionSteps.length}'),
+                        Text('Total steps: ${state.output.solutionSteps.length}'),
                         AnimatedOpacity(
                           duration: const Duration(milliseconds: 200),
                           opacity: state.solverSettings.keepCacheData ? 1 : 0.4,
-                          child: Text('Total cache data: ${state.cachedBoxSolutions.length}'),
+                          child: Text('Total cache data: ${state.output.cachedBoxSolutions.length}'),
                         ),
-                        Text('Lines checked: ${state.linesChecked}'),
+                        Text('Lines checked: ${state.output.linesChecked}'),
                         AnimatedOpacity(
                           duration: const Duration(milliseconds: 200),
                           opacity: state.solverSettings.countCheckedBoxes ? 1 : 0.4,
                           child: Column(children: [
-                            Text('Boxes checked: ${state.boxesChecked}'),
-                            Text('Actual boxes checked: ${state.actualBoxesChecked}'),
-                            Text('Other boxes checked: ${state.otherBoxesChecked}'),
+                            Text('Boxes checked: ${state.output.boxesChecked}'),
+                            Text('Actual boxes checked: ${state.output.actualBoxesChecked}'),
+                            Text('Other boxes checked: ${state.output.otherBoxesChecked}'),
                           ]),
                         ),
                         const SizedBox(height: 24),

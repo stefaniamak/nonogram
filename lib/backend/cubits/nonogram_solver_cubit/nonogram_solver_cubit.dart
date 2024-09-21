@@ -25,20 +25,22 @@ class NonogramSolverCubit extends Cubit<NonogramSolverState> {
     emit(
       state.copyWith(
         solverStatus: SolverStatus.initial,
-        solutionSteps: [
-          SolutionStep(
-            currentSolution: state.nonogram!.emptySolution,
-            explanation: 'Empty nonogram',
-          ),
-        ],
-        stack: initializeStackList(state.nonogram!.clues),
         stepNumber: 0,
-        linesChecked: 0,
-        boxesChecked: 0,
-        otherBoxesChecked: 0,
         startDateTime: null,
         endingDateTime: null,
-        cachedBoxSolutions: {},
+        output: state.output.copyWith(
+          stack: initializeStackList(state.nonogram!.clues),
+          linesChecked: 0,
+          boxesChecked: 0,
+          otherBoxesChecked: 0,
+          cachedBoxSolutions: {},
+          solutionSteps: [
+            SolutionStep(
+              currentSolution: state.nonogram!.emptySolution,
+              explanation: 'Empty nonogram',
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -52,7 +54,7 @@ class NonogramSolverCubit extends Cubit<NonogramSolverState> {
       lineSolverIsolate,
       workerName: 'lineSolverIsolate',
       // isDebug: kDebugMode,
-      // concurrent: 4,
+      concurrent: state.solverSettings.isolateConcurrent,
     );
 
     print('state.keepCacheData: ${state.solverSettings.keepCacheData}');
@@ -60,7 +62,7 @@ class NonogramSolverCubit extends Cubit<NonogramSolverState> {
     // Get the result.
     final result = await isolateManager.compute(
       jsonEncode(IsolateInput(
-        solutionSteps: state.solutionSteps,
+        solutionSteps: state.output.solutionSteps,
         nonogram: state.nonogram!,
         solverSettings: state.solverSettings,
       ).toJson()),
@@ -76,7 +78,7 @@ class NonogramSolverCubit extends Cubit<NonogramSolverState> {
           // Return `false` to mark this value is not the final.a
           // print('progress.solutionSteps.last: ${progress.solutionSteps.last.currentSolution}');
           addSolutionSteps([progress.solutionSteps.last]);
-          updateStepNumber(state.solutionSteps.length - 1);
+          updateStepNumber(state.output.solutionSteps.length - 1);
           updateCachedBoxSolutions(progress.cachedBoxSolutions);
           return false;
         }
@@ -86,7 +88,7 @@ class NonogramSolverCubit extends Cubit<NonogramSolverState> {
         IsolateOutput result = IsolateOutput.fromJson(data['result']);
 
         addSolutionSteps([result.solutionSteps.last]);
-        updateStepNumber(state.solutionSteps.length - 1);
+        updateStepNumber(state.output.solutionSteps.length - 1);
         updateCachedBoxSolutions(result.cachedBoxSolutions);
 
         // Return `true` to mark this value is the final.
@@ -96,7 +98,7 @@ class NonogramSolverCubit extends Cubit<NonogramSolverState> {
       },
     );
 
-    updateStepNumber(state.solutionSteps.length - 1);
+    updateStepNumber(state.output.solutionSteps.length - 1);
     print(result); // 100
   }
 
@@ -106,6 +108,10 @@ class NonogramSolverCubit extends Cubit<NonogramSolverState> {
 
   void updateStepNumber(int index) {
     emit(state.copyWith(stepNumber: index));
+  }
+
+  void updateIsolateConcurrent(int index) {
+    emit(state.copyWith(solverSettings: state.solverSettings.copyWith(isolateConcurrent: index)));
   }
 
   void updateGroupSteps() {
@@ -122,15 +128,15 @@ class NonogramSolverCubit extends Cubit<NonogramSolverState> {
   }
 
   void updateCachedBoxSolutions(Map<String, bool> cacheData) {
-    Map<String, bool> tempCache = state.cachedBoxSolutions;
+    Map<String, bool> tempCache = state.output.cachedBoxSolutions;
     tempCache.addAll(cacheData);
-    emit(state.copyWith(cachedBoxSolutions: tempCache));
+    emit(state.copyWith(output: state.output.copyWith(cachedBoxSolutions: tempCache)));
   }
 
   void addSolutionSteps(List<SolutionStep> solutionStep) {
-    List<SolutionStep> tempStep = state.solutionSteps;
+    List<SolutionStep> tempStep = state.output.solutionSteps;
     tempStep.addAll(solutionStep);
-    emit(state.copyWith(solutionSteps: tempStep));
+    emit(state.copyWith(output: state.output.copyWith(solutionSteps: tempStep)));
   }
 
   List<Map<int, NonoAxis>> initializeStackList(IsolateClues clues) {
