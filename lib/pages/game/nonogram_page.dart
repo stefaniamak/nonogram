@@ -156,6 +156,29 @@ class NonogramPage extends StatelessWidget {
                             const Text('Count boxes checked in recursive algorithm'),
                           ],
                         ),
+                        Row(
+                          children: [
+                            const Text('Isolate concurrent: '),
+                            IconButton(
+                              onPressed: state.solverSettings.isolateConcurrent == 1
+                                  ? null
+                                  : () {
+                                      context
+                                          .read<NonogramSolverCubit>()
+                                          .updateIsolateConcurrent(state.solverSettings.isolateConcurrent - 1);
+                                    },
+                              icon: const Icon(Icons.remove),
+                            ),
+                            Text(state.solverSettings.isolateConcurrent.toString()),
+                            IconButton(
+                                onPressed: () {
+                                  context
+                                      .read<NonogramSolverCubit>()
+                                      .updateIsolateConcurrent(state.solverSettings.isolateConcurrent + 1);
+                                },
+                                icon: const Icon(Icons.add)),
+                          ],
+                        ),
                       ],
                     ),
                   ),

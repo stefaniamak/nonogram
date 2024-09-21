@@ -46,6 +46,8 @@ class NonogramSolverCubit extends Cubit<NonogramSolverState> {
   void solvePuzzle() async {
     emit(state.copyWith(solverStatus: SolverStatus.solving));
 
+    print(' state.solverSettings.isolateConcurrent: ${ state.solverSettings.isolateConcurrent}');
+
     final isolateManager = IsolateManager.createCustom(
       lineSolverIsolate,
       workerName: 'lineSolverIsolate',
