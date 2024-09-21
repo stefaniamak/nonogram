@@ -27,7 +27,7 @@ class IsolateNonogram {
   bool? get isUnique => note?.contains('definitely unique');
   bool? get isLineSolvable => note?.contains('definitely line/color solvable');
 
-  // String get emptySolution => Iterable.generate(height * width, (_) => '?').join();
+  String get emptySolution => Iterable.generate(height * width, (_) => '?').join();
 
   factory IsolateNonogram.fromJson(final Map<String, dynamic> json) => _$IsolateNonogramFromJson(json);
 

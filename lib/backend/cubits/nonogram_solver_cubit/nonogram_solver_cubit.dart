@@ -24,7 +24,12 @@ class NonogramSolverCubit extends Cubit<NonogramSolverState> {
     emit(
       state.copyWith(
         solverStatus: SolverStatus.initial,
-        solutionSteps: [],
+        solutionSteps: [
+          SolutionStep(
+            currentSolution: state.nonogram!.emptySolution,
+            explanation: 'Empty nonogram',
+          ),
+        ],
         stack: initializeStackList(state.nonogram!.clues),
         stepNumber: 0,
         linesChecked: 0,
@@ -35,13 +40,6 @@ class NonogramSolverCubit extends Cubit<NonogramSolverState> {
         cachedBoxSolutions: {},
       ),
     );
-
-    addSolutionSteps([
-      SolutionStep(
-        currentSolution: Iterable.generate(state.nonogram!.height * state.nonogram!.width, (_) => '?').join(),
-        explanation: 'Empty nonogram',
-      )
-    ]);
   }
 
   void solvePuzzle() async {
