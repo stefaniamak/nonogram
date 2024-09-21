@@ -57,9 +57,8 @@ class NonogramSolverCubit extends Cubit<NonogramSolverState> {
       jsonEncode(IsolateInput(
         rows: [...state.nonogram!.clues.rows],
         columns: [...state.nonogram!.clues.columns],
-        // stack: state.stack,
         solutionSteps: state.solutionSteps,
-        nonogram: state.nonogram!, // kCatIsolate,
+        nonogram: state.nonogram!,
       ).toJson()),
       callback: (value) {
         // Condition to recognize the progress value. Ex:
