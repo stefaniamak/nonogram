@@ -9,10 +9,12 @@ class IsolateOutput {
   const IsolateOutput({
     required this.stack,
     required this.solutionSteps,
+    this.cachedBoxSolutions = const {},
   });
 
   final List<Map<int, NonoAxis>> stack;
   final List<SolutionStep> solutionSteps;
+  final Map<String, bool> cachedBoxSolutions;
 
   factory IsolateOutput.fromJson(final Map<String, dynamic> json) => _$IsolateOutputFromJson(json);
 

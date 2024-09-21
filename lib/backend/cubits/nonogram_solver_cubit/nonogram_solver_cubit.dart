@@ -73,6 +73,7 @@ class NonogramSolverCubit extends Cubit<NonogramSolverState> {
           // print('progress.solutionSteps.last: ${progress.solutionSteps.last.currentSolution}');
           addSolutionSteps([progress.solutionSteps.last]);
           updateStepNumber(state.solutionSteps.length - 1);
+          updateCachedBoxSolutions(progress.cachedBoxSolutions);
           return false;
         }
 
@@ -82,6 +83,7 @@ class NonogramSolverCubit extends Cubit<NonogramSolverState> {
 
         addSolutionSteps([result.solutionSteps.last]);
         updateStepNumber(state.solutionSteps.length - 1);
+        updateCachedBoxSolutions(result.cachedBoxSolutions);
 
         // Return `true` to mark this value is the final.
 
@@ -112,6 +114,12 @@ class NonogramSolverCubit extends Cubit<NonogramSolverState> {
 
   void updateCountCheckedBoxes() {
     emit(state.copyWith(countCheckedBoxes: !state.countCheckedBoxes));
+  }
+
+  void updateCachedBoxSolutions(Map<String, bool> cacheData) {
+    Map<String, bool> tempCache = state.cachedBoxSolutions;
+    tempCache.addAll(cacheData);
+    emit(state.copyWith(cachedBoxSolutions: tempCache));
   }
 
   void addSolutionSteps(List<SolutionStep> solutionStep) {

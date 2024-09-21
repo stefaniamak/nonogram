@@ -17,6 +17,11 @@ IsolateOutput _$IsolateOutputFromJson(Map<String, dynamic> json) =>
       solutionSteps: (json['solutionSteps'] as List<dynamic>)
           .map((e) => SolutionStep.fromJson(e as Map<String, dynamic>))
           .toList(),
+      cachedBoxSolutions:
+          (json['cachedBoxSolutions'] as Map<String, dynamic>?)?.map(
+                (k, e) => MapEntry(k, e as bool),
+              ) ??
+              const {},
     );
 
 Map<String, dynamic> _$IsolateOutputToJson(IsolateOutput instance) =>
@@ -26,6 +31,7 @@ Map<String, dynamic> _$IsolateOutputToJson(IsolateOutput instance) =>
               e.map((k, e) => MapEntry(k.toString(), _$NonoAxisEnumMap[e]!)))
           .toList(),
       'solutionSteps': instance.solutionSteps,
+      'cachedBoxSolutions': instance.cachedBoxSolutions,
     };
 
 const _$NonoAxisEnumMap = {
