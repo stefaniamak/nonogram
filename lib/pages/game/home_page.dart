@@ -11,7 +11,7 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: NonogramPage(
-        nonogram: Nonograms().dancer,
+        nonogram: Nonograms().cat,
       ),
     );
   }

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:nonogram/backend/models/nonogram.dart';
+import 'package:nonogram/backend/models/isolate/isolate_nonogram.dart';
 
 class NonogramTitle extends StatelessWidget {
   const NonogramTitle({
@@ -8,7 +8,7 @@ class NonogramTitle extends StatelessWidget {
     this.showDescription = true,
   });
 
-  final Nonogram nonogram;
+  final IsolateNonogram nonogram;
   final bool showDescription;
 
   @override

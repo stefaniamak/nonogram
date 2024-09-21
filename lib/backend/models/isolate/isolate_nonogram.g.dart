@@ -9,6 +9,9 @@ part of 'isolate_nonogram.dart';
 IsolateNonogram _$IsolateNonogramFromJson(Map<String, dynamic> json) =>
     IsolateNonogram(
       id: json['id'] as String,
+      info: json['info'] == null
+          ? null
+          : IsolateNonogramInfo.fromJson(json['info'] as Map<String, dynamic>),
       note: json['note'] as String?,
       clues: IsolateClues.fromJson(json['clues'] as Map<String, dynamic>),
     );
@@ -16,6 +19,7 @@ IsolateNonogram _$IsolateNonogramFromJson(Map<String, dynamic> json) =>
 Map<String, dynamic> _$IsolateNonogramToJson(IsolateNonogram instance) =>
     <String, dynamic>{
       'id': instance.id,
+      'info': instance.info,
       'note': instance.note,
       'clues': instance.clues,
     };

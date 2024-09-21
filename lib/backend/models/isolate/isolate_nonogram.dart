@@ -1,5 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:nonogram/backend/models/isolate/isolate_clues.dart';
+import 'package:nonogram/backend/models/isolate/isolate_nonogram_info.dart';
 
 part 'isolate_nonogram.g.dart';
 
@@ -7,14 +8,14 @@ part 'isolate_nonogram.g.dart';
 class IsolateNonogram {
   const IsolateNonogram({
     required this.id,
-    // this.info,
+    this.info,
     this.note,
     required this.clues,
     // this.solutions,
   });
 
   final String id;
-  // final NonogramInfo? info;
+  final IsolateNonogramInfo? info;
   final String? note;
   final IsolateClues clues;
   // final List<Solution>? solutions;
@@ -25,6 +26,8 @@ class IsolateNonogram {
   bool? get isPublished => note?.contains('published');
   bool? get isUnique => note?.contains('definitely unique');
   bool? get isLineSolvable => note?.contains('definitely line/color solvable');
+
+  // String get emptySolution => Iterable.generate(height * width, (_) => '?').join();
 
   factory IsolateNonogram.fromJson(final Map<String, dynamic> json) => _$IsolateNonogramFromJson(json);
 

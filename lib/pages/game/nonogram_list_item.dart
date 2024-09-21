@@ -1,7 +1,9 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:nonogram/backend/models/nonogram.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:nonogram/backend/cubits/nonogram_solver_cubit/nonogram_solver_cubit.dart';
+import 'package:nonogram/backend/models/isolate/isolate_nonogram.dart';
 import 'package:nonogram/pages/game/nonogram_grid_and_clues.dart';
 import 'package:nonogram/pages/game/nonogram_page.dart';
 import 'package:nonogram/pages/game/widgets/nonogram_title.dart';
@@ -12,7 +14,7 @@ class NonogramListItem extends StatelessWidget {
     required this.nonogram,
   });
 
-  final Nonogram nonogram;
+  final IsolateNonogram nonogram;
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +28,10 @@ class NonogramListItem extends StatelessWidget {
         Navigator.push(
           context,
           MaterialPageRoute<void>(
-            builder: (BuildContext context) => NonogramPage(nonogram: nonogram),
+            builder: (BuildContext context) => BlocProvider(
+              create: (_) => NonogramSolverCubit()..initialize(nonogram: nonogram),
+              child: NonogramPage(nonogram: nonogram),
+            ),
           ),
         );
       },
@@ -42,7 +47,7 @@ class NonogramListItem extends StatelessWidget {
             Expanded(
               flex: 4,
               child: NonogramGridAndClues(
-                clues: nonogram.clues!,
+                clues: nonogram.clues,
                 maxSize: puzzleSize,
               ),
             ),

@@ -1,7 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:nonogram/backend/models/solution_step.dart';
-
-import '../../type_extensions/nono_axis_extension.dart';
+import 'package:nonogram/backend/type_extensions/nono_axis_extension.dart';
 
 part 'isolate_output.g.dart';
 

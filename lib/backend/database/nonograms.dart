@@ -1,23 +1,21 @@
-import 'package:nonogram/backend/database/nonograms/16_knot.dart';
-import 'package:nonogram/backend/database/nonograms/23_edge.dart';
-import 'package:nonogram/backend/database/nonograms/2_cat.dart';
-import 'package:nonogram/backend/database/nonograms/529_swing.dart';
-import 'package:nonogram/backend/models/nonogram.dart';
-
-import 'nonograms/1_dancer.dart';
+import 'package:nonogram/backend/database/nonograms_for_isolate/cat_isolate.dart';
+import 'package:nonogram/backend/database/nonograms_for_isolate/dancer_isolate.dart';
+import 'package:nonogram/backend/database/nonograms_for_isolate/knot_isolate.dart';
+import 'package:nonogram/backend/database/nonograms_for_isolate/swing_isolate.dart';
+import 'package:nonogram/backend/models/isolate/isolate_nonogram.dart';
 
 class Nonograms {
-  List<Nonogram> get allNonograms => [
+  List<IsolateNonogram> get allNonograms => [
         dancer,
         cat,
         knot,
-        edge,
+        // edge,
         swing,
       ];
 
-  Nonogram get dancer => kDancer;
-  Nonogram get cat => kCat;
-  Nonogram get knot => kKnot;
-  Nonogram get edge => kEdge;
-  Nonogram get swing => kSwing;
+  IsolateNonogram get dancer => kDancerIsolate;
+  IsolateNonogram get cat => kCatIsolate;
+  IsolateNonogram get knot => kKnotIsolate;
+// IsolateNonogram get edge => kEdgeIsolate;
+  IsolateNonogram get swing => kSwingIsolate;
 }

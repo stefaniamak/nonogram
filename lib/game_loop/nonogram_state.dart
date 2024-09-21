@@ -98,7 +98,7 @@ NonogramState useNonogramState(Nonogram nonogram) {
   );
 
   final stack$ = useState(
-    initializeStepsList(nonogram.clues!),
+    initializeStackList(nonogram.clues!),
   );
 
   final SolutionStep initialSolutionStep = SolutionStep(currentSolution: activeSolution$.value, explanation: 'Empty nonogram');
@@ -179,7 +179,7 @@ NonogramState useNonogramState(Nonogram nonogram) {
 
   final resetPuzzle = useCallback(() {
     activeSolution$.value = emptySolution;
-    stack$.value = initializeStepsList(nonogram.clues!);
+    stack$.value = initializeStackList(nonogram.clues!);
     solutionSteps$.value = <SolutionStep>[initialSolutionStep];
     stepNumber$.value = 0;
     linesChecked$.value = 0;
@@ -231,7 +231,7 @@ NonogramState useNonogramState(Nonogram nonogram) {
   );
 }
 
-List<Map<int, NonoAxis>> initializeStepsList(Clues clues) {
+List<Map<int, NonoAxis>> initializeStackList(Clues clues) {
   List<Map<int, NonoAxis>> lineStack = [];
 
   for (int i = 0; i < clues.rows.length; i++) {

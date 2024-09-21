@@ -23,6 +23,8 @@ dependencies:
   sliver_tools: ^0.2.12
   isolate_manager: ^5.2.1+1
   json_annotation: ^4.9.0
+  bloc: ^8.1.4
+  flutter_bloc: ^8.1.6
 #  worker_manager: ^7.1.1
 
 dev_dependencies:

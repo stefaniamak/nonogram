@@ -11,14 +11,14 @@ class IsolateInput {
   const IsolateInput({
     required this.rows,
     required this.columns,
-    required this.stack,
+    // required this.stack,
     required this.solutionSteps,
     required this.nonogram,
   });
 
   final List<List<int>> rows;
   final List<List<int>> columns;
-  final List<Map<int, NonoAxis>> stack;
+  // final List<Map<int, NonoAxis>> stack;
   final List<SolutionStep> solutionSteps;
   final IsolateNonogram nonogram;
 

@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:nonogram/backend/models/clues.dart';
+import 'package:nonogram/backend/models/isolate/isolate_clues.dart';
 import 'package:nonogram/pages/game/nono_clues.dart';
 import 'package:nonogram/pages/game/nonogram_ui.dart';
 import 'package:nonogram/painters/nonogram_grid.dart';
 
 class NonogramGridAndClues extends StatelessWidget {
   // final Nonogram nonogram;
-  final Clues clues;
+  final IsolateClues clues;
   final String? solution;
   final Size? boxItems;
   // final NonogramState? nonogramState;

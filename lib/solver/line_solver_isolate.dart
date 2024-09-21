@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:isolate_manager/isolate_manager.dart';
+import 'package:nonogram/backend/models/isolate/isolate_clues.dart';
 import 'package:nonogram/backend/models/isolate/isolate_input.dart';
 import 'package:nonogram/backend/models/isolate/isolate_nonogram.dart';
 import 'package:nonogram/backend/models/isolate/isolate_output.dart';
@@ -48,10 +49,10 @@ void lineSolverIsolate(dynamic params) {
     params,
     onEvent: (controller, message) {
       final IsolateInput input = IsolateInput.fromJson(jsonDecode(message));
-      List<Map<int, NonoAxis>> stack = input.stack;
+      List<Map<int, NonoAxis>> stack = initializeStackList(input.nonogram.clues);
       List<SolutionStep> solutionSteps = input.solutionSteps;
       IsolateOutput? progress = IsolateOutput(
-        stack: input.stack,
+        stack: stack,
         solutionSteps: input.solutionSteps,
       );
 
@@ -402,10 +403,10 @@ IsolateOutput? loopSides(List<SolutionStep> solutionSteps, int lineIndex, List<i
           }
           if (isLineCompleted && fullUpdatedSolution.split('').contains('?')) {
             var tempStack = finalStack;
-            print('runs..????');
-            print('finalStack before: ${tempStack.length} - $tempStack');
+            // print('runs..????');
+            // print('finalStack before: ${tempStack.length} - $tempStack');
             finalStack.addAll(tempStack.updateStack([lineIndex], lineType == NonoAxis.row ? NonoAxis.column : NonoAxis.row));
-            print('finalStack after: ${finalStack.length} - $finalStack');
+            // print('finalStack after: ${finalStack.length} - $finalStack');
           }
           return IsolateOutput(
             stack: finalStack.updateStack(charIndexes, lineType),
@@ -657,4 +658,18 @@ List<String> getSideMostSolution(List<List<String>> solution, List<int> clues, N
   }
   if (printPrints) print('Final sideMostSolution: $sideMostSolution');
   return axis == NonoAxisAlignment.end ? sideMostSolution.reversed.toList() : sideMostSolution;
+}
+
+List<Map<int, NonoAxis>> initializeStackList(IsolateClues clues) {
+  List<Map<int, NonoAxis>> lineStack = [];
+
+  for (int i = 0; i < clues.rows.length; i++) {
+    lineStack.add({i: NonoAxis.row});
+  }
+
+  for (int i = 0; i < clues.columns.length; i++) {
+    lineStack.add({i: NonoAxis.column});
+  }
+
+  return lineStack;
 }

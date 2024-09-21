@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:nonogram/backend/models/clues.dart';
+import 'package:nonogram/backend/models/isolate/isolate_clues.dart';
 
 class CluesUi extends StatelessWidget {
-  final Clues clues;
+  final IsolateClues clues;
   final double boxSize;
   final Axis axis;
   final Function(Axis axis, int index, List<int> clues)? onEdit;
