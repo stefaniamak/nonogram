@@ -30,7 +30,7 @@ class NonogramSolverCubit extends Cubit<NonogramSolverState> {
         endingDateTime: null,
         output: state.output.copyWith(
           stack: initializeStackList(state.nonogram!.clues),
-          linesChecked: 0,
+          linesCheckedList: [0],
           boxesChecked: 0,
           otherBoxesChecked: 0,
           cachedBoxSolutions: {},
@@ -82,6 +82,7 @@ class NonogramSolverCubit extends Cubit<NonogramSolverState> {
           addSolutionSteps([progress.solutionSteps.last]);
           updateStepNumber(state.output.solutionSteps.length - 1);
           updateCachedBoxSolutions(progress.cachedBoxSolutions);
+          updateLinesChecked(progress.linesCheckedList);
           return false;
         }
 
@@ -92,6 +93,7 @@ class NonogramSolverCubit extends Cubit<NonogramSolverState> {
         addSolutionSteps([result.solutionSteps.last]);
         updateStepNumber(state.output.solutionSteps.length - 1);
         updateCachedBoxSolutions(result.cachedBoxSolutions);
+        updateLinesChecked(result.linesCheckedList);
 
         // Return `true` to mark this value is the final.
 
@@ -138,6 +140,12 @@ class NonogramSolverCubit extends Cubit<NonogramSolverState> {
     Map<String, bool> tempCache = state.output.cachedBoxSolutions;
     tempCache.addAll(cacheData);
     emit(state.copyWith(output: state.output.copyWith(cachedBoxSolutions: tempCache)));
+  }
+
+  void updateLinesChecked(List<int> linesChecked) {
+    List<int> tempCache = state.output.linesCheckedList;
+    tempCache.addAll(linesChecked);
+    emit(state.copyWith(output: state.output.copyWith(linesCheckedList: tempCache)));
   }
 
   void addSolutionSteps(List<SolutionStep> solutionStep) {

@@ -22,10 +22,13 @@ void lineSolverIsolate(dynamic params) {
       List<Map<int, NonoAxis>> stack = initializeStackList(input.nonogram.clues);
       List<SolutionStep> solutionSteps = input.solutionSteps;
       Map<String, bool> cachedBoxSolutions = {};
+      // Map<String, int> linesCheckedList = {'linesChecked': 0};
+      List<int> linesCheckedList = [0];
       IsolateOutput? progress = IsolateOutput(
         stack: stack,
         solutionSteps: input.solutionSteps,
         cachedBoxSolutions: cachedBoxSolutions,
+        linesCheckedList: linesCheckedList,
       );
 
       while (stack.isNotEmpty) {
@@ -42,6 +45,7 @@ void lineSolverIsolate(dynamic params) {
           IsolateOutput(
             stack: stack,
             cachedBoxSolutions: cachedBoxSolutions,
+            linesCheckedList: linesCheckedList,
             solutionSteps: solutionSteps,
           ),
           input.solverSettings,
@@ -65,6 +69,7 @@ void lineSolverIsolate(dynamic params) {
         stack: stack,
         solutionSteps: solutionSteps,
         cachedBoxSolutions: cachedBoxSolutions,
+        linesCheckedList: linesCheckedList,
       );
       // This is a final value.
       return jsonEncode({'result': results});
@@ -454,9 +459,16 @@ IsolateOutput? loopSides(
       // }
     }
     if (printPrints) print('Overlapped solution: $updatedSolution');
-    // TODO(stef): updateLinesChecked
-    output = output.copyWith(linesChecked: output.linesChecked + 1);
   }
+  // TODO(stef): updateLinesChecked
+  // output = output.copyWith(linesChecked: output.linesChecked + 1);
+  // output.linesCheckedList.add(output.linesChecked + 1);
+  // output.linesCheckedList['linesChecked'] = output.linesCheckedList['linesChecked']! + 1;
+  // int temp = output.linesCheckedList.values.last ?? 0;
+  // output.linesCheckedList.remove('linesChecked');
+  // output.linesCheckedList.addAll({'linesChecked': output.linesCheckedList['linesChecked']! + 1});
+  output.linesCheckedList.add(output.linesCheckedList.last + 1);
+  print('output.linesCheckedList: ${output.linesCheckedList}');
   return null;
 }
 
