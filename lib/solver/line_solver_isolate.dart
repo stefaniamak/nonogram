@@ -476,10 +476,10 @@ IsolateOutput? loopSides(
   // int temp = output.linesCheckedList.values.last ?? 0;
   // output.linesCheckedList.remove('linesChecked');
   // output.linesCheckedList.addAll({'linesChecked': output.linesCheckedList['linesChecked']! + 1});
-  if (settings.countCheckedBoxes) {
-    output.linesCheckedList.add(output.linesCheckedList.last + 1);
-    output.linesCheckedList.removeAt(0);
-  }
+  // if (settings.countCheckedBoxes) {
+  output.linesCheckedList.add(output.linesCheckedList.last + 1);
+  output.linesCheckedList.removeAt(0);
+  // }
   print('output.linesCheckedList: ${output.linesCheckedList}');
   return null;
 }

@@ -127,7 +127,7 @@ class NonogramPage extends StatelessWidget {
                           opacity: state.solverSettings.countCheckedBoxes ? 1 : 0.4,
                           child: Column(children: [
                             Text('Boxes checked: ${state.output.boxesChecked}'),
-                            Text('Actual boxes checked: ${state.output.actualBoxesChecked}'),
+                            // Text('Actual boxes checked: ${state.output.actualBoxesChecked}'),
                             Text('Other boxes checked: ${state.output.otherBoxesChecked}'),
                           ]),
                         ),
@@ -154,7 +154,7 @@ class NonogramPage extends StatelessWidget {
                             Switch(
                                 value: state.solverSettings.countCheckedBoxes,
                                 onChanged: (_) => context.read<NonogramSolverCubit>().updateCountCheckedBoxes()),
-                            const Text('Count checks'),
+                            const Text('Count box checks'),
                           ],
                         ),
                         Row(
