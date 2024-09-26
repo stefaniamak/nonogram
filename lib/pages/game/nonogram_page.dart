@@ -136,24 +136,33 @@ class NonogramPage extends StatelessWidget {
                         Row(
                           children: [
                             Switch(
-                                value: state.solverSettings.groupSteps,
-                                onChanged: (_) => context.read<NonogramSolverCubit>().updateGroupSteps()),
+                              value: state.solverSettings.groupSteps,
+                              onChanged: state.solverStatus.canEdit
+                                  ? (_) => context.read<NonogramSolverCubit>().updateGroupSteps()
+                                  : null,
+                            ),
                             const Text('Group steps via clues'),
                           ],
                         ),
                         Row(
                           children: [
                             Switch(
-                                value: state.solverSettings.keepCacheData,
-                                onChanged: (_) => context.read<NonogramSolverCubit>().updateKeepCacheData()),
+                              value: state.solverSettings.keepCacheData,
+                              onChanged: state.solverStatus.canEdit
+                                  ? (_) => context.read<NonogramSolverCubit>().updateKeepCacheData()
+                                  : null,
+                            ),
                             const Text('Keep cache data of box solutions'),
                           ],
                         ),
                         Row(
                           children: [
                             Switch(
-                                value: state.solverSettings.countCheckedBoxes,
-                                onChanged: (_) => context.read<NonogramSolverCubit>().updateCountCheckedBoxes()),
+                              value: state.solverSettings.countCheckedBoxes,
+                              onChanged: state.solverStatus.canEdit
+                                  ? (_) => context.read<NonogramSolverCubit>().updateCountCheckedBoxes()
+                                  : null,
+                            ),
                             const Text('Count box checks'),
                           ],
                         ),
@@ -172,11 +181,13 @@ class NonogramPage extends StatelessWidget {
                             ),
                             Text(state.solverSettings.isolateConcurrent.toString()),
                             IconButton(
-                                onPressed: () {
-                                  context
-                                      .read<NonogramSolverCubit>()
-                                      .updateIsolateConcurrent(state.solverSettings.isolateConcurrent + 1);
-                                },
+                                onPressed: state.solverStatus.canEdit
+                                    ? () {
+                                        context
+                                            .read<NonogramSolverCubit>()
+                                            .updateIsolateConcurrent(state.solverSettings.isolateConcurrent + 1);
+                                      }
+                                    : null,
                                 icon: const Icon(Icons.add)),
                           ],
                         ),
