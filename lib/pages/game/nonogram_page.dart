@@ -154,7 +154,7 @@ class NonogramPage extends StatelessWidget {
                             Switch(
                                 value: state.solverSettings.countCheckedBoxes,
                                 onChanged: (_) => context.read<NonogramSolverCubit>().updateCountCheckedBoxes()),
-                            const Text('Count boxes checked in recursive algorithm'),
+                            const Text('Count checks'),
                           ],
                         ),
                         Row(

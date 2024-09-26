@@ -12,20 +12,22 @@ class IsolateOutput extends Equatable {
     this.solutionSteps = const <SolutionStep>[],
     this.cachedBoxSolutions = const {},
     this.linesCheckedList = const [0], // const {'linesChecked': 0},
-    this.boxesChecked = 0,
+    this.boxesCheckedList = const [0],
     this.actualBoxesChecked = 0,
-    this.otherBoxesChecked = 0,
+    this.otherBoxesCheckedList = const [0],
   });
 
   final List<Map<int, NonoAxis>> stack;
   final List<SolutionStep> solutionSteps;
   final Map<String, bool> cachedBoxSolutions;
   final List<int> linesCheckedList;
-  final int boxesChecked;
+  final List<int> boxesCheckedList;
   final int actualBoxesChecked;
-  final int otherBoxesChecked;
+  final List<int> otherBoxesCheckedList;
 
-  int get linesChecked => linesCheckedList.length;
+  int get linesChecked => linesCheckedList.last;
+  int get boxesChecked => boxesCheckedList.last;
+  int get otherBoxesChecked => otherBoxesCheckedList.last;
 
   factory IsolateOutput.fromJson(final Map<String, dynamic> json) => _$IsolateOutputFromJson(json);
 
@@ -39,19 +41,18 @@ class IsolateOutput extends Equatable {
     final List<SolutionStep>? solutionSteps,
     final Map<String, bool>? cachedBoxSolutions,
     final List<int>? linesCheckedList,
-    final int? boxesChecked,
+    final List<int>? boxesCheckedList,
     final int? actualBoxesChecked,
-    final int? otherBoxesChecked,
+    final List<int>? otherBoxesCheckedList,
   }) {
     return IsolateOutput(
       stack: stack ?? this.stack,
       solutionSteps: solutionSteps ?? this.solutionSteps,
       cachedBoxSolutions: cachedBoxSolutions ?? this.cachedBoxSolutions,
-      linesCheckedList: linesCheckedList ??
-          this.linesCheckedList, // linesCheckedList != null ? {'linesCheckedList': linesCheckedList} : this.linesCheckedList,
-      boxesChecked: boxesChecked ?? this.boxesChecked,
+      linesCheckedList: linesCheckedList ?? this.linesCheckedList,
+      boxesCheckedList: boxesCheckedList ?? this.boxesCheckedList,
       actualBoxesChecked: actualBoxesChecked ?? this.actualBoxesChecked,
-      otherBoxesChecked: otherBoxesChecked ?? this.otherBoxesChecked,
+      otherBoxesCheckedList: otherBoxesCheckedList ?? this.otherBoxesCheckedList,
     );
   }
 
@@ -62,8 +63,8 @@ class IsolateOutput extends Equatable {
         cachedBoxSolutions,
         linesCheckedList,
         linesChecked,
-        boxesChecked,
+        boxesCheckedList,
         actualBoxesChecked,
-        otherBoxesChecked,
+        otherBoxesCheckedList,
       ];
 }

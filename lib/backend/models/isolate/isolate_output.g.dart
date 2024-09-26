@@ -28,9 +28,15 @@ IsolateOutput _$IsolateOutputFromJson(Map<String, dynamic> json) =>
               ?.map((e) => (e as num).toInt())
               .toList() ??
           const [0],
-      boxesChecked: (json['boxesChecked'] as num?)?.toInt() ?? 0,
+      boxesCheckedList: (json['boxesCheckedList'] as List<dynamic>?)
+              ?.map((e) => (e as num).toInt())
+              .toList() ??
+          const [0],
       actualBoxesChecked: (json['actualBoxesChecked'] as num?)?.toInt() ?? 0,
-      otherBoxesChecked: (json['otherBoxesChecked'] as num?)?.toInt() ?? 0,
+      otherBoxesCheckedList: (json['otherBoxesCheckedList'] as List<dynamic>?)
+              ?.map((e) => (e as num).toInt())
+              .toList() ??
+          const [0],
     );
 
 Map<String, dynamic> _$IsolateOutputToJson(IsolateOutput instance) =>
@@ -42,9 +48,9 @@ Map<String, dynamic> _$IsolateOutputToJson(IsolateOutput instance) =>
       'solutionSteps': instance.solutionSteps,
       'cachedBoxSolutions': instance.cachedBoxSolutions,
       'linesCheckedList': instance.linesCheckedList,
-      'boxesChecked': instance.boxesChecked,
+      'boxesCheckedList': instance.boxesCheckedList,
       'actualBoxesChecked': instance.actualBoxesChecked,
-      'otherBoxesChecked': instance.otherBoxesChecked,
+      'otherBoxesCheckedList': instance.otherBoxesCheckedList,
     };
 
 const _$NonoAxisEnumMap = {

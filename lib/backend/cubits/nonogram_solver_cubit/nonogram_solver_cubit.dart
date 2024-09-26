@@ -31,8 +31,8 @@ class NonogramSolverCubit extends Cubit<NonogramSolverState> {
         output: state.output.copyWith(
           stack: initializeStackList(state.nonogram!.clues),
           linesCheckedList: [0],
-          boxesChecked: 0,
-          otherBoxesChecked: 0,
+          boxesCheckedList: [0],
+          otherBoxesCheckedList: [0],
           cachedBoxSolutions: {},
           solutionSteps: [
             SolutionStep(
@@ -83,6 +83,9 @@ class NonogramSolverCubit extends Cubit<NonogramSolverState> {
           updateStepNumber(state.output.solutionSteps.length - 1);
           updateCachedBoxSolutions(progress.cachedBoxSolutions);
           updateLinesChecked(progress.linesCheckedList);
+          updateBoxesChecked(progress.boxesCheckedList);
+          updateOtherBoxesChecked(progress.otherBoxesCheckedList);
+
           return false;
         }
 
@@ -94,6 +97,8 @@ class NonogramSolverCubit extends Cubit<NonogramSolverState> {
         updateStepNumber(state.output.solutionSteps.length - 1);
         updateCachedBoxSolutions(result.cachedBoxSolutions);
         updateLinesChecked(result.linesCheckedList);
+        updateBoxesChecked(result.boxesCheckedList);
+        updateOtherBoxesChecked(result.otherBoxesCheckedList);
 
         // Return `true` to mark this value is the final.
 
@@ -132,8 +137,11 @@ class NonogramSolverCubit extends Cubit<NonogramSolverState> {
   }
 
   void updateCountCheckedBoxes() {
-    emit(state.copyWith(
-        solverSettings: state.solverSettings.copyWith(countCheckedBoxes: !state.solverSettings.countCheckedBoxes)));
+    emit(
+      state.copyWith(
+        solverSettings: state.solverSettings.copyWith(countCheckedBoxes: !state.solverSettings.countCheckedBoxes),
+      ),
+    );
   }
 
   void updateCachedBoxSolutions(Map<String, bool> cacheData) {
@@ -146,6 +154,18 @@ class NonogramSolverCubit extends Cubit<NonogramSolverState> {
     List<int> tempCache = state.output.linesCheckedList;
     tempCache.addAll(linesChecked);
     emit(state.copyWith(output: state.output.copyWith(linesCheckedList: tempCache)));
+  }
+
+  void updateBoxesChecked(List<int> boxesChecked) {
+    List<int> tempCache = state.output.boxesCheckedList;
+    tempCache.addAll(boxesChecked);
+    emit(state.copyWith(output: state.output.copyWith(boxesCheckedList: tempCache)));
+  }
+
+  void updateOtherBoxesChecked(List<int> otherBoxesChecked) {
+    List<int> tempCache = state.output.otherBoxesCheckedList;
+    tempCache.addAll(otherBoxesChecked);
+    emit(state.copyWith(output: state.output.copyWith(otherBoxesCheckedList: tempCache)));
   }
 
   void addSolutionSteps(List<SolutionStep> solutionStep) {

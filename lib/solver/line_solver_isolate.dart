@@ -24,11 +24,16 @@ void lineSolverIsolate(dynamic params) {
       Map<String, bool> cachedBoxSolutions = {};
       // Map<String, int> linesCheckedList = {'linesChecked': 0};
       List<int> linesCheckedList = [0];
+      List<int> boxesChecked = [0];
+      List<int> otherBoxesChecked = [0];
+
       IsolateOutput? progress = IsolateOutput(
         stack: stack,
         solutionSteps: input.solutionSteps,
         cachedBoxSolutions: cachedBoxSolutions,
         linesCheckedList: linesCheckedList,
+        boxesCheckedList: boxesChecked,
+        otherBoxesCheckedList: otherBoxesChecked,
       );
 
       while (stack.isNotEmpty) {
@@ -46,7 +51,9 @@ void lineSolverIsolate(dynamic params) {
             stack: stack,
             cachedBoxSolutions: cachedBoxSolutions,
             linesCheckedList: linesCheckedList,
+            boxesCheckedList: boxesChecked,
             solutionSteps: solutionSteps,
+            otherBoxesCheckedList: otherBoxesChecked,
           ),
           input.solverSettings,
         );
@@ -70,6 +77,8 @@ void lineSolverIsolate(dynamic params) {
         solutionSteps: solutionSteps,
         cachedBoxSolutions: cachedBoxSolutions,
         linesCheckedList: linesCheckedList,
+        boxesCheckedList: boxesChecked,
+        otherBoxesCheckedList: otherBoxesChecked,
       );
       // This is a final value.
       return jsonEncode({'result': results});
@@ -467,7 +476,10 @@ IsolateOutput? loopSides(
   // int temp = output.linesCheckedList.values.last ?? 0;
   // output.linesCheckedList.remove('linesChecked');
   // output.linesCheckedList.addAll({'linesChecked': output.linesCheckedList['linesChecked']! + 1});
-  output.linesCheckedList.add(output.linesCheckedList.last + 1);
+  if (settings.countCheckedBoxes) {
+    output.linesCheckedList.add(output.linesCheckedList.last + 1);
+    output.linesCheckedList.removeAt(0);
+  }
   print('output.linesCheckedList: ${output.linesCheckedList}');
   return null;
 }
@@ -494,7 +506,11 @@ List<List<String>> getAllLinePossibleSolutions(List<int> clues, String line, Iso
           output.cachedBoxSolutions.addAll(updateCachedBoxSolutions(clues, clueIndex, line, charIndex, result));
         }
         if (result == false) {}
-        // if (state.countCheckedBoxes) state.updateBoxesChecked();
+        // if (state.countCheckedBoxes)
+        if (settings.countCheckedBoxes) {
+          output.boxesCheckedList.add(output.boxesCheckedList.last + 1);
+          output.boxesCheckedList.removeAt(0);
+        }
       }
       String solutionNumb = result ? '${clueIndex + 2}' : '0';
       // print('can fit: $result');
@@ -520,6 +536,10 @@ bool doOtherCluesFit(NonoDirection solutionSide, List<int> clues, int clueIndex,
   int clue = clues.elementAt(clueIndex);
 
   // if (state.countCheckedBoxes) state.updateOtherBoxesChecked();
+  if (settings.countCheckedBoxes) {
+    output.otherBoxesCheckedList.add(output.otherBoxesCheckedList.last + 1);
+    output.otherBoxesCheckedList.removeAt(0);
+  }
 
   if (printPrints) print('Does clue have clues ${solutionSide.name}?');
   if (!solutionSide.hasOtherClues(clueIndex, clues.length)) {
