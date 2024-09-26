@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:bloc/bloc.dart';
+import 'package:equatable/equatable.dart';
 import 'package:isolate_manager/isolate_manager.dart';
 import 'package:nonogram/backend/models/isolate/isolate_clues.dart';
 import 'package:nonogram/backend/models/isolate/isolate_input.dart';
@@ -9,6 +10,7 @@ import 'package:nonogram/backend/models/isolate/isolate_output.dart';
 import 'package:nonogram/backend/models/isolate/solver_settings.dart';
 import 'package:nonogram/backend/models/solution_step.dart';
 import 'package:nonogram/backend/type_extensions/nono_axis_extension.dart';
+import 'package:nonogram/config/nullable.dart';
 import 'package:nonogram/solver/line_solver_isolate.dart';
 
 part 'nonogram_solver_state.dart';
@@ -26,8 +28,8 @@ class NonogramSolverCubit extends Cubit<NonogramSolverState> {
       state.copyWith(
         solverStatus: SolverStatus.initial,
         stepNumber: 0,
-        startDateTime: null,
-        endingDateTime: null,
+        startDateTime: Nullable(null),
+        endingDateTime: Nullable(null),
         output: state.output.copyWith(
           stack: initializeStackList(state.nonogram!.clues),
           linesCheckedList: [0],
@@ -48,7 +50,7 @@ class NonogramSolverCubit extends Cubit<NonogramSolverState> {
   void solvePuzzle() async {
     emit(state.copyWith(
       solverStatus: SolverStatus.solving,
-      startDateTime: DateTime.now(),
+      startDateTime: Nullable(DateTime.now()),
       endingDateTime: null,
     ));
 
@@ -112,7 +114,7 @@ class NonogramSolverCubit extends Cubit<NonogramSolverState> {
 
     emit(state.copyWith(
       solverStatus: SolverStatus.solved,
-      endingDateTime: DateTime.now(),
+      endingDateTime: Nullable(DateTime.now()),
     ));
   }
 
