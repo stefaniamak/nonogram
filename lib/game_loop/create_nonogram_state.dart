@@ -1,13 +1,13 @@
-import 'package:built_collection/built_collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:nonogram/backend/models/clues.dart';
-import 'package:nonogram/backend/models/nonogram.dart';
+import 'package:nonogram/backend/models/isolate/isolate_clues.dart';
+import 'package:nonogram/backend/models/isolate/isolate_nonogram.dart';
+import 'package:nonogram/backend/type_extensions/nono_string_extension.dart';
 
 import 'nonogram_state.dart';
 
 class CreateNonogramState {
-  final Nonogram nonogram;
+  final IsolateNonogram nonogram;
   final int width;
   final int height;
   final List<List<int>> horizontalClues;
@@ -20,6 +20,7 @@ class CreateNonogramState {
   final TextEditingController selectedLineTextEditingController;
   // final Function(Clues clues) updateClues;
   final String solution;
+  final Function(int boxIndex) updateBox;
 
   CreateNonogramState({
     required this.nonogram,
@@ -35,6 +36,7 @@ class CreateNonogramState {
     required this.setSelectedLine,
     required this.updateSelectedLine,
     required this.selectedLineTextEditingController,
+    required this.updateBox,
   });
 }
 
@@ -53,20 +55,19 @@ CreateNonogramState useCreateNonogramState() {
     Iterable.generate(width$.value * height$.value, (_) => '?').join(),
   );
   final nonogram$ = useState(
-    Nonogram((n) => n
-      ..id = "test"
-      // ..info = NonogramInfo((i) => i
-      //   ..title = "Dancer"
-      //   ..copyright = "(c) Copyright 2004 by Jan Wolter"
-      //   ..author = "Jan Wolter"
-      //   ..authorId = "jan"
-      //   ..description = "A stick figure man, dancing his stickly little heart out.").toBuilder()
-      // ..note = "published,definitely unique,definitely line/color solvable"
-      ..clues = Clues(
-        (c) => c
-          ..columns = ListBuilder(verticalClues$.value)
-          ..rows = ListBuilder(horizontalClues$.value),
-      ).toBuilder()),
+    IsolateNonogram(
+        id: 'test',
+        // ..info = NonogramInfo((i) => i
+        //   ..title = "Dancer"
+        //   ..copyright = "(c) Copyright 2004 by Jan Wolter"
+        //   ..author = "Jan Wolter"
+        //   ..authorId = "jan"
+        //   ..description = "A stick figure man, dancing his stickly little heart out.").toBuilder()
+        // ..note = "published,definitely unique,definitely line/color solvable"
+        clues: IsolateClues(
+          columns: verticalClues$.value,
+          rows: horizontalClues$.value,
+        )),
   );
 
   final selectedLineAxis$ = useState(Axis.horizontal);
@@ -77,12 +78,27 @@ CreateNonogramState useCreateNonogramState() {
   // Functions
 
   final updateWidth = useCallback((int index) {
+    print('width: $index');
     if (index > width$.value) {
       horizontalClues$.value.addAll(List<List<int>>.generate(index - width$.value, (_) => <int>[0]));
     } else {
       horizontalClues$.value.removeRange(index, width$.value);
     }
     width$.value = index;
+
+    if (solution$.value.length < height$.value * width$.value) {
+      int missingBoxes = height$.value * width$.value - solution$.value.length;
+      int difference = (missingBoxes / height$.value).ceil();
+
+      solution$.value = solution$.value.replaceAllMapped(RegExp(r'.{' + (index - difference).toString() + r'}'),
+          (match) => "${match.group(0)}${Iterable.generate((missingBoxes / height$.value).ceil(), (_) => '?').join()}");
+    } else if (solution$.value.length > height$.value * width$.value) {
+      int extraBoxes = solution$.value.length - height$.value * width$.value;
+      int difference = (extraBoxes / height$.value).ceil();
+
+      solution$.value = solution$.value.replaceAllMapped(
+          RegExp(r'(.{' + (index).toString() + r'})(.{' + (difference).toString() + r'})'), (match) => "${match.group(1)}");
+    }
   });
 
   final updateHeight = useCallback((int index) {
@@ -92,6 +108,13 @@ CreateNonogramState useCreateNonogramState() {
       verticalClues$.value.removeRange(index, height$.value);
     }
     height$.value = index;
+
+    if (solution$.value.length < height$.value * width$.value) {
+      solution$.value =
+          solution$.value + Iterable.generate(height$.value * width$.value - solution$.value.length, (_) => '?').join();
+    } else {
+      solution$.value = solution$.value.substring(0, height$.value * width$.value);
+    }
   });
 
   final updateSolution = useCallback((int index, PointState pointState) {
@@ -99,20 +122,19 @@ CreateNonogramState useCreateNonogramState() {
   });
 
   final updateNonogram = useCallback(() {
-    nonogram$.value = Nonogram((n) => n
-      ..id = "test"
-      // ..info = NonogramInfo((i) => i
-      //   ..title = "Dancer"
-      //   ..copyright = "(c) Copyright 2004 by Jan Wolter"
-      //   ..author = "Jan Wolter"
-      //   ..authorId = "jan"
-      //   ..description = "A stick figure man, dancing his stickly little heart out.").toBuilder()
-      // ..note = "published,definitely unique,definitely line/color solvable"
-      ..clues = Clues(
-        (c) => c
-          ..columns = ListBuilder(verticalClues$.value)
-          ..rows = ListBuilder(horizontalClues$.value),
-      ).toBuilder());
+    nonogram$.value = IsolateNonogram(
+        id: 'test',
+        // ..info = NonogramInfo((i) => i
+        //   ..title = "Dancer"
+        //   ..copyright = "(c) Copyright 2004 by Jan Wolter"
+        //   ..author = "Jan Wolter"
+        //   ..authorId = "jan"
+        //   ..description = "A stick figure man, dancing his stickly little heart out.").toBuilder()
+        // ..note = "published,definitely unique,definitely line/color solvable"
+        clues: IsolateClues(
+          columns: verticalClues$.value,
+          rows: horizontalClues$.value,
+        ));
 
     //     .rebuild(
     //   (p0) => p0
@@ -150,6 +172,11 @@ CreateNonogramState useCreateNonogramState() {
     (selectedLineAxis$.value == Axis.horizontal ? horizontalClues$ : verticalClues$).value[selectedLineIndex$.value] = list;
   });
 
+  final updateBox = useCallback((int boxIndex) {
+    final bool isEmpty = solution$.value.characterAt(boxIndex) == '?';
+    solution$.value = solution$.value.replaceRange(boxIndex, boxIndex + 1, isEmpty ? '1' : '?');
+  });
+
   return CreateNonogramState(
     nonogram: nonogram$.value,
     width: width$.value,
@@ -164,5 +191,6 @@ CreateNonogramState useCreateNonogramState() {
     setSelectedLine: setSelectedLine,
     updateSelectedLine: updateSelectedLine,
     selectedLineTextEditingController: selectedLineTextEditingController,
+    updateBox: updateBox,
   );
 }

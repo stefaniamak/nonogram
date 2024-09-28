@@ -13,6 +13,7 @@ class NonogramGridAndClues extends StatelessWidget {
   final EdgeInsets padding;
   final Size? maxSize;
   final Function(Axis axis, int index, List<int>)? onLineTap;
+  final Function(int)? onTap;
 
   const NonogramGridAndClues({
     // required this.nonogram,
@@ -24,6 +25,7 @@ class NonogramGridAndClues extends StatelessWidget {
 
     // this.nonogramState,
     this.padding = EdgeInsets.zero,
+    this.onTap,
     super.key,
   });
 
@@ -68,6 +70,7 @@ class NonogramGridAndClues extends StatelessWidget {
                 boxItems: Size(clues.columnLength + 0, clues.rowLength + 0),
                 // solution: nonogramState!.solutionSteps.elementAt(nonogramState.stepNumber).currentSolution,
                 solution: solution ?? Iterable.generate(clues.columnLength * clues.rowLength, (_) => '?').join(),
+                onTap: onTap,
                 // clues: clues,
               ),
             ],

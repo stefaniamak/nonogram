@@ -40,6 +40,7 @@ class CreateNonogramPage extends HookWidget {
                 child: Center(
                   child: NonogramGridAndClues(
                     // nonogram: nonogramState.nonogram,
+                    solution: state.solution,
                     clues: IsolateClues(
                       columns: state.horizontalClues,
                       rows: state.verticalClues,
@@ -53,6 +54,9 @@ class CreateNonogramPage extends HookWidget {
                       (MediaQuery.of(context).size.width) > 1200 ? 1000 : (MediaQuery.of(context).size.width * 0.8),
                       MediaQuery.of(context).size.height * 0.7,
                     ),
+                    onTap: (int index) {
+                      state.updateBox(index);
+                    },
                   ),
                 ),
               ),
