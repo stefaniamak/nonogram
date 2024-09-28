@@ -78,7 +78,6 @@ CreateNonogramState useCreateNonogramState() {
   // Functions
 
   final updateWidth = useCallback((int index) {
-    print('width: $index');
     if (index > width$.value) {
       horizontalClues$.value.addAll(List<List<int>>.generate(index - width$.value, (_) => <int>[0]));
     } else {
@@ -90,12 +89,18 @@ CreateNonogramState useCreateNonogramState() {
       int missingBoxes = height$.value * width$.value - solution$.value.length;
       int difference = (missingBoxes / height$.value).ceil();
 
+      /// Adds as many missing boxes are needed at the end of the solution line.
+      /// That happens by finding the number of boxes that should be added at the end of each line [missingBoxes] and
+      /// replacing every match with the same match plus the missing boxes.
       solution$.value = solution$.value.replaceAllMapped(RegExp(r'.{' + (index - difference).toString() + r'}'),
           (match) => "${match.group(0)}${Iterable.generate((missingBoxes / height$.value).ceil(), (_) => '?').join()}");
     } else if (solution$.value.length > height$.value * width$.value) {
       int extraBoxes = solution$.value.length - height$.value * width$.value;
       int difference = (extraBoxes / height$.value).ceil();
 
+      /// Removes as many extra boxes are needed at the end of the solution line.
+      /// That happens by finding the number of boxes that should be removed at the end of each line [extraBoxes] and
+      /// replacing every match with the same match [match.group(1)] without the extra boxes [match.group(2)].
       solution$.value = solution$.value.replaceAllMapped(
           RegExp(r'(.{' + (index).toString() + r'})(.{' + (difference).toString() + r'})'), (match) => "${match.group(1)}");
     }
