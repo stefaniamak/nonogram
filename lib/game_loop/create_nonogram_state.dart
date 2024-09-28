@@ -180,6 +180,22 @@ CreateNonogramState useCreateNonogramState() {
   final updateBox = useCallback((int boxIndex) {
     final bool isEmpty = solution$.value.characterAt(boxIndex) == '?';
     solution$.value = solution$.value.replaceRange(boxIndex, boxIndex + 1, isEmpty ? '1' : '?');
+
+    int row = boxIndex ~/ width$.value;
+    int column = boxIndex % width$.value;
+
+    print('boxIndex: $boxIndex, row: $row, column: $column');
+
+    RegExp regExp = RegExp(r'1+'); // Match one or more consecutive ones
+
+    Iterable<RegExpMatch> rowMatches = regExp.allMatches(solution$.value.getRowIsolate(row, width$.value));
+    List<int> rowClues = rowMatches.map((match) => match.group(0)!.length).toList();
+
+    Iterable<RegExpMatch> columnMmatches = regExp.allMatches(solution$.value.getColumnIsolate(column, width$.value));
+    List<int> columnClues = columnMmatches.map((match) => match.group(0)!.length).toList();
+
+    verticalClues$.value[row] = rowClues.isNotEmpty ? rowClues : [0];
+    horizontalClues$.value[column] = columnClues.isNotEmpty ? columnClues : [0];
   });
 
   return CreateNonogramState(
