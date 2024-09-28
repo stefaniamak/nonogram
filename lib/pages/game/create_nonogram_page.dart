@@ -5,6 +5,7 @@ import 'package:nonogram/backend/cubits/nonogram_solver_cubit/nonogram_solver_cu
 import 'package:nonogram/backend/models/isolate/isolate_clues.dart';
 import 'package:nonogram/backend/models/isolate/isolate_nonogram.dart';
 import 'package:nonogram/game_loop/create_nonogram_state.dart';
+import 'package:nonogram/pages/app_page.dart';
 import 'package:nonogram/pages/game/nonogram_grid_and_clues.dart';
 import 'package:nonogram/pages/game/nonogram_page.dart';
 
@@ -18,94 +19,91 @@ class CreateNonogramPage extends HookWidget {
     var state = useCreateNonogramState();
     final TextEditingController textEditingController = useTextEditingController();
 
-    return Scaffold(
-      body: Column(
-        children: [
-          SizedBox(height: MediaQuery.of(context).padding.top),
-          TextFormField(
-            controller: state.selectedLineTextEditingController,
-            onChanged: (String value) {
-              print('TextFormField onChanged');
-              state.updateSelectedLine(value);
-            },
-          ),
-          // TODO(stef): restore
-          Expanded(
-            flex: 10,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                Expanded(
-                  child: Center(
-                    child: NonogramGridAndClues(
-                      // nonogram: nonogramState.nonogram,
-                      clues: IsolateClues(
-                        columns: state.horizontalClues,
-                        rows: state.verticalClues,
-                      ),
-                      onLineTap: (Axis axis, int index, List<int> cluesLine) {
-                        state.setSelectedLine(axis, index, cluesLine);
-                      },
-                      padding: const EdgeInsets.all(32),
-                      boxItems: Size(state.width + 0, state.height + 0),
-                      maxSize: Size(
-                        MediaQuery.of(context).size.width * 0.8,
-                        MediaQuery.of(context).size.height * 0.7,
-                      ),
+    return AppPage(
+      children: [
+        // SizedBox(height: MediaQuery.of(context).padding.top),
+        TextFormField(
+          controller: state.selectedLineTextEditingController,
+          onChanged: (String value) {
+            print('TextFormField onChanged');
+            state.updateSelectedLine(value);
+          },
+        ),
+        // TODO(stef): restore
+        SizedBox(
+          height: MediaQuery.of(context).size.height * 0.7,
+          // flex: 10,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              Expanded(
+                child: Center(
+                  child: NonogramGridAndClues(
+                    // nonogram: nonogramState.nonogram,
+                    clues: IsolateClues(
+                      columns: state.horizontalClues,
+                      rows: state.verticalClues,
+                    ),
+                    onLineTap: (Axis axis, int index, List<int> cluesLine) {
+                      state.setSelectedLine(axis, index, cluesLine);
+                    },
+                    padding: const EdgeInsets.all(32),
+                    boxItems: Size(state.width + 0, state.height + 0),
+                    maxSize: Size(
+                      1200 < (MediaQuery.of(context).size.width * 0.8) ? 1200 : (MediaQuery.of(context).size.width * 0.8),
+                      MediaQuery.of(context).size.height * 0.7,
                     ),
                   ),
                 ),
-                RotatedBox(
-                  quarterTurns: 1,
-                  child: Slider(
-                    value: state.height + 0.0,
-                    min: 1,
-                    max: 50,
-                    divisions: 50,
-                    onChanged: (value) {
-                      state.updateHeight(value.ceil());
-                    },
-                  ),
+              ),
+              RotatedBox(
+                quarterTurns: 1,
+                child: Slider(
+                  value: state.height + 0.0,
+                  min: 1,
+                  max: 50,
+                  divisions: 50,
+                  onChanged: (value) {
+                    state.updateHeight(value.ceil());
+                  },
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
-          Expanded(
-            child: Slider(
-              value: state.width + 0.0,
-              min: 1,
-              max: 50,
-              divisions: 50,
-              onChanged: (value) {
-                state.updateWidth(value.ceil());
-              },
-            ),
-          ),
-          // TODO(stef): restore
-          OutlinedButton(
-            onPressed: () {
-              final nonogram = IsolateNonogram(
-                id: "-",
-                clues: IsolateClues(
-                  columns: state.horizontalClues,
-                  rows: state.verticalClues,
+        ),
+        Slider(
+          value: state.width + 0.0,
+          min: 1,
+          max: 50,
+          divisions: 50,
+          onChanged: (value) {
+            state.updateWidth(value.ceil());
+          },
+        ),
+        // TODO(stef): restore
+        OutlinedButton(
+          onPressed: () {
+            final nonogram = IsolateNonogram(
+              id: "-",
+              clues: IsolateClues(
+                columns: state.horizontalClues,
+                rows: state.verticalClues,
+              ),
+            );
+            Navigator.push(
+              context,
+              MaterialPageRoute<void>(
+                builder: (BuildContext context) => BlocProvider(
+                  create: (_) => NonogramSolverCubit()..initialize(nonogram: nonogram),
+                  child: NonogramPage(nonogram: nonogram),
                 ),
-              );
-              Navigator.push(
-                context,
-                MaterialPageRoute<void>(
-                  builder: (BuildContext context) => BlocProvider(
-                    create: (_) => NonogramSolverCubit()..initialize(nonogram: nonogram),
-                    child: NonogramPage(nonogram: nonogram),
-                  ),
-                ),
-              );
-            },
-            child: const Text('SOLVE'),
-          ),
-          SizedBox(height: MediaQuery.of(context).padding.bottom + 12),
-        ],
-      ),
+              ),
+            );
+          },
+          child: const Text('SOLVE'),
+        ),
+        // SizedBox(height: MediaQuery.of(context).padding.bottom + 12),
+      ],
     );
   }
 }
