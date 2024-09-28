@@ -50,7 +50,7 @@ class CreateNonogramPage extends HookWidget {
                     padding: const EdgeInsets.all(32),
                     boxItems: Size(state.width + 0, state.height + 0),
                     maxSize: Size(
-                      1200 < (MediaQuery.of(context).size.width * 0.8) ? 1200 : (MediaQuery.of(context).size.width * 0.8),
+                      (MediaQuery.of(context).size.width) > 1200 ? 1000 : (MediaQuery.of(context).size.width * 0.8),
                       MediaQuery.of(context).size.height * 0.7,
                     ),
                   ),
@@ -80,6 +80,7 @@ class CreateNonogramPage extends HookWidget {
             state.updateWidth(value.ceil());
           },
         ),
+        const SizedBox(height: 24),
         // TODO(stef): restore
         OutlinedButton(
           onPressed: () {
