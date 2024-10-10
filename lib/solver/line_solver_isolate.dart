@@ -29,7 +29,7 @@ void lineSolverIsolate(dynamic params) {
 
       IsolateOutput? progress = IsolateOutput(
         stack: stack,
-        solutionSteps: input.solutionSteps,
+        solutionSteps: solutionSteps,
         cachedBoxSolutions: cachedBoxSolutions,
         linesCheckedList: linesCheckedList,
         boxesCheckedList: boxesChecked,
@@ -90,6 +90,9 @@ void lineSolverIsolate(dynamic params) {
 IsolateOutput? loopSides(
     int lineIndex, List<int> clues, NonoAxis lineType, IsolateNonogram nonogram, IsolateOutput output, SolverSettings settings,
     [bool printPrints = false]) {
+  output.linesCheckedList.add(output.linesCheckedList.last + 1);
+  output.linesCheckedList.removeAt(0);
+
   if (printPrints) print('Check ${lineType.name} with index $lineIndex.');
   if (printPrints) print('${lineType.name}\'s clues: $clues');
   String initialSolution; // = solutionSteps.last.currentSolution.getLine(lineIndex, nonogram, lineType);
@@ -171,13 +174,42 @@ IsolateOutput? loopSides(
   if (isLineCompleted) {
     if (printPrints) print('It is. Shall cross out remaining empty boxes if any left.');
     if (initialSolution.split('').toList().contains('?')) {
-      if (false) {
-        //!state.groupSteps) {
+      // TODO(stef): restore groupSteps
+      if (!settings.groupSteps) {
+        List<Map<int, NonoAxis>> tempStack = output.stack;
+        List<SolutionStep> newSolutionSteps = [];
         for (int charIndex = 0; charIndex < initialSolution.length; charIndex++) {
           if (initialSolution.characterAt(charIndex) == '?') {
             int indexSol = lineType.getSolutionPosition(lineIndex, charIndex, nonogram.width);
             var fullUpdatedSolution = output.solutionSteps.last.getUpdatedSolution(indexSol, '0');
             if (printPrints) print('fullUpdatedSolution: $fullUpdatedSolution');
+
+            // List<Map<int, NonoAxis>> finalStack = output.stack;
+            // var tempStack = finalStack;
+            // output.stack.addAll(tempStack.updateStack([charIndex], lineType));
+
+            tempStack = tempStack.updateStack([charIndex], lineType);
+            newSolutionSteps.add(
+              SolutionStep(
+                currentSolution: fullUpdatedSolution,
+                axis: lineType,
+                lineIndex: lineIndex,
+                explanation: 'Cross out remaining empty boxes of ${lineType.name} with index $lineIndex.',
+              ),
+            );
+
+            // return IsolateOutput(
+            //   stack: output.stack.updateStack([charIndex], lineType),
+            //   solutionSteps: [
+            //     SolutionStep(
+            //       currentSolution: fullUpdatedSolution,
+            //       axis: lineType,
+            //       lineIndex: lineIndex,
+            //       explanation: 'Cross out remaining empty boxes of ${lineType.name} with index $lineIndex.',
+            //     ),
+            //   ],
+            // );
+
             // state.addStep(SolutionStep(
             //   currentSolution: fullUpdatedSolution,
             //   axis: lineType,
@@ -187,6 +219,10 @@ IsolateOutput? loopSides(
             // state.stack.updateStack([charIndex], lineType, state);
           }
         }
+        return IsolateOutput(
+          stack: tempStack,
+          solutionSteps: newSolutionSteps,
+        );
       } else {
         int charStart = initialSolution.split('').toList().indexWhere((String char) => char == '?');
         int charEnd = initialSolution.split('').toList().lastIndexWhere((String char) => char == '?') + 1;
@@ -285,8 +321,8 @@ IsolateOutput? loopSides(
 
     String updatedSolution = '';
 
-    if (true) {
-      //state.groupSteps) {
+    // TODO(stef): restore groupSteps
+    if (settings.groupSteps) {
       // Generate a regex pattern to match any number except those in the exclusion list
       String inclusionPattern = charIndexesOfQMarks.map((e) => e).join('|');
       // Precompile regex patterns
@@ -414,58 +450,126 @@ IsolateOutput? loopSides(
         }
       }
     } else {
-      // String updatedSolution = initialSolution;
-      // for (int charIndex in charIndexesOfQMarks) {
-      //   if (printPrints) print('Is box unknown and should be checked?');
-      //   if (initialSolution.characters.characterAt(charIndex).toString() == '?') {
-      //     if (printPrints) print('Yes it is.');
-      //     if (printPrints)
-      //       print(
-      //           'Are all possible solutions (${allLineSolutions.elementAt(charIndex)}) of box at index $charIndex only zeros (0)?');
-      //
-      //     if (allLineSolutions.elementAt(charIndex).everyElementIsZero) {
-      //       if (printPrints) print('Yes. Cross out this box.');
-      //       updatedSolution = updatedSolution.replaceRange(charIndex, charIndex + 1, '0');
-      //
-      //       int indexSol = lineType.getSolutionPosition(lineIndex, charIndex, state.nonogram.width);
-      //       var fullUpdatedSolution = solutionSteps.last.getUpdatedSolution(indexSol, '0');
-      //       if (printPrints) print('fullUpdatedSolution: $fullUpdatedSolution');
-      //       state.addStep(SolutionStep(
-      //         currentSolution: fullUpdatedSolution,
-      //         axis: lineType,
-      //         lineIndex: lineIndex,
-      //         explanation: 'Cross out box.',
-      //       ));
-      //       state.stack.updateStack([charIndex], lineType, state);
-      //     } else {
-      //       if (printPrints) print('No.');
-      //       var startingSolutionIndex = startingMostSolution.elementAt(charIndex).toString();
-      //       var endingSolutionIndex = endingMostSolution.elementAt(charIndex).toString();
-      //       if (printPrints) print('Do both side solutions of box at index $charIndex contain the same clue index?');
-      //
-      //       if (printPrints) print('startingSolutionIndex: $startingSolutionIndex');
-      //       if (printPrints) print('endingSolutionIndex  : $endingSolutionIndex');
-      //       if (startingSolutionIndex.isSameClueIndexWith(endingSolutionIndex)) {
-      //         if (printPrints) print('Yes. Fill in this box.');
-      //         updatedSolution = updatedSolution.replaceRange(charIndex, charIndex + 1, '1');
-      //         int indexSol = lineType.getSolutionPosition(lineIndex, charIndex, nonogram.width);
-      //         // state.setFilled(lineType.getSolutionPosition(lineIndex, charIndex, nonogram.width));
-      //         var fullUpdatedSolution = solutionSteps.last.getUpdatedSolution(indexSol, '1');
-      //         if (printPrints) print('fullUpdatedSolution: $fullUpdatedSolution');
-      //         state.addStep(SolutionStep(
-      //           currentSolution: fullUpdatedSolution,
-      //           axis: lineType,
-      //           lineIndex: lineIndex,
-      //           explanation: 'Fill in box.',
-      //         ));
-      //         state.stack.updateStack([charIndex], lineType, state);
-      //       } else {
-      //         if (printPrints) print('No. It contains different indexes.');
-      //       }
-      //     }
-      //   }
-      //   if (printPrints) print('No it is not.');
-      // }
+      String updatedSolution = initialSolution;
+
+      List<Map<int, NonoAxis>> tempStack = output.stack;
+      List<SolutionStep> newSolutionSteps = [];
+
+      for (int charIndex in charIndexesOfQMarks) {
+        if (printPrints) print('Is box unknown and should be checked?');
+        // TODO check if characters update works as expected
+        if (initialSolution.split('').elementAt(charIndex).toString() == '?') {
+          if (printPrints) print('Yes it is.');
+          if (printPrints) {
+            print(
+                'Are all possible solutions (${allLineSolutions.elementAt(charIndex)}) of box at index $charIndex only zeros (0)?');
+          }
+
+          if (allLineSolutions.elementAt(charIndex).everyElementIsZero) {
+            if (printPrints) print('Yes. Cross out this box.');
+            updatedSolution = updatedSolution.replaceRange(charIndex, charIndex + 1, '0');
+
+            int indexSol = lineType.getSolutionPosition(lineIndex, charIndex, nonogram.width);
+            var fullUpdatedSolution = output.solutionSteps.last.getUpdatedSolution(indexSol, '0');
+            if (printPrints) print('fullUpdatedSolution: $fullUpdatedSolution');
+            // output.solutionSteps.add(
+            //   SolutionStep(
+            //     currentSolution: fullUpdatedSolution,
+            //     axis: lineType,
+            //     lineIndex: lineIndex,
+            //     explanation: 'Cross out box.',
+            //   ),
+            // );
+
+            // List<Map<int, NonoAxis>> finalStack = output.stack;
+            // var tempStack = finalStack;
+            // output.stack.addAll(tempStack.updateStack([charIndex], lineType));
+            // output.stack.updateStack([charIndex], lineType);
+            //
+            // output.stack.addAll(output.stack.updateStack([charIndex], lineType));
+            // state.stack.updateStack([charIndex], lineType, state);
+            tempStack = tempStack.updateStack([charIndex], lineType);
+            newSolutionSteps.add(
+              SolutionStep(
+                currentSolution: fullUpdatedSolution,
+                axis: lineType,
+                lineIndex: lineIndex,
+                explanation: 'Cross out box.',
+              ),
+            );
+            // return IsolateOutput(
+            //   stack: output.stack.updateStack([charIndex], lineType),
+            //   solutionSteps: [
+            //     SolutionStep(
+            //       currentSolution: fullUpdatedSolution,
+            //       axis: lineType,
+            //       lineIndex: lineIndex,
+            //       explanation: 'Cross out box.',
+            //     ),
+            //   ],
+            // );
+          } else {
+            if (printPrints) print('No.');
+            var startingSolutionIndex = startingMostSolution.elementAt(charIndex).toString();
+            var endingSolutionIndex = endingMostSolution.elementAt(charIndex).toString();
+            if (printPrints) print('Do both side solutions of box at index $charIndex contain the same clue index?');
+
+            if (printPrints) print('startingSolutionIndex: $startingSolutionIndex');
+            if (printPrints) print('endingSolutionIndex  : $endingSolutionIndex');
+            if (startingSolutionIndex.isSameClueIndexWith(endingSolutionIndex)) {
+              if (printPrints) print('Yes. Fill in this box.');
+              updatedSolution = updatedSolution.replaceRange(charIndex, charIndex + 1, '1');
+              int indexSol = lineType.getSolutionPosition(lineIndex, charIndex, nonogram.width);
+              // state.setFilled(lineType.getSolutionPosition(lineIndex, charIndex, nonogram.width));
+              var fullUpdatedSolution = output.solutionSteps.last.getUpdatedSolution(indexSol, '1');
+              if (printPrints) print('fullUpdatedSolution: $fullUpdatedSolution');
+              // state.addStep(SolutionStep(
+              //   currentSolution: fullUpdatedSolution,
+              //   axis: lineType,
+              //   lineIndex: lineIndex,
+              //   explanation: 'Fill in box.',
+              // ));
+              // state.stack.updateStack([charIndex], lineType, state);
+
+              tempStack = tempStack.updateStack([charIndex], lineType);
+              newSolutionSteps.add(
+                SolutionStep(
+                  currentSolution: fullUpdatedSolution,
+                  axis: lineType,
+                  lineIndex: lineIndex,
+                  explanation: 'Fill in box.',
+                ),
+              );
+              // output.solutionSteps.add(
+              //   SolutionStep(
+              //     currentSolution: fullUpdatedSolution,
+              //     axis: lineType,
+              //     lineIndex: lineIndex,
+              //     explanation: 'Fill in box.',
+              //   ),
+              // );
+
+              // List<Map<int, NonoAxis>> finalStack = output.stack;
+              // var tempStack = finalStack;
+              // output.stack.addAll(tempStack.updateStack([charIndex], lineType));
+
+              // List<Map<int, NonoAxis>> finalStack = output.stack;
+              // var tempStack = finalStack;
+              // finalStack
+              // output.stack.addAll(output.stack.updateStack([charIndex], lineType));
+              // output.stack.updateStack([charIndex], lineType);
+            } else {
+              if (printPrints) print('No. It contains different indexes.');
+            }
+          }
+        }
+        if (printPrints) print('No it is not.');
+      }
+
+      return IsolateOutput(
+        stack: tempStack,
+        solutionSteps: newSolutionSteps,
+      );
     }
     if (printPrints) print('Overlapped solution: $updatedSolution');
   }
@@ -477,8 +581,6 @@ IsolateOutput? loopSides(
   // output.linesCheckedList.remove('linesChecked');
   // output.linesCheckedList.addAll({'linesChecked': output.linesCheckedList['linesChecked']! + 1});
   // if (settings.countCheckedBoxes) {
-  output.linesCheckedList.add(output.linesCheckedList.last + 1);
-  output.linesCheckedList.removeAt(0);
   // }
   print('output.linesCheckedList: ${output.linesCheckedList}');
   return null;
