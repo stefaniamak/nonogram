@@ -12,6 +12,7 @@ class SolutionStep {
     this.isNote,
     this.lineIndex,
     required this.explanation,
+    required this.newFilledBoxes,
   });
 
   final String currentSolution;
@@ -20,6 +21,7 @@ class SolutionStep {
   final bool? isNote;
   final int? lineIndex;
   final String explanation;
+  final List<int> newFilledBoxes;
 
   String getUpdatedSolution(int index, String value) => currentSolution.replaceRange(index, index + 1, value);
 

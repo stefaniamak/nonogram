@@ -40,6 +40,7 @@ class NonogramSolverCubit extends Cubit<NonogramSolverState> {
             SolutionStep(
               currentSolution: state.nonogram!.emptySolution,
               explanation: 'Empty nonogram',
+              newFilledBoxes: [],
             ),
           ],
         ),

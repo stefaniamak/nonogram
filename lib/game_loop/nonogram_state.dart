@@ -101,7 +101,11 @@ NonogramState useNonogramState(Nonogram nonogram) {
     initializeStackList(nonogram.clues!),
   );
 
-  final SolutionStep initialSolutionStep = SolutionStep(currentSolution: activeSolution$.value, explanation: 'Empty nonogram');
+  final SolutionStep initialSolutionStep = SolutionStep(
+    currentSolution: activeSolution$.value,
+    explanation: 'Empty nonogram',
+    newFilledBoxes: [],
+  );
   final ValueNotifier<List<SolutionStep>> solutionSteps$ = useState(
     <SolutionStep>[initialSolutionStep],
   );

@@ -15,6 +15,9 @@ SolutionStep _$SolutionStepFromJson(Map<String, dynamic> json) => SolutionStep(
       isNote: json['isNote'] as bool?,
       lineIndex: (json['lineIndex'] as num?)?.toInt(),
       explanation: json['explanation'] as String,
+      newFilledBoxes: (json['newFilledBoxes'] as List<dynamic>)
+          .map((e) => (e as num).toInt())
+          .toList(),
     );
 
 Map<String, dynamic> _$SolutionStepToJson(SolutionStep instance) =>
@@ -25,6 +28,7 @@ Map<String, dynamic> _$SolutionStepToJson(SolutionStep instance) =>
       'isNote': instance.isNote,
       'lineIndex': instance.lineIndex,
       'explanation': instance.explanation,
+      'newFilledBoxes': instance.newFilledBoxes,
     };
 
 const _$NonoAxisEnumMap = {

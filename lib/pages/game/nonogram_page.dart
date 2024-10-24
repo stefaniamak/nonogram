@@ -14,6 +14,16 @@ class NonogramPage extends StatelessWidget {
     super.key,
   });
 
+  // List<int> getHighlightedBoxes(NonogramSolverState state){
+  //   List<int> highlightedBoxes = [];
+  //   var currentSolution = state.output.solutionSteps.elementAt(state.stepNumber).currentSolution;
+  //   var previousSolution = state.output.solutionSteps.elementAt(state.stepNumber-1).currentSolution;
+  //   [
+  //     state.output.solutionSteps.elementAt(state.stepNumber).currentSolution.characters.indexedWhere((element) => element=='1').toList(),
+  //   ]
+  //   return highlightedBoxes;
+  // }
+
   @override
   Widget build(BuildContext context) {
     // NonogramState nonogramState = useNonogramState(nonogram);
@@ -45,6 +55,10 @@ class NonogramPage extends StatelessWidget {
                           (MediaQuery.of(context).size.width - infoMaxWidth - 50 > 0 ? infoMaxWidth + 50 : 48),
                       MediaQuery.of(context).size.height * 0.9,
                     ),
+                    highlightedBoxes: state.output.solutionSteps.elementAt(state.stepNumber).newFilledBoxes,
+                    // highlightedBoxes:state.stepNumber>1 ?
+                    // getHighlightedBoxes(state)
+                    //     :[],
                   ),
                   ConstrainedBox(
                     constraints: const BoxConstraints(maxWidth: 460),

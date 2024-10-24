@@ -4,11 +4,17 @@ import 'package:nonogram/game_loop/nonogram_state.dart';
 class GridBox extends CustomPainter {
   final PointState pointState;
   final double side;
+  final bool isHighlighted;
 
-  GridBox({super.repaint, required this.pointState, this.side = 20});
+  GridBox({
+    super.repaint,
+    required this.pointState,
+    this.side = 20,
+    this.isHighlighted = false,
+  });
 
-  final _defaultPaint = Paint()
-    ..color = Colors.black
+  late final Paint _defaultPaint = Paint()
+    ..color = isHighlighted ? Colors.lightGreen : Colors.black
     ..strokeWidth = 1
     ..strokeCap = StrokeCap.round
     ..style = PaintingStyle.stroke;
@@ -28,8 +34,7 @@ class GridBox extends CustomPainter {
     }
   }
 
-  void drawEmptyBox(Canvas canvas,
-      [PaintingStyle paintingStyle = PaintingStyle.stroke]) {
+  void drawEmptyBox(Canvas canvas, [PaintingStyle paintingStyle = PaintingStyle.stroke]) {
     var paint = _defaultPaint..style = paintingStyle;
 
     var path = Path();

@@ -1,11 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:nonogram/backend/models/clues.dart';
 import 'package:nonogram/backend/type_extensions/nono_string_extension.dart';
 import 'package:nonogram/game_loop/nonogram_state.dart';
-import 'package:nonogram/pages/game/nonogram_ui.dart';
 import 'package:nonogram/painters/grid_box.dart';
-
-import '../backend/models/nonogram.dart';
 
 class NonogramGrid extends StatelessWidget {
   // final Nonogram nonogram;
@@ -16,6 +12,7 @@ class NonogramGrid extends StatelessWidget {
   final Size boxItems;
   final String? solution;
   final Function(int)? onTap;
+  final List<int> highlightedBoxes;
 
   const NonogramGrid({
     // required this.nonogram,
@@ -25,6 +22,7 @@ class NonogramGrid extends StatelessWidget {
     required this.boxItems,
     this.solution,
     this.onTap,
+    this.highlightedBoxes = const [],
     super.key,
   });
 
@@ -65,6 +63,7 @@ class NonogramGrid extends StatelessWidget {
             foregroundPainter: GridBox(
               pointState: getGridBoxState(index),
               side: gridItemSide,
+              isHighlighted: highlightedBoxes.contains(index),
             ),
           );
 

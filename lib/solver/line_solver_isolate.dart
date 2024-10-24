@@ -74,6 +74,14 @@ void lineSolverIsolate(dynamic params) {
         stack.removeAt(0);
       }
 
+      solutionSteps.add(
+        SolutionStep(
+          currentSolution: solutionSteps.last.currentSolution,
+          explanation: solutionSteps.last.currentSolution.split('').contains('?') ? 'Nonogram not solved' : 'Nonogram solved',
+          newFilledBoxes: [],
+        ),
+      );
+
       IsolateOutput? results = IsolateOutput(
         stack: stack,
         solutionSteps: solutionSteps,
@@ -197,6 +205,7 @@ IsolateOutput? loopSides(
                 axis: lineType,
                 lineIndex: lineIndex,
                 explanation: 'Cross out remaining empty boxes of ${lineType.name} with index $lineIndex.',
+                newFilledBoxes: [charIndex],
               ),
             );
 
@@ -272,6 +281,7 @@ IsolateOutput? loopSides(
         /// We use this regex with replaceAllMapped to change the "?" characters to "0".
         ///
         var fullUpdatedSolution = output.solutionSteps.last.currentSolution;
+        List<int> newFilledBoxes = [];
 
         // TODO(stef): add "useLookbehind" variable
         if (false) {
@@ -284,6 +294,7 @@ IsolateOutput? loopSides(
         } else {
           for (int charIndex in charIndexesOfQMarks) {
             var tempPos = lineType.getSolutionPosition(lineIndex, charIndex, nonogram.width);
+            newFilledBoxes.add(tempPos);
             fullUpdatedSolution = fullUpdatedSolution.substring(0, tempPos) + '0' + fullUpdatedSolution.substring(tempPos + 1);
           }
         }
@@ -298,6 +309,7 @@ IsolateOutput? loopSides(
               axis: lineType,
               lineIndex: lineIndex,
               explanation: 'Cross out all remaining empty boxes of ${lineType.name} with index $lineIndex.',
+              newFilledBoxes: newFilledBoxes,
             ),
           ],
         );
@@ -361,6 +373,7 @@ IsolateOutput? loopSides(
       Map<int, List<int>> result = matchMap.map((key, value) => MapEntry(key, value.toList()));
 
       List<Map<int, NonoAxis>> finalStack = output.stack;
+      List<int> newFilledBoxes = [];
 
       for (int clueKey in result.keys) {
         List<int> charIndexes = result[clueKey]!;
@@ -379,6 +392,7 @@ IsolateOutput? loopSides(
         } else {
           for (int charIndex in charIndexes) {
             var tempPos = lineType.getSolutionPosition(lineIndex, charIndex, nonogram.width);
+            newFilledBoxes.add(tempPos);
             fullUpdatedSolution = fullUpdatedSolution.substring(0, tempPos) +
                 (clueKey == 0 ? '0' : '1') +
                 fullUpdatedSolution.substring(tempPos + 1);
@@ -439,6 +453,7 @@ IsolateOutput? loopSides(
                 lineIndex: lineIndex,
                 explanation:
                     '${clueKey == 0 ? 'Cross out' : 'Fill in'} sure boxes for clue ${clues.elementAt(clueIndex)} with index $clueIndex of ${lineType.name} with index $lineIndex.',
+                newFilledBoxes: newFilledBoxes,
               ),
             ],
           );
@@ -499,6 +514,7 @@ IsolateOutput? loopSides(
                 axis: lineType,
                 lineIndex: lineIndex,
                 explanation: 'Cross out box.',
+                newFilledBoxes: [charIndex],
               ),
             );
             // return IsolateOutput(
@@ -544,6 +560,7 @@ IsolateOutput? loopSides(
                   axis: lineType,
                   lineIndex: lineIndex,
                   explanation: 'Fill in box.',
+                  newFilledBoxes: [charIndex],
                 ),
               );
               // output.solutionSteps.add(
