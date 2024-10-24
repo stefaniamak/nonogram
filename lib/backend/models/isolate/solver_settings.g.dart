@@ -12,6 +12,7 @@ SolverSettings _$SolverSettingsFromJson(Map<String, dynamic> json) =>
       keepCacheData: json['keepCacheData'] as bool? ?? true,
       countCheckedBoxes: json['countCheckedBoxes'] as bool? ?? true,
       isolateConcurrent: (json['isolateConcurrent'] as num?)?.toInt() ?? 1,
+      highlightNewFilledBoxes: json['highlightNewFilledBoxes'] as bool? ?? true,
     );
 
 Map<String, dynamic> _$SolverSettingsToJson(SolverSettings instance) =>
@@ -20,4 +21,5 @@ Map<String, dynamic> _$SolverSettingsToJson(SolverSettings instance) =>
       'keepCacheData': instance.keepCacheData,
       'countCheckedBoxes': instance.countCheckedBoxes,
       'isolateConcurrent': instance.isolateConcurrent,
+      'highlightNewFilledBoxes': instance.highlightNewFilledBoxes,
     };

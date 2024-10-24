@@ -135,6 +135,14 @@ class NonogramSolverCubit extends Cubit<NonogramSolverState> {
     emit(state.copyWith(solverSettings: state.solverSettings.copyWith(groupSteps: !state.solverSettings.groupSteps)));
   }
 
+  void updateHighlightNewFilledBoxes() {
+    emit(
+      state.copyWith(
+        solverSettings: state.solverSettings.copyWith(highlightNewFilledBoxes: !state.solverSettings.highlightNewFilledBoxes),
+      ),
+    );
+  }
+
   void updateKeepCacheData() {
     emit(state.copyWith(solverSettings: state.solverSettings.copyWith(keepCacheData: !state.solverSettings.keepCacheData)));
   }

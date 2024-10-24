@@ -55,7 +55,9 @@ class NonogramPage extends StatelessWidget {
                           (MediaQuery.of(context).size.width - infoMaxWidth - 50 > 0 ? infoMaxWidth + 50 : 48),
                       MediaQuery.of(context).size.height * 0.9,
                     ),
-                    highlightedBoxes: state.output.solutionSteps.elementAt(state.stepNumber).newFilledBoxes,
+                    highlightedBoxes: state.solverSettings.highlightNewFilledBoxes
+                        ? state.output.solutionSteps.elementAt(state.stepNumber).newFilledBoxes
+                        : [],
                     // highlightedBoxes:state.stepNumber>1 ?
                     // getHighlightedBoxes(state)
                     //     :[],
@@ -204,6 +206,16 @@ class NonogramPage extends StatelessWidget {
                                   : null,
                               icon: const Icon(Icons.add),
                             ),
+                          ],
+                        ),
+                        const Text('--Graphics--'),
+                        Row(
+                          children: [
+                            Switch(
+                              value: state.solverSettings.highlightNewFilledBoxes,
+                              onChanged: (_) => context.read<NonogramSolverCubit>().updateHighlightNewFilledBoxes(),
+                            ),
+                            const Text('Show new values with highlited color'),
                           ],
                         ),
                       ],

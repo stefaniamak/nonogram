@@ -9,12 +9,14 @@ class SolverSettings {
     this.keepCacheData = true,
     this.countCheckedBoxes = true,
     this.isolateConcurrent = 1,
+    this.highlightNewFilledBoxes = true,
   });
 
   final bool groupSteps;
   final bool keepCacheData;
   final bool countCheckedBoxes;
   final int isolateConcurrent;
+  final bool highlightNewFilledBoxes;
 
   factory SolverSettings.fromJson(final Map<String, dynamic> json) => _$SolverSettingsFromJson(json);
 
@@ -28,12 +30,14 @@ class SolverSettings {
     final bool? keepCacheData,
     final bool? countCheckedBoxes,
     final int? isolateConcurrent,
+    final bool? highlightNewFilledBoxes,
   }) {
     return SolverSettings(
       groupSteps: groupSteps ?? this.groupSteps,
       keepCacheData: keepCacheData ?? this.keepCacheData,
       countCheckedBoxes: countCheckedBoxes ?? this.countCheckedBoxes,
       isolateConcurrent: isolateConcurrent ?? this.isolateConcurrent,
+      highlightNewFilledBoxes: highlightNewFilledBoxes ?? this.highlightNewFilledBoxes,
     );
   }
 }
