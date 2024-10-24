@@ -195,14 +195,15 @@ class NonogramPage extends StatelessWidget {
                             ),
                             Text(state.solverSettings.isolateConcurrent.toString()),
                             IconButton(
-                                onPressed: state.solverStatus.canEdit
-                                    ? () {
-                                        context
-                                            .read<NonogramSolverCubit>()
-                                            .updateIsolateConcurrent(state.solverSettings.isolateConcurrent + 1);
-                                      }
-                                    : null,
-                                icon: const Icon(Icons.add)),
+                              onPressed: state.solverStatus.canEdit
+                                  ? () {
+                                      context
+                                          .read<NonogramSolverCubit>()
+                                          .updateIsolateConcurrent(state.solverSettings.isolateConcurrent + 1);
+                                    }
+                                  : null,
+                              icon: const Icon(Icons.add),
+                            ),
                           ],
                         ),
                       ],
