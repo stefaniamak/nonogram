@@ -66,6 +66,8 @@ void lineSolverIsolate(dynamic params) {
               },
             ),
           );
+          print('stackstack: $stack');
+          print('progress.stack: ${progress.stack}');
           stack.addAll(progress.stack);
           solutionSteps = progress.solutionSteps;
         }
@@ -219,6 +221,7 @@ IsolateOutput? loopSides(
             // state.stack.updateStack([charIndex], lineType, state);
           }
         }
+        print('newSolutionSteps: $newSolutionSteps');
         return IsolateOutput(
           stack: tempStack,
           solutionSteps: newSolutionSteps,
@@ -452,7 +455,8 @@ IsolateOutput? loopSides(
     } else {
       String updatedSolution = initialSolution;
 
-      List<Map<int, NonoAxis>> tempStack = output.stack;
+      List<Map<int, NonoAxis>> finalStack = output.stack;
+      List<Map<int, NonoAxis>> tempStack = finalStack;
       List<SolutionStep> newSolutionSteps = [];
 
       for (int charIndex in charIndexesOfQMarks) {
@@ -531,7 +535,9 @@ IsolateOutput? loopSides(
               // ));
               // state.stack.updateStack([charIndex], lineType, state);
 
-              tempStack = tempStack.updateStack([charIndex], lineType);
+              finalStack.addAll(tempStack.updateStack([charIndex], lineType));
+              finalStack.updateStack([charIndex], lineType);
+              // tempStack = tempStack.updateStack([charIndex], lineType);
               newSolutionSteps.add(
                 SolutionStep(
                   currentSolution: fullUpdatedSolution,
@@ -567,7 +573,7 @@ IsolateOutput? loopSides(
       }
 
       return IsolateOutput(
-        stack: tempStack,
+        stack: finalStack,
         solutionSteps: newSolutionSteps,
       );
     }

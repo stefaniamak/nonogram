@@ -133,17 +133,17 @@ class NonogramPage extends StatelessWidget {
                         ),
                         const SizedBox(height: 24),
                         const Text('--Settings--'),
-                        Row(
-                          children: [
-                            Switch(
-                              value: state.solverSettings.groupSteps,
-                              onChanged: state.solverStatus.canEdit
-                                  ? (_) => context.read<NonogramSolverCubit>().updateGroupSteps()
-                                  : null,
-                            ),
-                            const Text('Group steps via clues'),
-                          ],
-                        ),
+                        // Row(
+                        //   children: [
+                        //     Switch(
+                        //       value: state.solverSettings.groupSteps,
+                        //       onChanged: state.solverStatus.canEdit
+                        //           ? (_) => context.read<NonogramSolverCubit>().updateGroupSteps()
+                        //           : null,
+                        //     ),
+                        //     const Text('Group steps via clues'),
+                        //   ],
+                        // ),
                         Row(
                           children: [
                             Switch(

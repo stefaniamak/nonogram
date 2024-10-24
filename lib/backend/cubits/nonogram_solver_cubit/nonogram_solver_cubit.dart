@@ -81,7 +81,7 @@ class NonogramSolverCubit extends Cubit<NonogramSolverState> {
 
           // Return `false` to mark this value is not the final.a
           // print('progress.solutionSteps.last: ${progress.solutionSteps.last.currentSolution}');
-          addSolutionSteps([progress.solutionSteps.last]);
+          if (progress.solutionSteps.isNotEmpty) addSolutionSteps([progress.solutionSteps.last]);
           updateStepNumber(state.output.solutionSteps.length - 1);
           updateCachedBoxSolutions(progress.cachedBoxSolutions);
           updateLinesChecked(progress.linesCheckedList);
