@@ -20,7 +20,7 @@ class NonogramListItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final double width = MediaQuery.of(context).size.width;
     final int columns = width > 1200 ? 3 : (width > 700 ? 2 : 1);
-    final double cardWidth = (min(1200, width) * 0.65) / columns;
+    final double cardWidth = (min(1200, width) * 0.60) / columns;
     final Size puzzleSize = Size(cardWidth, cardWidth);
 
     return InkWell(
