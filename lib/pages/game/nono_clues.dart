@@ -49,10 +49,9 @@ class ClueBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       width: side,
       height: side,
-      padding: const EdgeInsets.all(4),
       child: FittedBox(
         fit: BoxFit.contain,
         child: Text(numb.toString()),
