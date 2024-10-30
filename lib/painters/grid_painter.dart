@@ -9,6 +9,7 @@ class GridPainter extends CustomPainter {
   final List<int> highlightedBoxes;
   final Size boxItems;
   final String? solution;
+  final Function(int)? onTap;
 
   GridPainter({
     super.repaint,
@@ -16,7 +17,14 @@ class GridPainter extends CustomPainter {
     this.highlightedBoxes = const [],
     required this.boxItems,
     required this.solution,
+    this.onTap,
   });
+
+  @override
+  bool? hitTest(Offset position) {
+    onTap?.call((position.dx / side).floor() + (position.dy / side).floor() * boxItems.width.floor());
+    return false;
+  }
 
   PointState getGridBoxState(int index) {
     var char = solution?.split('').elementAt(index);

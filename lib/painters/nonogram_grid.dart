@@ -26,11 +26,12 @@ class NonogramGrid extends StatelessWidget {
       height: size.height,
       child: CustomPaint(
         isComplex: true,
-        foregroundPainter: GridPainter(
+        painter: GridPainter(
           boxItems: boxItems,
           side: gridItemSide,
           highlightedBoxes: highlightedBoxes,
           solution: solution,
+          onTap: onTap,
         ),
       ),
     );
