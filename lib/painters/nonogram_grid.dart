@@ -24,14 +24,20 @@ class NonogramGrid extends StatelessWidget {
     return SizedBox(
       width: size.width,
       height: size.height,
-      child: CustomPaint(
-        isComplex: true,
-        painter: GridPainter(
-          boxItems: boxItems,
-          side: gridItemSide,
-          highlightedBoxes: highlightedBoxes,
-          solution: solution,
-          onTap: onTap,
+      child: GestureDetector(
+        onTapDown: (details) {
+          final Offset position = details.localPosition;
+          onTap?.call((position.dx / gridItemSide).floor() + (position.dy / gridItemSide).floor() * boxItems.width.floor());
+        },
+        child: CustomPaint(
+          isComplex: true,
+          painter: GridPainter(
+            boxItems: boxItems,
+            side: gridItemSide,
+            highlightedBoxes: highlightedBoxes,
+            solution: solution,
+            onTap: onTap,
+          ),
         ),
       ),
     );

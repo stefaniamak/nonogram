@@ -22,8 +22,7 @@ class GridPainter extends CustomPainter {
 
   @override
   bool? hitTest(Offset position) {
-    onTap?.call((position.dx / side).floor() + (position.dy / side).floor() * boxItems.width.floor());
-    return false;
+    return true;
   }
 
   PointState getGridBoxState(int index) {
