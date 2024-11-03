@@ -27,7 +27,6 @@ class GridBox extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     switch (pointState) {
       case PointState.unknown:
-        drawEmptyBox(canvas);
         break;
       case PointState.filled:
         drawFilledBox(canvas);
@@ -36,10 +35,13 @@ class GridBox extends CustomPainter {
         drawCrossBox(canvas);
         break;
     }
+    drawEmptyBox(canvas, color: Colors.black);
   }
 
-  void drawEmptyBox(Canvas canvas, [PaintingStyle paintingStyle = PaintingStyle.stroke]) {
-    var paint = _defaultPaint..style = paintingStyle;
+  void drawEmptyBox(Canvas canvas, {PaintingStyle paintingStyle = PaintingStyle.stroke, Color? color}) {
+    var paint = _defaultPaint
+      ..style = paintingStyle
+      ..color = color ?? _defaultPaint.color;
     double x = point.x.toDouble();
     double y = point.y.toDouble();
 
@@ -53,7 +55,7 @@ class GridBox extends CustomPainter {
     canvas.drawPath(path, paint);
   }
 
-  void drawFilledBox(Canvas canvas) => drawEmptyBox(canvas, PaintingStyle.fill);
+  void drawFilledBox(Canvas canvas) => drawEmptyBox(canvas, paintingStyle: PaintingStyle.fill);
 
   void drawCrossBox(Canvas canvas) {
     drawEmptyBox(canvas);
