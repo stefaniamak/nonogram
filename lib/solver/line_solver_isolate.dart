@@ -66,8 +66,8 @@ void lineSolverIsolate(dynamic params) {
               },
             ),
           );
-          print('stackstack: $stack');
-          print('progress.stack: ${progress.stack}');
+          // print('stackstack: $stack');
+          // print('progress.stack: ${progress.stack}');
           stack.addAll(progress.stack);
           solutionSteps = progress.solutionSteps;
         }
@@ -137,9 +137,9 @@ IsolateOutput? loopSides(
   int filledBoxes = initialSolution.sumFilledBoxes;
   bool isLineCompleted = filledBoxes == clues.sum;
 
-  if (lineIndex == 18) {
-    print('filledBoxes: $filledBoxes k clues.sum: ${clues.sum}');
-  }
+  // if (lineIndex == 18) {
+  //   print('filledBoxes: $filledBoxes k clues.sum: ${clues.sum}');
+  // }
 
   if (printPrints) print('Are filled boxes ($filledBoxes) equal with clue\'s sum (${clues.sum})?');
 
@@ -230,7 +230,7 @@ IsolateOutput? loopSides(
             // state.stack.updateStack([charIndex], lineType, state);
           }
         }
-        print('newSolutionSteps: $newSolutionSteps');
+        // print('newSolutionSteps: $newSolutionSteps');
         return IsolateOutput(
           stack: tempStack,
           solutionSteps: newSolutionSteps,
@@ -431,12 +431,12 @@ IsolateOutput? loopSides(
           filledBoxes = initialSolution2.sumFilledBoxes;
           isLineCompleted = filledBoxes == clues.sum;
           // finalStack = finalStack.updateStack(charIndexes, lineType);
-          if (clues.elementAt(clueIndex) == 14 && clueIndex == 1 && lineIndex == 18) {
-            print('initialSolution2.sumFilledBoxes: ${initialSolution2.sumFilledBoxes} and clues.sum: ${clues.sum}');
-            print('isLineCompleted: $isLineCompleted && initialSolution2: $initialSolution2');
-            print(
-                'isLineCompleted && fullUpdatedSolution.split(\'\').contains(\'?\'): ${isLineCompleted && fullUpdatedSolution.split('').contains('?')}');
-          }
+          // if (clues.elementAt(clueIndex) == 14 && clueIndex == 1 && lineIndex == 18) {
+          //   print('initialSolution2.sumFilledBoxes: ${initialSolution2.sumFilledBoxes} and clues.sum: ${clues.sum}');
+          //   print('isLineCompleted: $isLineCompleted && initialSolution2: $initialSolution2');
+          //   print(
+          //       'isLineCompleted && fullUpdatedSolution.split(\'\').contains(\'?\'): ${isLineCompleted && fullUpdatedSolution.split('').contains('?')}');
+          // }
           if (isLineCompleted && fullUpdatedSolution.split('').contains('?')) {
             var tempStack = finalStack;
             // print('runs..????');
@@ -605,7 +605,7 @@ IsolateOutput? loopSides(
   // output.linesCheckedList.addAll({'linesChecked': output.linesCheckedList['linesChecked']! + 1});
   // if (settings.countCheckedBoxes) {
   // }
-  print('output.linesCheckedList: ${output.linesCheckedList}');
+  // print('output.linesCheckedList: ${output.linesCheckedList}');
   return null;
 }
 

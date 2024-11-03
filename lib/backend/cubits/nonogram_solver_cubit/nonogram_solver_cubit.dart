@@ -62,7 +62,7 @@ class NonogramSolverCubit extends Cubit<NonogramSolverState> {
       concurrent: state.solverSettings.isolateConcurrent,
     );
 
-    print('state.keepCacheData: ${state.solverSettings.keepCacheData}');
+    // print('state.keepCacheData: ${state.solverSettings.keepCacheData}');
 
     // Get the result.
     final result = await isolateManager.compute(
@@ -84,6 +84,7 @@ class NonogramSolverCubit extends Cubit<NonogramSolverState> {
           // print('progress.solutionSteps.last: ${progress.solutionSteps.last.currentSolution}');
           if (progress.solutionSteps.isNotEmpty) addSolutionSteps([progress.solutionSteps.last]);
           updateStepNumber(state.output.solutionSteps.length - 1);
+          print('progress.cachedBoxSolutions: ${progress.cachedBoxSolutions.length}');
           updateCachedBoxSolutions(progress.cachedBoxSolutions);
           updateLinesChecked(progress.linesCheckedList);
           updateBoxesChecked(progress.boxesCheckedList);
@@ -111,7 +112,7 @@ class NonogramSolverCubit extends Cubit<NonogramSolverState> {
     );
 
     updateStepNumber(state.output.solutionSteps.length - 1);
-    print(result); // 100
+    // print(result); // 100
 
     emit(state.copyWith(
       solverStatus: SolverStatus.solved,
