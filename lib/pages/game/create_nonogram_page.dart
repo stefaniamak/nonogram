@@ -24,17 +24,34 @@ class _CreateNonogramPageState extends State<CreateNonogramPage> {
 
   @override
   Widget build(BuildContext context) {
+    final CreateNonogramCubit createNonogramCubit = context.read<CreateNonogramCubit>();
     return BlocConsumer<CreateNonogramCubit, CreateNonogramState>(
       listener: (BuildContext context, CreateNonogramState state) {},
       builder: (_, CreateNonogramState state) {
         return AppPage(
           children: [
             // SizedBox(height: MediaQuery.of(context).padding.top),
-            TextFormField(
-              controller: textEditingController,
-              onChanged: (String value) {
-                context.read<CreateNonogramCubit>().updateSelectedLine(value);
-              },
+            Row(
+              children: [
+                Expanded(
+                  child: TextFormField(
+                    controller: textEditingController,
+                    onChanged: (String value) {
+                      createNonogramCubit.updateSelectedLine(value);
+                    },
+                  ),
+                ),
+                IconButton(
+                  onPressed: () => createNonogramCubit.togglePaintMode(),
+                  color: state.editingSettings.paint ? Colors.green : Colors.black,
+                  icon: const Icon(Icons.draw),
+                ),
+                IconButton(
+                  onPressed: () => createNonogramCubit.toggleEraseMode(),
+                  color: state.editingSettings.erase ? Colors.green : Colors.black,
+                  icon: const Icon(Icons.edit_off),
+                ),
+              ],
             ),
             SizedBox(
               height: MediaQuery.of(context).size.height * 0.7,
@@ -52,7 +69,7 @@ class _CreateNonogramPageState extends State<CreateNonogramPage> {
                           rows: state.verticalClues,
                         ),
                         onLineTap: (Axis axis, int index, List<int> cluesLine) {
-                          context.read<CreateNonogramCubit>().setSelectedLine(axis, index, cluesLine);
+                          createNonogramCubit.setSelectedLine(axis, index, cluesLine);
                           textEditingController.text = cluesLine.join(',');
                         },
                         padding: const EdgeInsets.all(32),
@@ -62,7 +79,7 @@ class _CreateNonogramPageState extends State<CreateNonogramPage> {
                           MediaQuery.of(context).size.height * 0.7,
                         ),
                         onTap: (int index) {
-                          context.read<CreateNonogramCubit>().updateBox(index);
+                          createNonogramCubit.updateBox(index);
                         },
                       ),
                     ),
@@ -75,7 +92,7 @@ class _CreateNonogramPageState extends State<CreateNonogramPage> {
                       max: _maxSizeValue + 0.0,
                       divisions: _maxSizeValue,
                       onChanged: (value) {
-                        context.read<CreateNonogramCubit>().updateHeight(value.ceil());
+                        createNonogramCubit.updateHeight(value.ceil());
                       },
                     ),
                   ),
@@ -88,7 +105,7 @@ class _CreateNonogramPageState extends State<CreateNonogramPage> {
               max: _maxSizeValue + 0.0,
               divisions: _maxSizeValue,
               onChanged: (value) {
-                context.read<CreateNonogramCubit>().updateWidth(value.ceil());
+                createNonogramCubit.updateWidth(value.ceil());
               },
             ),
             const SizedBox(height: 24),

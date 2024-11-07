@@ -1,6 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:nonogram/backend/cubits/create_nonogram/create_nonogram_state.dart';
+import 'package:nonogram/backend/cubits/create_nonogram/editing_settings.dart';
 import 'package:nonogram/backend/cubits/create_nonogram/selected_line.dart';
 import 'package:nonogram/backend/type_extensions/nono_string_extension.dart';
 
@@ -102,5 +103,13 @@ class CreateNonogramCubit extends Cubit<CreateNonogramState> {
       tempList[state.selectedLine!.index] = list;
       emit(state.copyWith(verticalClues: tempList));
     }
+  }
+
+  void togglePaintMode() {
+    emit(state.copyWith(editingSettings: state.editingSettings.paint ? EditingSettings.noMode : EditingSettings.paintMode));
+  }
+
+  void toggleEraseMode() {
+    emit(state.copyWith(editingSettings: state.editingSettings.erase ? EditingSettings.noMode : EditingSettings.eraseMode));
   }
 }
