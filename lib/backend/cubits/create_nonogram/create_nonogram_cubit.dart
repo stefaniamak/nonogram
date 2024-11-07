@@ -66,7 +66,7 @@ class CreateNonogramCubit extends Cubit<CreateNonogramState> {
     int row = boxIndex ~/ state.width;
     int column = boxIndex % state.width;
 
-    print('boxIndex: $boxIndex, row: $row, column: $column');
+    // print('boxIndex: $boxIndex, row: $row, column: $column');
 
     RegExp regExp = RegExp(r'1+'); // Match one or more consecutive ones
 

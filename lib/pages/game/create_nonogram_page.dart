@@ -41,16 +41,17 @@ class _CreateNonogramPageState extends State<CreateNonogramPage> {
                     },
                   ),
                 ),
-                IconButton(
-                  onPressed: () => createNonogramCubit.togglePaintMode(),
-                  color: state.editingSettings.paint ? Colors.green : Colors.black,
-                  icon: const Icon(Icons.draw),
-                ),
-                IconButton(
-                  onPressed: () => createNonogramCubit.toggleEraseMode(),
-                  color: state.editingSettings.erase ? Colors.green : Colors.black,
-                  icon: const Icon(Icons.edit_off),
-                ),
+                // TODO(stef): I'll see if I'll restore the bellow
+                // IconButton(
+                //   onPressed: () => createNonogramCubit.togglePaintMode(),
+                //   color: state.editingSettings.paint ? Colors.green : Colors.black,
+                //   icon: const Icon(Icons.draw),
+                // ),
+                // IconButton(
+                //   onPressed: () => createNonogramCubit.toggleEraseMode(),
+                //   color: state.editingSettings.erase ? Colors.green : Colors.black,
+                //   icon: const Icon(Icons.edit_off),
+                // ),
               ],
             ),
             SizedBox(
