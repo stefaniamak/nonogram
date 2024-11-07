@@ -6,6 +6,7 @@ import 'package:nonogram/backend/type_extensions/nono_string_extension.dart';
 
 import 'nonogram_state.dart';
 
+@Deprecated('Use CreateNonogramState from create_nonogram file instead')
 class CreateNonogramState {
   final IsolateNonogram nonogram;
   final int width;
@@ -22,6 +23,7 @@ class CreateNonogramState {
   final String solution;
   final Function(int boxIndex) updateBox;
 
+  @Deprecated('Use CreateNonogramState from create_nonogram file instead')
   CreateNonogramState({
     required this.nonogram,
     required this.width,
@@ -40,6 +42,7 @@ class CreateNonogramState {
   });
 }
 
+@Deprecated('Use CreateNonogramState from create_nonogram file instead')
 CreateNonogramState useCreateNonogramState() {
   // Initializations
 
