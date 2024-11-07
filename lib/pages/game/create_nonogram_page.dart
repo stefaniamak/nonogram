@@ -20,6 +20,7 @@ class CreateNonogramPage extends StatefulWidget {
 
 class _CreateNonogramPageState extends State<CreateNonogramPage> {
   final TextEditingController textEditingController = TextEditingController();
+  final int _maxSizeValue = 75;
 
   @override
   Widget build(BuildContext context) {
@@ -71,8 +72,8 @@ class _CreateNonogramPageState extends State<CreateNonogramPage> {
                     child: Slider(
                       value: state.height + 0.0,
                       min: 1,
-                      max: 50,
-                      divisions: 50,
+                      max: _maxSizeValue + 0.0,
+                      divisions: _maxSizeValue,
                       onChanged: (value) {
                         context.read<CreateNonogramCubit>().updateHeight(value.ceil());
                       },
@@ -84,8 +85,8 @@ class _CreateNonogramPageState extends State<CreateNonogramPage> {
             Slider(
               value: state.width + 0.0,
               min: 1,
-              max: 50,
-              divisions: 50,
+              max: _maxSizeValue + 0.0,
+              divisions: _maxSizeValue,
               onChanged: (value) {
                 context.read<CreateNonogramCubit>().updateWidth(value.ceil());
               },
