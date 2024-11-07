@@ -7,6 +7,7 @@ class NonogramGrid extends StatelessWidget {
   final Size boxItems;
   final String? solution;
   final Function(int)? onTap;
+  final Function(int)? onPan;
   final List<int> highlightedBoxes;
 
   const NonogramGrid({
@@ -15,6 +16,7 @@ class NonogramGrid extends StatelessWidget {
     required this.boxItems,
     this.solution,
     this.onTap,
+    this.onPan,
     this.highlightedBoxes = const [],
     super.key,
   });
@@ -25,9 +27,15 @@ class NonogramGrid extends StatelessWidget {
       width: size.width,
       height: size.height,
       child: GestureDetector(
-        onTapDown: (details) {
+        onPanStart: (details) {
           final Offset position = details.localPosition;
+          // print('onPanStart: $position');
           onTap?.call((position.dx / gridItemSide).floor() + (position.dy / gridItemSide).floor() * boxItems.width.floor());
+        },
+        onPanUpdate: (details) {
+          final Offset position = details.localPosition;
+          // print('onPanUpdate: $position');
+          onPan?.call((position.dx / gridItemSide).floor() + (position.dy / gridItemSide).floor() * boxItems.width.floor());
         },
         child: CustomPaint(
           isComplex: true,

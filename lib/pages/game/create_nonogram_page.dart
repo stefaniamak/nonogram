@@ -81,6 +81,9 @@ class _CreateNonogramPageState extends State<CreateNonogramPage> {
                         onTap: (int index) {
                           createNonogramCubit.updateBox(index);
                         },
+                        onPan: (int index) {
+                          createNonogramCubit.onPan(index);
+                        },
                       ),
                     ),
                   ),

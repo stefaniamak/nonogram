@@ -14,6 +14,7 @@ class NonogramGridAndClues extends StatelessWidget {
   final Size? maxSize;
   final Function(Axis axis, int index, List<int>)? onLineTap;
   final Function(int)? onTap;
+  final Function(int)? onPan;
   final List<int> highlightedBoxes;
 
   const NonogramGridAndClues({
@@ -27,6 +28,7 @@ class NonogramGridAndClues extends StatelessWidget {
     // this.nonogramState,
     this.padding = EdgeInsets.zero,
     this.onTap,
+    this.onPan,
     this.highlightedBoxes = const [],
     super.key,
   });
@@ -73,6 +75,7 @@ class NonogramGridAndClues extends StatelessWidget {
                 // solution: nonogramState!.solutionSteps.elementAt(nonogramState.stepNumber).currentSolution,
                 solution: solution ?? Iterable.generate(clues.columnLength * clues.rowLength, (_) => '?').join(),
                 onTap: onTap,
+                onPan: onPan,
                 // clues: clues,
                 highlightedBoxes: highlightedBoxes,
               ),

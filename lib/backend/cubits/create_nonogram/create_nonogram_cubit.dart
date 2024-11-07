@@ -56,6 +56,10 @@ class CreateNonogramCubit extends Cubit<CreateNonogramState> {
   }
 
   void updateBox(int boxIndex) {
+    // if (!_shouldUpdateBox(boxIndex)) {
+    //   return;
+    // }
+
     final bool isEmpty = state.solution.characterAt(boxIndex) == '?';
     emit(state.copyWith(solution: state.solution.replaceRange(boxIndex, boxIndex + 1, isEmpty ? '1' : '?')));
 
@@ -81,7 +85,27 @@ class CreateNonogramCubit extends Cubit<CreateNonogramState> {
     emit(state.copyWith(
       verticalClues: newVerticalClues,
       horizontalClues: newHorizontalClues,
+      editingSettings: isEmpty ? EditingSettings.paintMode : EditingSettings.eraseMode,
     ));
+  }
+
+  bool _shouldUpdateBox(int boxIndex) {
+    if (state.editingSettings == EditingSettings.noMode) {
+      return true;
+    } else if (state.editingSettings.paint) {
+      return state.solution.characterAt(boxIndex) == '?';
+    } else if (state.editingSettings.erase) {
+      return state.solution.characterAt(boxIndex) == '1';
+    }
+    return true;
+  }
+
+  void onPan(int boxIndex) {
+    if (state.solution.characterAt(boxIndex) == '?' && state.editingSettings.paint) {
+      updateBox(boxIndex);
+    } else if (state.solution.characterAt(boxIndex) == '1' && state.editingSettings.erase) {
+      updateBox(boxIndex);
+    }
   }
 
   void setSelectedLine(Axis axis, int index, List<int> clues) {
