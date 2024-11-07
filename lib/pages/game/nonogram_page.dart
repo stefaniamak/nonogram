@@ -208,6 +208,7 @@ class NonogramPage extends StatelessWidget {
                             ),
                           ],
                         ),
+                        const SizedBox(height: 24),
                         const Text('--Graphics--'),
                         Row(
                           children: [
