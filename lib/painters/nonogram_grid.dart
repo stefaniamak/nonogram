@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:nonogram/painters/grid_painter.dart';
 
-class NonogramGrid extends StatelessWidget {
+class NonogramGrid extends StatefulWidget {
   final double gridItemSide;
   final Size size;
   final Size boxItems;
@@ -22,29 +22,57 @@ class NonogramGrid extends StatelessWidget {
   });
 
   @override
+  State<NonogramGrid> createState() => _NonogramGridState();
+}
+
+class _NonogramGridState extends State<NonogramGrid> {
+  bool _calceledOnTap = false;
+
+  int getIndex(Offset position) {
+    return (position.dx / widget.gridItemSide).floor() +
+        (position.dy / widget.gridItemSide).floor() * widget.boxItems.width.floor();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: size.width,
-      height: size.height,
+      width: widget.size.width,
+      height: widget.size.height,
       child: GestureDetector(
+        // behavior: HitTestBehavior.deferToChild,
+        onTapDown: (details) {
+          widget.onTap?.call(getIndex(details.localPosition));
+          setState(() {
+            _calceledOnTap = false;
+          });
+        },
+        onTapCancel: () {
+          setState(() {
+            _calceledOnTap = true;
+          });
+        },
+        onVerticalDragStart: (details) {
+          if (!_calceledOnTap) widget.onTap?.call(getIndex(details.localPosition));
+        },
+        onVerticalDragUpdate: (details) {
+          widget.onPan?.call(getIndex(details.localPosition));
+          if (_calceledOnTap) _calceledOnTap = false;
+        },
         onPanStart: (details) {
-          final Offset position = details.localPosition;
-          // print('onPanStart: $position');
-          onTap?.call((position.dx / gridItemSide).floor() + (position.dy / gridItemSide).floor() * boxItems.width.floor());
+          if (!_calceledOnTap) widget.onTap?.call(getIndex(details.localPosition));
         },
         onPanUpdate: (details) {
-          final Offset position = details.localPosition;
-          // print('onPanUpdate: $position');
-          onPan?.call((position.dx / gridItemSide).floor() + (position.dy / gridItemSide).floor() * boxItems.width.floor());
+          widget.onPan?.call(getIndex(details.localPosition));
+          if (_calceledOnTap) _calceledOnTap = false;
         },
         child: CustomPaint(
           isComplex: true,
           painter: GridPainter(
-            boxItems: boxItems,
-            side: gridItemSide,
-            highlightedBoxes: highlightedBoxes,
-            solution: solution,
-            onTap: onTap,
+            boxItems: widget.boxItems,
+            side: widget.gridItemSide,
+            highlightedBoxes: widget.highlightedBoxes,
+            solution: widget.solution,
+            onTap: widget.onTap,
           ),
         ),
       ),
