@@ -55,7 +55,7 @@ class CreateNonogramCubit extends Cubit<CreateNonogramState> {
     }
   }
 
-  void updateBox(int boxIndex) {
+  void updateBox(int boxIndex, [bool autoUpdateClues = true]) {
     // if (!_shouldUpdateBox(boxIndex)) {
     //   return;
     // }
@@ -63,10 +63,16 @@ class CreateNonogramCubit extends Cubit<CreateNonogramState> {
     final bool isEmpty = state.solution.characterAt(boxIndex) == '?';
     emit(state.copyWith(solution: state.solution.replaceRange(boxIndex, boxIndex + 1, isEmpty ? '1' : '?')));
 
+    if (autoUpdateClues) {
+      updateClues(boxIndex, isEmpty);
+    }
+  }
+
+  void updateClues(int boxIndex, bool isEmpty) {
     int row = boxIndex ~/ state.width;
     int column = boxIndex % state.width;
 
-    // print('boxIndex: $boxIndex, row: $row, column: $column');
+    print('boxIndex: $boxIndex, row: $row, column: $column');
 
     RegExp regExp = RegExp(r'1+'); // Match one or more consecutive ones
 
@@ -103,11 +109,16 @@ class CreateNonogramCubit extends Cubit<CreateNonogramState> {
   void onPan(int boxIndex) {
     if (boxIndex > -1 && boxIndex < state.solution.length) {
       if (state.solution.characterAt(boxIndex) == '?' && state.editingSettings.paint) {
-        updateBox(boxIndex);
+        updateBox(boxIndex);//, false);
       } else if (state.solution.characterAt(boxIndex) == '1' && state.editingSettings.erase) {
-        updateBox(boxIndex);
+        updateBox(boxIndex);//, false);
       }
     }
+  }
+
+  void onPanEnd(int boxIndex) {
+    final bool isEmpty = state.solution.characterAt(boxIndex) == '?';
+    updateClues(boxIndex, isEmpty);
   }
 
   void setSelectedLine(Axis axis, int index, List<int> clues) {

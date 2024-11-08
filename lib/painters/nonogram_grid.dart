@@ -8,6 +8,7 @@ class NonogramGrid extends StatefulWidget {
   final String? solution;
   final Function(int)? onTap;
   final Function(int)? onPan;
+  final Function(int)? onPanEnd;
   final List<int> highlightedBoxes;
 
   const NonogramGrid({
@@ -17,6 +18,7 @@ class NonogramGrid extends StatefulWidget {
     this.solution,
     this.onTap,
     this.onPan,
+    this.onPanEnd,
     this.highlightedBoxes = const [],
     super.key,
   });
@@ -58,12 +60,24 @@ class _NonogramGridState extends State<NonogramGrid> {
           widget.onPan?.call(getIndex(details.localPosition));
           if (_calceledOnTap) _calceledOnTap = false;
         },
+        onVerticalDragEnd: (details) {
+          widget.onPanEnd?.call(getIndex(details.localPosition));
+          setState(() {
+            _calceledOnTap = false;
+          });
+        },
         onPanStart: (details) {
           if (!_calceledOnTap) widget.onTap?.call(getIndex(details.localPosition));
         },
         onPanUpdate: (details) {
           widget.onPan?.call(getIndex(details.localPosition));
           if (_calceledOnTap) _calceledOnTap = false;
+        },
+        onPanEnd: (details) {
+          widget.onPanEnd?.call(getIndex(details.localPosition));
+          setState(() {
+            _calceledOnTap = false;
+          });
         },
         child: CustomPaint(
           isComplex: true,
