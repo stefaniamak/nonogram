@@ -101,10 +101,12 @@ class CreateNonogramCubit extends Cubit<CreateNonogramState> {
   }
 
   void onPan(int boxIndex) {
-    if (state.solution.characterAt(boxIndex) == '?' && state.editingSettings.paint) {
-      updateBox(boxIndex);
-    } else if (state.solution.characterAt(boxIndex) == '1' && state.editingSettings.erase) {
-      updateBox(boxIndex);
+    if (boxIndex > -1 && boxIndex < state.solution.length) {
+      if (state.solution.characterAt(boxIndex) == '?' && state.editingSettings.paint) {
+        updateBox(boxIndex);
+      } else if (state.solution.characterAt(boxIndex) == '1' && state.editingSettings.erase) {
+        updateBox(boxIndex);
+      }
     }
   }
 
