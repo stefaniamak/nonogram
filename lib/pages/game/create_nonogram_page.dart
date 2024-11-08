@@ -80,10 +80,10 @@ class _CreateNonogramPageState extends State<CreateNonogramPage> {
                           MediaQuery.of(context).size.height * 0.7,
                         ),
                         onTap: (int index) {
-                          createNonogramCubit.updateBox(index);
+                          if (index > -1) createNonogramCubit.updateBox(index);
                         },
                         onPan: (int index) {
-                          createNonogramCubit.onPan(index);
+                          if (index > -1) createNonogramCubit.onPan(index);
                         },
                       ),
                     ),
