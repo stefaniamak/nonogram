@@ -29,6 +29,7 @@ class _CreateNonogramPageState extends State<CreateNonogramPage> {
       listener: (BuildContext context, CreateNonogramState state) {},
       builder: (_, CreateNonogramState state) {
         return AppPage(
+          hasVerticalPadding: false,
           children: [
             // SizedBox(height: MediaQuery.of(context).padding.top),
             Row(
