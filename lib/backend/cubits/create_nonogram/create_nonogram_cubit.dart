@@ -146,16 +146,18 @@ class CreateNonogramCubit extends Cubit<CreateNonogramState> {
   void onPan(int boxIndex) {
     if (boxIndex > -1 && boxIndex < state.solution.length) {
       if (state.solution.characterAt(boxIndex) == '?' && state.editingSettings.paint) {
-        updateBox(boxIndex); //, false);
+        updateBox(boxIndex, false);
       } else if (state.solution.characterAt(boxIndex) == '1' && state.editingSettings.erase) {
-        updateBox(boxIndex); //, false);
+        updateBox(boxIndex, false);
       }
     }
   }
 
   void onPanEnd(int boxIndex) {
     final bool isEmpty = state.solution.characterAt(boxIndex) == '?';
-    updateClues(boxIndex, isEmpty);
+    // updateClues(boxIndex, isEmpty);
+    updateHorizontalClues();
+    updateVerticalClues();
   }
 
   void setSelectedLine(Axis axis, int index, List<int> clues) {

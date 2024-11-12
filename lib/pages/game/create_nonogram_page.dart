@@ -87,7 +87,7 @@ class _CreateNonogramPageState extends State<CreateNonogramPage> {
                           if (index > -1) createNonogramCubit.onPan(index);
                         },
                         onPanEnd: (int index) {
-                          // if (index > -1) createNonogramCubit.onPanEnd(index);
+                          if (index > -1) createNonogramCubit.onPanEnd(index);
                         },
                       ),
                     ),
