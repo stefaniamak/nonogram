@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nonogram/backend/cubits/create_nonogram/create_nonogram_cubit.dart';
 import 'package:nonogram/backend/cubits/nonogram_solver_cubit/nonogram_solver_cubit.dart';
 import 'package:nonogram/backend/models/isolate/isolate_clues.dart';
+import 'package:nonogram/config/app_color.dart';
 import 'package:nonogram/pages/app_page.dart';
 import 'package:nonogram/pages/game/nonogram_grid_and_clues.dart';
 import 'package:nonogram/pages/game/nonogram_page.dart';
@@ -86,9 +87,11 @@ class _CreateNonogramPageState extends State<CreateNonogramPage> {
                         onPan: (int index) {
                           if (index > -1) createNonogramCubit.onPan(index);
                         },
-                        onPanEnd: (int index) {
-                          if (index > -1) createNonogramCubit.onPanEnd(index);
-                        },
+                        onPanEnd: state.editingSettings.updateOnPanEnd
+                            ? (int index) {
+                                if (index > -1) createNonogramCubit.onPanEnd(index);
+                              }
+                            : null,
                       ),
                     ),
                   ),
@@ -132,7 +135,37 @@ class _CreateNonogramPageState extends State<CreateNonogramPage> {
               },
               child: const Text('SOLVE'),
             ),
-            // SizedBox(height: MediaQuery.of(context).padding.bottom + 12),
+
+            const SizedBox(height: 24),
+            Column(
+              children: [
+                const Text('--Settings--'),
+                const SizedBox(height: 8),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Switch(
+                      value: state.editingSettings.updateOnPanEnd,
+                      onChanged: (_) => createNonogramCubit.updateEditingSettingsOnPanEnd(),
+                    ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Update drag changes at onPanEnd',
+                          style: TextStyle(color: state.editingSettings.updateOnPanEnd ? Colors.black : AppColor.disabled),
+                        ),
+                        Text(
+                          'Update drag changes at onPan',
+                          style: TextStyle(color: !state.editingSettings.updateOnPanEnd ? Colors.black : AppColor.disabled),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ],
+            ),
+            SizedBox(height: MediaQuery.of(context).padding.bottom + 12),
           ],
         );
       },

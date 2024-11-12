@@ -128,7 +128,9 @@ class CreateNonogramCubit extends Cubit<CreateNonogramState> {
     emit(state.copyWith(
       verticalClues: newVerticalClues,
       horizontalClues: newHorizontalClues,
-      editingSettings: isEmpty ? EditingSettings.paintMode : EditingSettings.eraseMode,
+      editingSettings: (isEmpty ? EditingSettings.paintMode : EditingSettings.eraseMode).copyWith(
+        updateOnPanEnd: state.editingSettings.updateOnPanEnd,
+      ),
     ));
   }
 
@@ -143,12 +145,14 @@ class CreateNonogramCubit extends Cubit<CreateNonogramState> {
     return true;
   }
 
-  void onPan(int boxIndex) {
+  void onPan(
+    int boxIndex,
+  ) {
     if (boxIndex > -1 && boxIndex < state.solution.length) {
       if (state.solution.characterAt(boxIndex) == '?' && state.editingSettings.paint) {
-        updateBox(boxIndex, false);
+        updateBox(boxIndex, !state.editingSettings.updateOnPanEnd);
       } else if (state.solution.characterAt(boxIndex) == '1' && state.editingSettings.erase) {
-        updateBox(boxIndex, false);
+        updateBox(boxIndex, !state.editingSettings.updateOnPanEnd);
       }
     }
   }
@@ -181,11 +185,15 @@ class CreateNonogramCubit extends Cubit<CreateNonogramState> {
     }
   }
 
-  void togglePaintMode() {
-    emit(state.copyWith(editingSettings: state.editingSettings.paint ? EditingSettings.noMode : EditingSettings.paintMode));
+  void updateEditingSettingsOnPanEnd() {
+    emit(state.copyWith(editingSettings: state.editingSettings.copyWith(updateOnPanEnd: !state.editingSettings.updateOnPanEnd)));
   }
 
-  void toggleEraseMode() {
-    emit(state.copyWith(editingSettings: state.editingSettings.erase ? EditingSettings.noMode : EditingSettings.eraseMode));
-  }
+  // void togglePaintMode() {
+  //   emit(state.copyWith(editingSettings: state.editingSettings.paint ? EditingSettings.noMode : EditingSettings.paintMode));
+  // }
+  //
+  // void toggleEraseMode() {
+  //   emit(state.copyWith(editingSettings: state.editingSettings.erase ? EditingSettings.noMode : EditingSettings.eraseMode));
+  // }
 }
