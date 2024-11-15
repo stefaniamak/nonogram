@@ -26,13 +26,14 @@ class _CreateNonogramPageState extends State<CreateNonogramPage> {
   @override
   Widget build(BuildContext context) {
     final CreateNonogramCubit createNonogramCubit = context.read<CreateNonogramCubit>();
+    final MediaQueryData md = MediaQuery.of(context);
     return BlocConsumer<CreateNonogramCubit, CreateNonogramState>(
       listener: (BuildContext context, CreateNonogramState state) {},
       builder: (_, CreateNonogramState state) {
         return AppPage(
           hasVerticalPadding: false,
           children: [
-            // SizedBox(height: MediaQuery.of(context).padding.top),
+            // SizedBox(height: md.padding.top),
             Row(
               children: [
                 Expanded(
@@ -57,7 +58,7 @@ class _CreateNonogramPageState extends State<CreateNonogramPage> {
               ],
             ),
             SizedBox(
-              height: MediaQuery.of(context).size.height * 0.7,
+              height: md.size.height - md.padding.vertical - 200 - kToolbarHeight, //* 0.58,
               // flex: 10,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.end,
@@ -78,8 +79,8 @@ class _CreateNonogramPageState extends State<CreateNonogramPage> {
                         padding: const EdgeInsets.all(32),
                         boxItems: Size(state.width + 0, state.height + 0),
                         maxSize: Size(
-                          (MediaQuery.of(context).size.width) > 1200 ? 1000 : (MediaQuery.of(context).size.width * 0.8),
-                          MediaQuery.of(context).size.height * 0.7,
+                          (md.size.width) > 1200 ? 1000 : (md.size.width * 0.8),
+                          md.size.height - md.padding.vertical - 200 - kToolbarHeight,
                         ),
                         onTap: (int index) {
                           if (index > -1) createNonogramCubit.updateBox(index);
@@ -165,7 +166,7 @@ class _CreateNonogramPageState extends State<CreateNonogramPage> {
                 ),
               ],
             ),
-            SizedBox(height: MediaQuery.of(context).padding.bottom + 12),
+            SizedBox(height: md.padding.bottom + 12),
           ],
         );
       },
