@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nonogram/backend/cubits/nonogram_solver_cubit/nonogram_solver_cubit.dart';
@@ -27,8 +29,10 @@ class NonogramPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // NonogramState nonogramState = useNonogramState(nonogram);
+    final MediaQueryData md = MediaQuery.of(context);
     final bool isLargeScreen = MediaQuery.of(context).size.width > 1200;
     const double infoMaxWidth = 460;
+    final double height = max(1, md.size.height - md.padding.vertical - 180 - kToolbarHeight);
 
     return BlocConsumer<NonogramSolverCubit, NonogramSolverState>(
         // bloc: NonogramSolverCubit()..initialize(nonogram: nonogram),
@@ -54,7 +58,7 @@ class NonogramPage extends StatelessWidget {
                       maxSize: Size(
                         MediaQuery.of(context).size.width -
                             (MediaQuery.of(context).size.width - infoMaxWidth - 50 > 0 ? infoMaxWidth + 50 : 48),
-                        MediaQuery.of(context).size.height * 0.9,
+                        height,
                       ),
                       highlightedBoxes: state.solverSettings.highlightNewFilledBoxes
                           ? state.output.solutionSteps.elementAt(state.stepNumber).newFilledBoxes
