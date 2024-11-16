@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:nonogram/backend/models/nonogram.dart';
+import 'package:nonogram/backend/cubits/create_nonogram/create_nonogram_cubit.dart';
+import 'package:nonogram/backend/models/isolate/isolate_nonogram.dart';
 import 'package:nonogram/game_loop/nonogram_list_state.dart';
 import 'package:nonogram/pages/app_page.dart';
 import 'package:nonogram/pages/game/create_nonogram_page.dart';
@@ -33,7 +35,10 @@ class NonogramListPage extends HookWidget {
               Navigator.push(
                 context,
                 MaterialPageRoute<void>(
-                  builder: (BuildContext context) => const CreateNonogramPage(),
+                  builder: (BuildContext context) => BlocProvider(
+                    create: (_) => CreateNonogramCubit(),
+                    child: const CreateNonogramPage(),
+                  ),
                 ),
               );
             },
@@ -45,7 +50,7 @@ class NonogramListPage extends HookWidget {
           SliverGrid(
             delegate: SliverChildBuilderDelegate(
               (context, index) {
-                Nonogram nonogram = nonogramListState.nonograms[index];
+                IsolateNonogram nonogram = nonogramListState.nonograms[index];
                 return NonogramListItem(nonogram: nonogram);
               },
               childCount: nonogramListState.nonograms.length,

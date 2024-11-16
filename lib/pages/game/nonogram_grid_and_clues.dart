@@ -1,18 +1,22 @@
 import 'package:flutter/material.dart';
-import 'package:nonogram/backend/models/clues.dart';
+import 'package:nonogram/backend/models/isolate/isolate_clues.dart';
 import 'package:nonogram/pages/game/nono_clues.dart';
 import 'package:nonogram/pages/game/nonogram_ui.dart';
 import 'package:nonogram/painters/nonogram_grid.dart';
 
 class NonogramGridAndClues extends StatelessWidget {
   // final Nonogram nonogram;
-  final Clues clues;
+  final IsolateClues clues;
   final String? solution;
   final Size? boxItems;
   // final NonogramState? nonogramState;
   final EdgeInsets padding;
   final Size? maxSize;
   final Function(Axis axis, int index, List<int>)? onLineTap;
+  final Function(int)? onTap;
+  final Function(int)? onPan;
+  final Function(int)? onPanEnd;
+  final List<int> highlightedBoxes;
 
   const NonogramGridAndClues({
     // required this.nonogram,
@@ -24,6 +28,10 @@ class NonogramGridAndClues extends StatelessWidget {
 
     // this.nonogramState,
     this.padding = EdgeInsets.zero,
+    this.onTap,
+    this.onPan,
+    this.onPanEnd,
+    this.highlightedBoxes = const [],
     super.key,
   });
 
@@ -68,7 +76,11 @@ class NonogramGridAndClues extends StatelessWidget {
                 boxItems: Size(clues.columnLength + 0, clues.rowLength + 0),
                 // solution: nonogramState!.solutionSteps.elementAt(nonogramState.stepNumber).currentSolution,
                 solution: solution ?? Iterable.generate(clues.columnLength * clues.rowLength, (_) => '?').join(),
+                onTap: onTap,
+                onPan: onPan,
+                onPanEnd: onPanEnd,
                 // clues: clues,
+                highlightedBoxes: highlightedBoxes,
               ),
             ],
           ),

@@ -21,11 +21,18 @@ dependencies:
   provider: ^6.0.5
   rxdart: ^0.27.7
   sliver_tools: ^0.2.12
+  isolate_manager: ^5.2.1+1
+  json_annotation: ^4.9.0
+  bloc: ^8.1.4
+  flutter_bloc: ^8.1.6
+  equatable: ^2.0.5
+#  worker_manager: ^7.1.1
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   build_runner: ^2.3.3
+  json_serializable: ^6.8.0
   built_value_generator: ^8.4.3
   flutter_gen_runner: ^5.0.1
 

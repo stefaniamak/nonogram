@@ -1,93 +1,94 @@
 import 'package:flutter/material.dart';
-import 'package:nonogram/backend/models/clues.dart';
-import 'package:nonogram/backend/type_extensions/nono_string_extension.dart';
-import 'package:nonogram/game_loop/nonogram_state.dart';
-import 'package:nonogram/pages/game/nonogram_ui.dart';
-import 'package:nonogram/painters/grid_box.dart';
+import 'package:nonogram/painters/grid_painter.dart';
 
-import '../backend/models/nonogram.dart';
-
-class NonogramGrid extends StatelessWidget {
-  // final Nonogram nonogram;
-  // final NonogramState? nonogramState;
+class NonogramGrid extends StatefulWidget {
   final double gridItemSide;
-
   final Size size;
   final Size boxItems;
   final String? solution;
   final Function(int)? onTap;
+  final Function(int)? onPan;
+  final Function(int)? onPanEnd;
+  final List<int> highlightedBoxes;
 
   const NonogramGrid({
-    // required this.nonogram,
-    // this.nonogramState,
     required this.gridItemSide,
     required this.size,
     required this.boxItems,
     this.solution,
     this.onTap,
+    this.onPan,
+    this.onPanEnd,
+    this.highlightedBoxes = const [],
     super.key,
   });
 
-  PointState getGridBoxState(int index) {
-    var char = solution?.characterAt(index);
-    switch (char.toString()) {
-      case '?':
-        return PointState.unknown;
-      case '1':
-        return PointState.filled;
-      case '0':
-        return PointState.cross;
-      default:
-        return PointState.unknown;
-    }
+  @override
+  State<NonogramGrid> createState() => _NonogramGridState();
+}
+
+class _NonogramGridState extends State<NonogramGrid> {
+  bool _calceledOnTap = false;
+
+  int getIndex(Offset position) {
+    return (position.dx / widget.gridItemSide).floor() +
+        (position.dy / widget.gridItemSide).floor() * widget.boxItems.width.floor();
   }
 
   @override
   Widget build(BuildContext context) {
-    // String? solution = nonogramState?.solutionSteps.elementAt(nonogramState!.stepNumber).currentSolution;
-
     return SizedBox(
-      width: size.width,
-      height: size.height,
-      child: GridView.builder(
-        padding: EdgeInsets.zero,
-        // clipBehavior: Clip.none,
-        // shrinkWrap: true,
-        physics: const NeverScrollableScrollPhysics(),
-
-        itemCount: solution?.length ?? (boxItems.width * boxItems.height).ceil(),
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: boxItems.width.ceil(),
-        ),
-        itemBuilder: (BuildContext context, int index) {
-          final CustomPaint customPaint = CustomPaint(
-            isComplex: true,
-            foregroundPainter: GridBox(
-              pointState: getGridBoxState(index),
-              side: gridItemSide,
-            ),
-          );
-
-          // return Text('X');
-          // return DecoratedBox(
-          //   decoration: BoxDecoration(border: Border.all(color: Colors.blueAccent)),
-          // );
-          // switch (index.toString()) {
-          //   case '?':
-          //     return Icon(Icons.crop_square_sharp, size: gridItemSide);
-          //     return DecoratedBox(
-          //       decoration: BoxDecoration(border: Border.all(color: Colors.black)),
-          //     );
-          //   case '1':
-          //     return Icon(Icons.close);
-          //   case '0':
-          //     return SizedBox();
-          //   default:
-          //     return SizedBox();
-          // }
-
-          return onTap != null ? InkWell(onTap: () => onTap!.call(index), child: customPaint) : customPaint;
+      width: widget.size.width,
+      height: widget.size.height,
+      child: GestureDetector(
+        // behavior: HitTestBehavior.deferToChild,
+        onTapDown: (details) {
+          widget.onTap?.call(getIndex(details.localPosition));
+          setState(() {
+            _calceledOnTap = false;
+          });
         },
+        onTapCancel: () {
+          setState(() {
+            _calceledOnTap = true;
+          });
+        },
+        onVerticalDragStart: (details) {
+          if (!_calceledOnTap) widget.onTap?.call(getIndex(details.localPosition));
+        },
+        onVerticalDragUpdate: (details) {
+          widget.onPan?.call(getIndex(details.localPosition));
+          if (_calceledOnTap) _calceledOnTap = false;
+        },
+        onVerticalDragEnd: (details) {
+          widget.onPanEnd?.call(getIndex(details.localPosition));
+          setState(() {
+            _calceledOnTap = false;
+          });
+        },
+        onPanStart: (details) {
+          if (!_calceledOnTap) widget.onTap?.call(getIndex(details.localPosition));
+        },
+        onPanUpdate: (details) {
+          widget.onPan?.call(getIndex(details.localPosition));
+          if (_calceledOnTap) _calceledOnTap = false;
+        },
+        onPanEnd: (details) {
+          widget.onPanEnd?.call(getIndex(details.localPosition));
+          setState(() {
+            _calceledOnTap = false;
+          });
+        },
+        child: CustomPaint(
+          isComplex: true,
+          painter: GridPainter(
+            boxItems: widget.boxItems,
+            side: widget.gridItemSide,
+            highlightedBoxes: widget.highlightedBoxes,
+            solution: widget.solution,
+            onTap: widget.onTap,
+          ),
+        ),
       ),
     );
   }

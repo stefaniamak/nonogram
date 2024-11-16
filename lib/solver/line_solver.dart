@@ -28,6 +28,7 @@ class LineSolver {
         currentSolution: state.solutionSteps.last.currentSolution,
         explanation:
             'Nonogram is ${state.solutionSteps.last.currentSolution.characters.contains('?') ? 'not solved.' : 'solved!'}',
+        newFilledBoxes: [],
       ),
     );
     state.updateStepNumber(state.solutionSteps.length - 1);
@@ -43,6 +44,7 @@ class LineSolver {
     state.addStep(SolutionStep(
       currentSolution: state.activeSolution.solution!,
       explanation: 'Starting overlapping loop.',
+      newFilledBoxes: [],
     ));
 
     while (state.stack.isNotEmpty) {
@@ -60,6 +62,7 @@ class LineSolver {
     state.addStep(SolutionStep(
       currentSolution: state.solutionSteps.last.currentSolution,
       explanation: 'Finished overlapping loop.',
+      newFilledBoxes: [],
     ));
   }
 
@@ -115,8 +118,9 @@ class LineSolver {
                 axis: lineType,
                 lineIndex: lineIndex,
                 explanation: 'Cross out remaining empty boxes of ${lineType.name} with index $lineIndex.',
+                newFilledBoxes: [charIndex],
               ));
-              state.stack.updateStack([charIndex], lineType, state);
+              state.stack.updateStack([charIndex], lineType); //, state);
             }
           }
         } else {
@@ -189,9 +193,10 @@ class LineSolver {
             axis: lineType,
             lineIndex: lineIndex,
             explanation: 'Cross out all remaining empty boxes of ${lineType.name} with index $lineIndex.',
+            newFilledBoxes: charIndexesOfQMarks,
           ));
 
-          state.stack.updateStack(charIndexesOfQMarks, lineType, state);
+          state.stack.updateStack(charIndexesOfQMarks, lineType); //, state);
         }
       }
     } else {
@@ -294,8 +299,9 @@ class LineSolver {
               lineIndex: lineIndex,
               explanation:
                   '${clueKey == 0 ? 'Cross out' : 'Fill in'} sure boxes for clue ${clues.elementAt(clueIndex)} with index $clueIndex of ${lineType.name} with index $lineIndex.',
+              newFilledBoxes: charIndexes,
             ));
-            state.stack.updateStack(charIndexes, lineType, state);
+            state.stack.updateStack(charIndexes, lineType); //, state);
           }
         }
       } else {
@@ -320,8 +326,9 @@ class LineSolver {
                 axis: lineType,
                 lineIndex: lineIndex,
                 explanation: 'Cross out box.',
+                newFilledBoxes: [charIndex],
               ));
-              state.stack.updateStack([charIndex], lineType, state);
+              state.stack.updateStack([charIndex], lineType); //, state);
             } else {
               if (kPrintComments && kDebugMode) print('No.');
               var startingSolutionIndex = startingMostSolution.elementAt(charIndex).toString();
@@ -343,8 +350,9 @@ class LineSolver {
                   axis: lineType,
                   lineIndex: lineIndex,
                   explanation: 'Fill in box.',
+                  newFilledBoxes: [charIndex],
                 ));
-                state.stack.updateStack([charIndex], lineType, state);
+                state.stack.updateStack([charIndex], lineType); //, state);
               } else {
                 if (kPrintComments && kDebugMode) print('No. It contains different indexes.');
               }

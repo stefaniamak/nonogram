@@ -1,7 +1,9 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:nonogram/backend/models/nonogram.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:nonogram/backend/cubits/nonogram_solver_cubit/nonogram_solver_cubit.dart';
+import 'package:nonogram/backend/models/isolate/isolate_nonogram.dart';
 import 'package:nonogram/pages/game/nonogram_grid_and_clues.dart';
 import 'package:nonogram/pages/game/nonogram_page.dart';
 import 'package:nonogram/pages/game/widgets/nonogram_title.dart';
@@ -12,13 +14,13 @@ class NonogramListItem extends StatelessWidget {
     required this.nonogram,
   });
 
-  final Nonogram nonogram;
+  final IsolateNonogram nonogram;
 
   @override
   Widget build(BuildContext context) {
     final double width = MediaQuery.of(context).size.width;
     final int columns = width > 1200 ? 3 : (width > 700 ? 2 : 1);
-    final double cardWidth = (min(1200, width) * 0.65) / columns;
+    final double cardWidth = (min(1200, width) * 0.60) / columns;
     final Size puzzleSize = Size(cardWidth, cardWidth);
 
     return InkWell(
@@ -26,7 +28,10 @@ class NonogramListItem extends StatelessWidget {
         Navigator.push(
           context,
           MaterialPageRoute<void>(
-            builder: (BuildContext context) => NonogramPage(nonogram: nonogram),
+            builder: (BuildContext context) => BlocProvider(
+              create: (_) => NonogramSolverCubit()..initialize(nonogram: nonogram),
+              child: NonogramPage(nonogram: nonogram),
+            ),
           ),
         );
       },
@@ -41,9 +46,11 @@ class NonogramListItem extends StatelessWidget {
           children: [
             Expanded(
               flex: 4,
-              child: NonogramGridAndClues(
-                clues: nonogram.clues!,
-                maxSize: puzzleSize,
+              child: IgnorePointer(
+                child: NonogramGridAndClues(
+                  clues: nonogram.clues,
+                  maxSize: puzzleSize,
+                ),
               ),
             ),
             Expanded(

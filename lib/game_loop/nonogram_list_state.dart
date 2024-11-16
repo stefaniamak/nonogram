@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:nonogram/backend/models/nonogram.dart';
+import 'package:nonogram/backend/models/isolate/isolate_nonogram.dart';
 
 import '../backend/database/nonograms.dart';
 
 class NonogramListState {
-  final List<Nonogram> nonograms;
+  final List<IsolateNonogram> nonograms;
 
   const NonogramListState({required this.nonograms});
 }
 
 NonogramListState useNonogramList() {
-  final ValueNotifier<List<Nonogram>> nonograms$ = useState(
+  final ValueNotifier<List<IsolateNonogram>> nonograms$ = useState(
     Nonograms().allNonograms,
   );
 
