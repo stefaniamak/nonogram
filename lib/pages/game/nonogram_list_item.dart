@@ -46,9 +46,11 @@ class NonogramListItem extends StatelessWidget {
           children: [
             Expanded(
               flex: 4,
-              child: NonogramGridAndClues(
-                clues: nonogram.clues,
-                maxSize: puzzleSize,
+              child: IgnorePointer(
+                child: NonogramGridAndClues(
+                  clues: nonogram.clues,
+                  maxSize: puzzleSize,
+                ),
               ),
             ),
             Expanded(

@@ -45,22 +45,24 @@ class NonogramPage extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  NonogramGridAndClues(
-                    // nonogram: nonogram,
-                    clues: state.nonogram!.clues,
-                    solution: state.output.solutionSteps.elementAt(state.stepNumber).currentSolution,
-                    padding: const EdgeInsets.all(32),
-                    maxSize: Size(
-                      MediaQuery.of(context).size.width -
-                          (MediaQuery.of(context).size.width - infoMaxWidth - 50 > 0 ? infoMaxWidth + 50 : 48),
-                      MediaQuery.of(context).size.height * 0.9,
+                  IgnorePointer(
+                    child: NonogramGridAndClues(
+                      // nonogram: nonogram,
+                      clues: state.nonogram!.clues,
+                      solution: state.output.solutionSteps.elementAt(state.stepNumber).currentSolution,
+                      padding: const EdgeInsets.all(32),
+                      maxSize: Size(
+                        MediaQuery.of(context).size.width -
+                            (MediaQuery.of(context).size.width - infoMaxWidth - 50 > 0 ? infoMaxWidth + 50 : 48),
+                        MediaQuery.of(context).size.height * 0.9,
+                      ),
+                      highlightedBoxes: state.solverSettings.highlightNewFilledBoxes
+                          ? state.output.solutionSteps.elementAt(state.stepNumber).newFilledBoxes
+                          : [],
+                      // highlightedBoxes:state.stepNumber>1 ?
+                      // getHighlightedBoxes(state)
+                      //     :[],
                     ),
-                    highlightedBoxes: state.solverSettings.highlightNewFilledBoxes
-                        ? state.output.solutionSteps.elementAt(state.stepNumber).newFilledBoxes
-                        : [],
-                    // highlightedBoxes:state.stepNumber>1 ?
-                    // getHighlightedBoxes(state)
-                    //     :[],
                   ),
                   ConstrainedBox(
                     constraints: const BoxConstraints(maxWidth: 460),
