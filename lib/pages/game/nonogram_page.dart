@@ -132,12 +132,6 @@ class NonogramPage extends StatelessWidget {
                           'Puzzle duration: ${state.startDateTime != null ? ((state.endingDateTime ?? DateTime.now()).difference(state.startDateTime!)) : '-'}',
                         ),
                         Text('Total steps: ${state.output.solutionSteps.length}'),
-                        AnimatedOpacity(
-                          duration: const Duration(milliseconds: 200),
-                          opacity: state.solverSettings.keepCacheData ? 1 : 0.4,
-                          child:
-                              Text('Total cache data: ${state.output.totalCacheData}'), //state.output.cachedBoxSolutions.length
-                        ),
                         Text('Lines checked: ${state.output.linesChecked}'),
                         AnimatedOpacity(
                           duration: const Duration(milliseconds: 200),
@@ -147,6 +141,12 @@ class NonogramPage extends StatelessWidget {
                             // Text('Actual boxes checked: ${state.output.actualBoxesChecked}'),
                             Text('Other boxes checked: ${state.output.otherBoxesChecked}'),
                           ]),
+                        ),
+                        AnimatedOpacity(
+                          duration: const Duration(milliseconds: 200),
+                          opacity: state.solverSettings.keepCacheData ? 1 : 0.4,
+                          child:
+                              Text('Total cache data: ${state.output.totalCacheData}'), //state.output.cachedBoxSolutions.length
                         ),
                         const SizedBox(height: 24),
                         const Text('--Settings--'),
