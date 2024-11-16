@@ -71,7 +71,7 @@ class NonogramPage extends StatelessWidget {
                           children: [
                             Expanded(
                               child: FilledButton(
-                                onPressed: state.output.solutionSteps.length > 1
+                                onPressed: state.solverStatus.isSolving || state.output.solutionSteps.length > 1
                                     ? null
                                     : () => context.read<NonogramSolverCubit>().solvePuzzle(),
                                 child: const Text('SOLVE'),
@@ -135,7 +135,8 @@ class NonogramPage extends StatelessWidget {
                         AnimatedOpacity(
                           duration: const Duration(milliseconds: 200),
                           opacity: state.solverSettings.keepCacheData ? 1 : 0.4,
-                          child: Text('Total cache data: ${state.output.cachedBoxSolutions.length}'),
+                          child:
+                              Text('Total cache data: ${state.output.totalCacheData}'), //state.output.cachedBoxSolutions.length
                         ),
                         Text('Lines checked: ${state.output.linesChecked}'),
                         AnimatedOpacity(

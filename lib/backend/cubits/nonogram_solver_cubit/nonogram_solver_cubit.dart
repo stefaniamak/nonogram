@@ -82,13 +82,17 @@ class NonogramSolverCubit extends Cubit<NonogramSolverState> {
 
           // Return `false` to mark this value is not the final.a
           // print('progress.solutionSteps.last: ${progress.solutionSteps.last.currentSolution}');
-          if (progress.solutionSteps.isNotEmpty) addSolutionSteps(progress.solutionSteps);
+
+          updateSolutionOutput(progress);
+
+          // if (progress.solutionSteps.isNotEmpty) addSolutionSteps(progress.solutionSteps);
           updateStepNumber(state.output.solutionSteps.length - 1);
-          print('progress.cachedBoxSolutions: ${progress.cachedBoxSolutions.length}');
-          updateCachedBoxSolutions(progress.cachedBoxSolutions);
-          updateLinesChecked(progress.linesCheckedList);
-          updateBoxesChecked(progress.boxesCheckedList);
-          updateOtherBoxesChecked(progress.otherBoxesCheckedList);
+          // updateStepNumber(state.output.solutionSteps.length - 1);
+          // print('progress.cachedBoxSolutions: ${progress.cachedBoxSolutions.length}');
+          // updateCachedBoxSolutions(progress.cachedBoxSolutions);
+          // updateLinesChecked(progress.linesCheckedList);
+          // updateBoxesChecked(progress.boxesCheckedList);
+          // updateOtherBoxesChecked(progress.otherBoxesCheckedList);
 
           return false;
         }
@@ -97,12 +101,13 @@ class NonogramSolverCubit extends Cubit<NonogramSolverState> {
 
         IsolateOutput result = IsolateOutput.fromJson(data['result']);
 
-        addSolutionSteps(result.solutionSteps);
+        updateSolutionOutput(result);
+        // addSolutionSteps(result.solutionSteps);
         updateStepNumber(state.output.solutionSteps.length - 1);
-        updateCachedBoxSolutions(result.cachedBoxSolutions);
-        updateLinesChecked(result.linesCheckedList);
-        updateBoxesChecked(result.boxesCheckedList);
-        updateOtherBoxesChecked(result.otherBoxesCheckedList);
+        // updateCachedBoxSolutions(result.cachedBoxSolutions);
+        // updateLinesChecked(result.linesCheckedList);
+        // updateBoxesChecked(result.boxesCheckedList);
+        // updateOtherBoxesChecked(result.otherBoxesCheckedList);
 
         // Return `true` to mark this value is the final.
 
@@ -117,6 +122,23 @@ class NonogramSolverCubit extends Cubit<NonogramSolverState> {
     emit(state.copyWith(
       solverStatus: SolverStatus.solved,
       endingDateTime: Nullable(DateTime.now()),
+    ));
+  }
+
+  void updateSolutionOutput(IsolateOutput output) {
+    emit(state.copyWith(
+      output: state.output.copyWith(
+        stack: output.stack,
+        solutionSteps: state.output.solutionSteps + output.solutionSteps,
+        cachedBoxSolutions: output.cachedBoxSolutions,
+        // linesCheckedList: output.linesCheckedList,
+        // boxesCheckedList: output.boxesCheckedList,
+        // otherBoxesCheckedList: output.otherBoxesCheckedList,
+        linesChecked: output.linesChecked,
+        boxesChecked: output.boxesChecked,
+        otherBoxesChecked: output.otherBoxesChecked,
+        totalCacheData: output.totalCacheData,
+      ),
     ));
   }
 
@@ -182,11 +204,7 @@ class NonogramSolverCubit extends Cubit<NonogramSolverState> {
 
   void addSolutionSteps(List<SolutionStep> solutionSteps) {
     List<SolutionStep> tempStep = state.output.solutionSteps;
-    print('solutionSteps.length: ${solutionSteps.length}');
-    print('tempStep.length before: ${tempStep.length}');
     tempStep.addAll(solutionSteps);
-    print('tempStep.length after: ${tempStep.length}');
-    print('state.output.solutionSteps.length: ${state.output.solutionSteps.length}');
     emit(state.copyWith(output: state.output.copyWith(solutionSteps: tempStep)));
   }
 

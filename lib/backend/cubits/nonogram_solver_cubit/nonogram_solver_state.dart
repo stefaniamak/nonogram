@@ -5,6 +5,7 @@ enum SolverStatus { initial, solving, solved, notSolved }
 extension SolverStatusExtension on SolverStatus {
   bool get isCompleted => this == SolverStatus.solved || this == SolverStatus.notSolved;
   bool get canEdit => this == SolverStatus.initial;
+  bool get isSolving => this == SolverStatus.solving;
 }
 
 class NonogramSolverState extends Equatable {

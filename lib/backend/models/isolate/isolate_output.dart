@@ -15,6 +15,10 @@ class IsolateOutput extends Equatable {
     this.boxesCheckedList = const [0],
     this.actualBoxesChecked = 0,
     this.otherBoxesCheckedList = const [0],
+    this.linesChecked = 0,
+    this.boxesChecked = 0,
+    this.otherBoxesChecked = 0,
+    this.totalCacheData = 0,
   });
 
   final List<Map<int, NonoAxis>> stack;
@@ -24,10 +28,14 @@ class IsolateOutput extends Equatable {
   final List<int> boxesCheckedList;
   final int actualBoxesChecked;
   final List<int> otherBoxesCheckedList;
+  final int linesChecked;
+  final int boxesChecked;
+  final int otherBoxesChecked;
+  final int totalCacheData;
 
-  int get linesChecked => linesCheckedList.last;
-  int get boxesChecked => boxesCheckedList.last;
-  int get otherBoxesChecked => otherBoxesCheckedList.last;
+  // int get linesChecked => linesCheckedList.last;
+  // int get boxesChecked => boxesCheckedList.last;
+  // int get otherBoxesChecked => otherBoxesCheckedList.last;
 
   factory IsolateOutput.fromJson(final Map<String, dynamic> json) => _$IsolateOutputFromJson(json);
 
@@ -44,6 +52,10 @@ class IsolateOutput extends Equatable {
     final List<int>? boxesCheckedList,
     final int? actualBoxesChecked,
     final List<int>? otherBoxesCheckedList,
+    final int? linesChecked,
+    final int? boxesChecked,
+    final int? otherBoxesChecked,
+    final int? totalCacheData,
   }) {
     return IsolateOutput(
       stack: stack ?? this.stack,
@@ -53,6 +65,10 @@ class IsolateOutput extends Equatable {
       boxesCheckedList: boxesCheckedList ?? this.boxesCheckedList,
       actualBoxesChecked: actualBoxesChecked ?? this.actualBoxesChecked,
       otherBoxesCheckedList: otherBoxesCheckedList ?? this.otherBoxesCheckedList,
+      linesChecked: linesChecked ?? this.linesChecked,
+      boxesChecked: boxesChecked ?? this.boxesChecked,
+      otherBoxesChecked: otherBoxesChecked ?? this.otherBoxesChecked,
+      totalCacheData: totalCacheData ?? this.totalCacheData,
     );
   }
 
@@ -66,5 +82,8 @@ class IsolateOutput extends Equatable {
         boxesCheckedList,
         actualBoxesChecked,
         otherBoxesCheckedList,
+        boxesChecked,
+        otherBoxesChecked,
+        totalCacheData,
       ];
 }

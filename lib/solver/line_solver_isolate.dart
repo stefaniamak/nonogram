@@ -88,9 +88,10 @@ void lineSolverIsolate(dynamic params) {
         stack: stack,
         solutionSteps: solutionSteps,
         cachedBoxSolutions: cachedBoxSolutions,
-        linesCheckedList: linesCheckedList,
-        boxesCheckedList: boxesChecked,
-        otherBoxesCheckedList: otherBoxesChecked,
+        linesChecked: linesCheckedList.last,
+        boxesChecked: boxesChecked.last,
+        otherBoxesChecked: otherBoxesChecked.last,
+        totalCacheData: cachedBoxSolutions.length,
       );
       // This is a final value.
       return jsonEncode({'result': results});
@@ -239,6 +240,14 @@ IsolateOutput? loopSides(
         return IsolateOutput(
           stack: tempStack,
           solutionSteps: newSolutionSteps,
+          linesChecked: output.linesCheckedList.last,
+          boxesChecked: output.boxesCheckedList.last,
+          otherBoxesChecked: output.otherBoxesCheckedList.last,
+          totalCacheData: output.cachedBoxSolutions.length,
+          // linesCheckedList: output.linesCheckedList,
+          // cachedBoxSolutions: output.cachedBoxSolutions,
+          // boxesCheckedList: output.boxesCheckedList,
+          // otherBoxesCheckedList: output.otherBoxesCheckedList,
         );
       } else {
         int charStart = initialSolution.split('').toList().indexWhere((String char) => char == '?');
@@ -317,6 +326,14 @@ IsolateOutput? loopSides(
               newFilledBoxes: newFilledBoxes,
             ),
           ],
+          linesChecked: output.linesCheckedList.last,
+          boxesChecked: output.boxesCheckedList.last,
+          otherBoxesChecked: output.otherBoxesCheckedList.last,
+          totalCacheData: output.cachedBoxSolutions.length,
+          // linesCheckedList: output.linesCheckedList,
+          // cachedBoxSolutions: output.cachedBoxSolutions,
+          // boxesCheckedList: output.boxesCheckedList,
+          // otherBoxesCheckedList: output.otherBoxesCheckedList,
         );
       }
     }
@@ -377,7 +394,7 @@ IsolateOutput? loopSides(
 
       // Convert the sets to lists and print the final map
       Map<int, List<int>> result = matchMap.map((key, value) => MapEntry(key, value.toList()));
-      print('result: $result');
+      // print('result: $result');
 
       List<Map<int, NonoAxis>> finalStack = output.stack; // List.from(output.stack);
       List<int> newFilledBoxes = [];
@@ -482,10 +499,18 @@ IsolateOutput? loopSides(
           }
         }
         // if (newSolutionSteps.isNotEmpty || finalStack != output.stack) {
-        print('newSolutionSteps: ${newSolutionSteps.firstOrNull?.explanation} - ${newSolutionSteps.lastOrNull?.explanation}');
+        // print('newSolutionSteps: ${newSolutionSteps.firstOrNull?.explanation} - ${newSolutionSteps.lastOrNull?.explanation}');
         return IsolateOutput(
           stack: finalStack != output.stack ? finalStack : [],
           solutionSteps: newSolutionSteps,
+          linesChecked: output.linesCheckedList.last,
+          boxesChecked: output.boxesCheckedList.last,
+          otherBoxesChecked: output.otherBoxesCheckedList.last,
+          totalCacheData: output.cachedBoxSolutions.length,
+          // linesCheckedList: output.linesCheckedList,
+          // cachedBoxSolutions: output.cachedBoxSolutions,
+          // boxesCheckedList: output.boxesCheckedList,
+          // otherBoxesCheckedList: output.otherBoxesCheckedList,
         );
         // }
       }
@@ -622,6 +647,14 @@ IsolateOutput? loopSides(
       return IsolateOutput(
         stack: finalStack,
         solutionSteps: newSolutionSteps,
+        linesChecked: output.linesCheckedList.last,
+        boxesChecked: output.boxesCheckedList.last,
+        otherBoxesChecked: output.otherBoxesCheckedList.last,
+        totalCacheData: output.cachedBoxSolutions.length,
+        // linesCheckedList: output.linesCheckedList,
+        // cachedBoxSolutions: output.cachedBoxSolutions,
+        // boxesCheckedList: output.boxesCheckedList,
+        // otherBoxesCheckedList: output.otherBoxesCheckedList,
       );
     }
     if (printPrints) print('Overlapped solution: $updatedSolution');
@@ -636,6 +669,16 @@ IsolateOutput? loopSides(
   // if (settings.countCheckedBoxes) {
   // }
   // print('output.linesCheckedList: ${output.linesCheckedList}');
+  return IsolateOutput(
+    linesChecked: output.linesCheckedList.last,
+    boxesChecked: output.boxesCheckedList.last,
+    otherBoxesChecked: output.otherBoxesCheckedList.last,
+    totalCacheData: output.cachedBoxSolutions.length,
+    // linesCheckedList: output.linesCheckedList,
+    // cachedBoxSolutions: output.cachedBoxSolutions,
+    // boxesCheckedList: output.boxesCheckedList,
+    // otherBoxesCheckedList: output.otherBoxesCheckedList,
+  );
   return null;
 }
 
