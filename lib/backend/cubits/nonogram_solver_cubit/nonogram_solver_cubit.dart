@@ -35,6 +35,10 @@ class NonogramSolverCubit extends Cubit<NonogramSolverState> {
           linesCheckedList: [0],
           boxesCheckedList: [0],
           otherBoxesCheckedList: [0],
+          linesChecked: 0,
+          boxesChecked: 0,
+          otherBoxesChecked: 0,
+          totalCacheData: 0,
           cachedBoxSolutions: {},
           solutionSteps: [
             SolutionStep(
