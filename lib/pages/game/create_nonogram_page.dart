@@ -5,7 +5,7 @@ import 'package:nonogram/backend/cubits/create_nonogram/create_nonogram_state.da
 import 'package:nonogram/backend/cubits/nonogram_solver_cubit/nonogram_solver_cubit.dart';
 import 'package:nonogram/backend/models/isolate/isolate_clues.dart';
 import 'package:nonogram/backend/models/isolate/isolate_nonogram.dart';
-import 'package:nonogram/config/app_color.dart';
+import 'package:nonogram/config/app_colors.dart';
 import 'package:nonogram/pages/app_page.dart';
 import 'package:nonogram/pages/game/nonogram_grid_and_clues.dart';
 import 'package:nonogram/pages/game/nonogram_page.dart';
@@ -154,11 +154,11 @@ class _CreateNonogramPageState extends State<CreateNonogramPage> {
                       children: <Widget>[
                         Text(
                           'Update drag changes at onPanEnd',
-                          style: TextStyle(color: state.editingSettings.updateOnPanEnd ? Colors.black : AppColor.disabled),
+                          style: TextStyle(color: state.editingSettings.updateOnPanEnd ? Colors.black : AppColors.disabled),
                         ),
                         Text(
                           'Update drag changes at onPan',
-                          style: TextStyle(color: !state.editingSettings.updateOnPanEnd ? Colors.black : AppColor.disabled),
+                          style: TextStyle(color: !state.editingSettings.updateOnPanEnd ? Colors.black : AppColors.disabled),
                         ),
                       ],
                     ),

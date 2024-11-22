@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-
-import 'package:nonogram/config/app_color.dart';
+import 'package:nonogram/config/app_colors.dart';
 import 'package:nonogram/config/app_theme.dart';
 
 /// The shape that will be used to draw the [Slider]'s track.
@@ -82,7 +81,7 @@ class AppSliderTrackShape extends SliderTrackShape with BaseSliderTrackShape {
     );
 
     final Paint paint = Paint()
-      ..color = AppColor.black90 //Thumb Background Color
+      ..color = AppColors.black90 //Thumb Background Color
       ..style = PaintingStyle.stroke
       ..strokeWidth = 2;
 

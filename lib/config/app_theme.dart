@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:nonogram/config/app_color.dart';
+import 'package:nonogram/config/app_colors.dart';
 import 'package:nonogram/config/slider_theme/app_slider_track_shape.dart';
 
 class AppTheme {
@@ -27,13 +27,13 @@ class AppTheme {
           elevation: WidgetStateProperty.all<double>(0),
           foregroundColor: WidgetStateProperty.resolveWith<Color>((Set<WidgetState> states) {
             if (states.contains(WidgetState.disabled)) {
-              return AppColor.disabled;
+              return AppColors.disabled;
             }
-            return AppColor.black90;
+            return AppColors.black90;
           }),
           backgroundColor: WidgetStateProperty.resolveWith<Color>((Set<WidgetState> states) {
             if (states.contains(WidgetState.disabled)) {
-              return AppColor.black20;
+              return AppColors.black20;
             }
             return Colors.yellowAccent;
           }),
@@ -45,7 +45,7 @@ class AppTheme {
           ),
           side: WidgetStateProperty.resolveWith<BorderSide>((Set<WidgetState> states) {
             if (states.contains(WidgetState.disabled)) {
-              return const BorderSide(color: AppColor.disabled, width: 2);
+              return const BorderSide(color: AppColors.disabled, width: 2);
             }
             return const BorderSide(width: 2);
           }),
@@ -56,13 +56,13 @@ class AppTheme {
           elevation: WidgetStateProperty.all<double>(0),
           foregroundColor: WidgetStateProperty.resolveWith<Color>((Set<WidgetState> states) {
             if (states.contains(WidgetState.disabled)) {
-              return AppColor.black20;
+              return AppColors.black20;
             }
-            return AppColor.black90;
+            return AppColors.black90;
           }),
           backgroundColor: WidgetStateProperty.resolveWith<Color>((Set<WidgetState> states) {
             if (states.contains(WidgetState.disabled)) {
-              return AppColor.black20;
+              return AppColors.black20;
             }
             return Colors.white;
           }),
@@ -74,7 +74,7 @@ class AppTheme {
           ),
           side: WidgetStateProperty.resolveWith<BorderSide>((Set<WidgetState> states) {
             if (states.contains(WidgetState.disabled)) {
-              return const BorderSide(color: AppColor.disabled, width: 2);
+              return const BorderSide(color: AppColors.disabled, width: 2);
             }
             return const BorderSide(width: 2);
           }),
@@ -86,8 +86,8 @@ class AppTheme {
         activeTrackColor: Colors.black,
         inactiveTrackColor: Colors.white,
         inactiveTickMarkColor: Colors.black,
-        disabledActiveTrackColor: AppColor.disabled,
-        disabledInactiveTrackColor: AppColor.disabled,
+        disabledActiveTrackColor: AppColors.disabled,
+        disabledInactiveTrackColor: AppColors.disabled,
         thumbColor: Colors.black,
         overlayColor: Colors.grey.withOpacity(0.25),
         trackShape: const AppSliderTrackShape(),
@@ -97,31 +97,31 @@ class AppTheme {
       switchTheme: SwitchThemeData(
         thumbColor: WidgetStateProperty.resolveWith((Set<WidgetState> states) {
           if (states.contains(WidgetState.disabled)) {
-            return AppColor.black40;
+            return AppColors.black40;
           } else {
-            return states.contains(WidgetState.selected) ? AppColor.white : AppColor.black;
+            return states.contains(WidgetState.selected) ? AppColors.white : AppColors.black;
           }
         }),
         thumbIcon: WidgetStateProperty.resolveWith<Icon>(
           (Set<WidgetState> states) {
             final Color thumbColor;
             if (states.contains(WidgetState.disabled)) {
-              thumbColor = AppColor.black40;
+              thumbColor = AppColors.black40;
             } else {
-              thumbColor = states.contains(WidgetState.selected) ? AppColor.white : AppColor.black;
+              thumbColor = states.contains(WidgetState.selected) ? AppColors.white : AppColors.black;
             }
             return Icon(Icons.circle, color: thumbColor);
           },
         ),
         trackColor: WidgetStateProperty.resolveWith((Set<WidgetState> states) {
           if (states.contains(WidgetState.disabled)) {
-            return states.contains(WidgetState.selected) ? AppColor.black20 : Colors.transparent;
+            return states.contains(WidgetState.selected) ? AppColors.black20 : Colors.transparent;
           } else {
-            return states.contains(WidgetState.selected) ? AppColor.black : AppColor.white;
+            return states.contains(WidgetState.selected) ? AppColors.black : AppColors.white;
           }
         }),
         trackOutlineColor: WidgetStateProperty.resolveWith((Set<WidgetState> states) {
-          return states.contains(WidgetState.disabled) ? AppColor.black20 : AppColor.black;
+          return states.contains(WidgetState.disabled) ? AppColors.black20 : AppColors.black;
         }),
       ),
       chipTheme: ChipThemeData(

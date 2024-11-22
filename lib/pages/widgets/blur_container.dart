@@ -1,7 +1,7 @@
 import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
-import 'package:nonogram/config/app_color.dart';
+import 'package:nonogram/config/app_colors.dart';
 
 class BlurContainer extends StatelessWidget {
   const BlurContainer({
@@ -21,7 +21,7 @@ class BlurContainer extends StatelessWidget {
       children: <Widget>[
         DecoratedBox(
           decoration: BoxDecoration(
-            color: (color ?? AppColor.white).withOpacity(.86),
+            color: (color ?? AppColors.white).withOpacity(.86),
             borderRadius: BorderRadius.circular(borderRadius),
           ),
           child: ClipRRect(
