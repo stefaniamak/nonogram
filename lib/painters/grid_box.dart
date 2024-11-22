@@ -4,18 +4,16 @@ import 'package:flutter/material.dart';
 import 'package:nonogram/config/enums/point_state.dart';
 
 class GridBox extends CustomPainter {
+
+  GridBox({
+    required this.pointState, required this.point, super.repaint,
+    this.side = 20,
+    this.isHighlighted = false,
+  });
   final PointState pointState;
   final double side;
   final bool isHighlighted;
   final Point point;
-
-  GridBox({
-    super.repaint,
-    required this.pointState,
-    this.side = 20,
-    this.isHighlighted = false,
-    required this.point,
-  });
 
   late final Paint _defaultPaint = Paint()
     ..color = isHighlighted ? Colors.lightGreen : Colors.black
@@ -30,22 +28,20 @@ class GridBox extends CustomPainter {
         break;
       case PointState.filled:
         drawFilledBox(canvas);
-        break;
       case PointState.cross:
         drawCrossBox(canvas);
-        break;
     }
     drawEmptyBox(canvas, color: Colors.black);
   }
 
   void drawEmptyBox(Canvas canvas, {PaintingStyle paintingStyle = PaintingStyle.stroke, Color? color}) {
-    var paint = _defaultPaint
+    final Paint paint = _defaultPaint
       ..style = paintingStyle
       ..color = color ?? _defaultPaint.color;
-    double x = point.x.toDouble();
-    double y = point.y.toDouble();
+    final double x = point.x.toDouble();
+    final double y = point.y.toDouble();
 
-    var path = Path();
+    final Path path = Path();
     path.moveTo(x, y);
     path.lineTo(x + side, y);
     path.lineTo(x + side, y + side);
@@ -59,11 +55,11 @@ class GridBox extends CustomPainter {
 
   void drawCrossBox(Canvas canvas) {
     drawEmptyBox(canvas);
-    double x = point.x.toDouble();
-    double y = point.y.toDouble();
+    final double x = point.x.toDouble();
+    final double y = point.y.toDouble();
 
-    var paint = _defaultPaint..style = PaintingStyle.stroke;
-    var path = Path();
+    final Paint paint = _defaultPaint..style = PaintingStyle.stroke;
+    final Path path = Path();
 
     path.moveTo(x, y);
     path.lineTo(x + side, y + side);

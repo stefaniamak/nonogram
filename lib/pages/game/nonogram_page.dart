@@ -9,12 +9,12 @@ import 'package:nonogram/pages/game/nonogram_grid_and_clues.dart';
 import 'package:nonogram/pages/game/widgets/nonogram_title.dart';
 
 class NonogramPage extends StatelessWidget {
-  final IsolateNonogram nonogram;
 
   const NonogramPage({
     required this.nonogram,
     super.key,
   });
+  final IsolateNonogram nonogram;
 
   // List<int> getHighlightedBoxes(NonogramSolverState state){
   //   List<int> highlightedBoxes = [];
@@ -42,13 +42,12 @@ class NonogramPage extends StatelessWidget {
           return AppPage(
             hasVerticalPadding: false,
             hasMaxCrossAxisExtend: false,
-            children: [
+            children: <Widget>[
               Flex(
                 direction: isLargeScreen ? Axis.horizontal : Axis.vertical,
                 // verticalDirection: VerticalDirection.up,
                 mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
+                children: <Widget>[
                   IgnorePointer(
                     child: NonogramGridAndClues(
                       // nonogram: nonogram,
@@ -62,7 +61,7 @@ class NonogramPage extends StatelessWidget {
                       ),
                       highlightedBoxes: state.solverSettings.highlightNewFilledBoxes
                           ? state.output.solutionSteps.elementAt(state.stepNumber).newFilledBoxes
-                          : [],
+                          : <int>[],
                       // highlightedBoxes:state.stepNumber>1 ?
                       // getHighlightedBoxes(state)
                       //     :[],
@@ -71,10 +70,10 @@ class NonogramPage extends StatelessWidget {
                   ConstrainedBox(
                     constraints: const BoxConstraints(maxWidth: 460),
                     child: Column(
-                      children: [
+                      children: <Widget>[
                         NonogramTitle(nonogram: nonogram, showDescription: false),
                         Row(
-                          children: [
+                          children: <Widget>[
                             Expanded(
                               child: FilledButton(
                                 onPressed: state.solverStatus.isSolving || state.output.solutionSteps.length > 1
@@ -86,11 +85,11 @@ class NonogramPage extends StatelessWidget {
                             IconButton(
                               onPressed: state.solverStatus.isCompleted ? context.read<NonogramSolverCubit>().resetPuzzle : null,
                               icon: const Icon(Icons.restart_alt),
-                            )
+                            ),
                           ],
                         ),
                         Row(
-                          children: [
+                          children: <Widget>[
                             IconButton(
                               onPressed: state.solverStatus.isCompleted && state.stepNumber > 0
                                   ? () {
@@ -102,11 +101,10 @@ class NonogramPage extends StatelessWidget {
                             Expanded(
                               child: Slider(
                                 value: state.stepNumber + 0.0,
-                                min: 0,
                                 max: state.output.solutionSteps.length - 1,
                                 divisions: state.output.solutionSteps.length,
                                 onChanged: state.solverStatus.isCompleted
-                                    ? (value) => context.read<NonogramSolverCubit>().updateStepNumber(value.ceil())
+                                    ? (double value) => context.read<NonogramSolverCubit>().updateStepNumber(value.ceil())
                                     : null,
                               ),
                             ),
@@ -142,11 +140,11 @@ class NonogramPage extends StatelessWidget {
                         AnimatedOpacity(
                           duration: const Duration(milliseconds: 200),
                           opacity: state.solverSettings.countCheckedBoxes ? 1 : 0.4,
-                          child: Column(children: [
+                          child: Column(children: <Widget>[
                             Text('Boxes checked: ${state.output.boxesChecked}'),
                             // Text('Actual boxes checked: ${state.output.actualBoxesChecked}'),
                             Text('Other boxes checked: ${state.output.otherBoxesChecked}'),
-                          ]),
+                          ],),
                         ),
                         AnimatedOpacity(
                           duration: const Duration(milliseconds: 200),
@@ -168,7 +166,7 @@ class NonogramPage extends StatelessWidget {
                         //   ],
                         // ),
                         Row(
-                          children: [
+                          children: <Widget>[
                             Switch(
                               value: state.solverSettings.keepCacheData,
                               onChanged: state.solverStatus.canEdit
@@ -179,7 +177,7 @@ class NonogramPage extends StatelessWidget {
                           ],
                         ),
                         Row(
-                          children: [
+                          children: <Widget>[
                             Switch(
                               value: state.solverSettings.countCheckedBoxes,
                               onChanged: state.solverStatus.canEdit
@@ -190,7 +188,7 @@ class NonogramPage extends StatelessWidget {
                           ],
                         ),
                         Row(
-                          children: [
+                          children: <Widget>[
                             const Text('Isolate concurrent: '),
                             IconButton(
                               onPressed: state.solverSettings.isolateConcurrent == 1
@@ -218,7 +216,7 @@ class NonogramPage extends StatelessWidget {
                         const SizedBox(height: 24),
                         const Text('--Graphics--'),
                         Row(
-                          children: [
+                          children: <Widget>[
                             Switch(
                               value: state.solverSettings.highlightNewFilledBoxes,
                               onChanged: (_) => context.read<NonogramSolverCubit>().updateHighlightNewFilledBoxes(),
@@ -235,6 +233,6 @@ class NonogramPage extends StatelessWidget {
               ),
             ],
           );
-        });
+        },);
   }
 }

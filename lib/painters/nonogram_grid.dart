@@ -2,14 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:nonogram/painters/grid_painter.dart';
 
 class NonogramGrid extends StatefulWidget {
-  final double gridItemSide;
-  final Size size;
-  final Size boxItems;
-  final String? solution;
-  final Function(int)? onTap;
-  final Function(int)? onPan;
-  final Function(int)? onPanEnd;
-  final List<int> highlightedBoxes;
 
   const NonogramGrid({
     required this.gridItemSide,
@@ -19,9 +11,17 @@ class NonogramGrid extends StatefulWidget {
     this.onTap,
     this.onPan,
     this.onPanEnd,
-    this.highlightedBoxes = const [],
+    this.highlightedBoxes = const <int>[],
     super.key,
   });
+  final double gridItemSide;
+  final Size size;
+  final Size boxItems;
+  final String? solution;
+  final Function(int)? onTap;
+  final Function(int)? onPan;
+  final Function(int)? onPanEnd;
+  final List<int> highlightedBoxes;
 
   @override
   State<NonogramGrid> createState() => _NonogramGridState();
@@ -42,7 +42,7 @@ class _NonogramGridState extends State<NonogramGrid> {
       height: widget.size.height,
       child: GestureDetector(
         // behavior: HitTestBehavior.deferToChild,
-        onTapDown: (details) {
+        onTapDown: (TapDownDetails details) {
           widget.onTap?.call(getIndex(details.localPosition));
           setState(() {
             _calceledOnTap = false;
@@ -53,27 +53,27 @@ class _NonogramGridState extends State<NonogramGrid> {
             _calceledOnTap = true;
           });
         },
-        onVerticalDragStart: (details) {
+        onVerticalDragStart: (DragStartDetails details) {
           if (!_calceledOnTap) widget.onTap?.call(getIndex(details.localPosition));
         },
-        onVerticalDragUpdate: (details) {
+        onVerticalDragUpdate: (DragUpdateDetails details) {
           widget.onPan?.call(getIndex(details.localPosition));
           if (_calceledOnTap) _calceledOnTap = false;
         },
-        onVerticalDragEnd: (details) {
+        onVerticalDragEnd: (DragEndDetails details) {
           widget.onPanEnd?.call(getIndex(details.localPosition));
           setState(() {
             _calceledOnTap = false;
           });
         },
-        onPanStart: (details) {
+        onPanStart: (DragStartDetails details) {
           if (!_calceledOnTap) widget.onTap?.call(getIndex(details.localPosition));
         },
-        onPanUpdate: (details) {
+        onPanUpdate: (DragUpdateDetails details) {
           widget.onPan?.call(getIndex(details.localPosition));
           if (_calceledOnTap) _calceledOnTap = false;
         },
-        onPanEnd: (details) {
+        onPanEnd: (DragEndDetails details) {
           widget.onPanEnd?.call(getIndex(details.localPosition));
           setState(() {
             _calceledOnTap = false;

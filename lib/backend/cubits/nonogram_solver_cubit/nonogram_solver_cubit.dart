@@ -31,19 +31,19 @@ class NonogramSolverCubit extends Cubit<NonogramSolverState> {
         endingDateTime: Nullable(null),
         output: state.output.copyWith(
           stack: initializeStackList(state.nonogram!.clues),
-          linesCheckedList: [0],
-          boxesCheckedList: [0],
-          otherBoxesCheckedList: [0],
+          linesCheckedList: <int>[0],
+          boxesCheckedList: <int>[0],
+          otherBoxesCheckedList: <int>[0],
           linesChecked: 0,
           boxesChecked: 0,
           otherBoxesChecked: 0,
           totalCacheData: 0,
-          cachedBoxSolutions: {},
-          solutionSteps: [
+          cachedBoxSolutions: <String, bool>{},
+          solutionSteps: <SolutionStep>[
             SolutionStep(
               currentSolution: state.nonogram!.emptySolution,
               explanation: 'Empty nonogram',
-              newFilledBoxes: [],
+              newFilledBoxes: <int>[],
             ),
           ],
         ),
@@ -51,14 +51,13 @@ class NonogramSolverCubit extends Cubit<NonogramSolverState> {
     );
   }
 
-  void solvePuzzle() async {
+  Future<void> solvePuzzle() async {
     emit(state.copyWith(
       solverStatus: SolverStatus.solving,
       startDateTime: Nullable(DateTime.now()),
-      endingDateTime: null,
-    ));
+    ),);
 
-    final isolateManager = IsolateManager.createCustom(
+    final IsolateManager isolateManager = IsolateManager.createCustom(
       lineSolverIsolate,
       workerName: 'lineSolverIsolate',
       // isDebug: kDebugMode,
@@ -73,7 +72,7 @@ class NonogramSolverCubit extends Cubit<NonogramSolverState> {
         solutionSteps: state.output.solutionSteps,
         nonogram: state.nonogram!,
         solverSettings: state.solverSettings,
-      ).toJson()),
+      ).toJson(),),
       callback: (value) {
         // Condition to recognize the progress value. Ex:
         final data = jsonDecode(value);
@@ -81,7 +80,7 @@ class NonogramSolverCubit extends Cubit<NonogramSolverState> {
         if (data.containsKey('progress')) {
           // print('This is a progress value: ${data['progress']}');
 
-          IsolateOutput progress = IsolateOutput.fromJson(data['progress']);
+          final IsolateOutput progress = IsolateOutput.fromJson(data['progress']);
 
           // Return `false` to mark this value is not the final.a
           // print('progress.solutionSteps.last: ${progress.solutionSteps.last.currentSolution}');
@@ -102,7 +101,7 @@ class NonogramSolverCubit extends Cubit<NonogramSolverState> {
 
         // print('This is a final value: ${data['result']}');
 
-        IsolateOutput result = IsolateOutput.fromJson(data['result']);
+        final IsolateOutput result = IsolateOutput.fromJson(data['result']);
 
         updateSolutionOutput(result);
         // addSolutionSteps(result.solutionSteps);
@@ -125,7 +124,7 @@ class NonogramSolverCubit extends Cubit<NonogramSolverState> {
     emit(state.copyWith(
       solverStatus: SolverStatus.solved,
       endingDateTime: Nullable(DateTime.now()),
-    ));
+    ),);
   }
 
   void updateSolutionOutput(IsolateOutput output) {
@@ -142,7 +141,7 @@ class NonogramSolverCubit extends Cubit<NonogramSolverState> {
         otherBoxesChecked: output.otherBoxesChecked,
         totalCacheData: output.totalCacheData,
       ),
-    ));
+    ),);
   }
 
   void updateNonogram(IsolateNonogram nonogram) {
@@ -182,44 +181,44 @@ class NonogramSolverCubit extends Cubit<NonogramSolverState> {
   }
 
   void updateCachedBoxSolutions(Map<String, bool> cacheData) {
-    Map<String, bool> tempCache = state.output.cachedBoxSolutions;
+    final Map<String, bool> tempCache = state.output.cachedBoxSolutions;
     tempCache.addAll(cacheData);
     emit(state.copyWith(output: state.output.copyWith(cachedBoxSolutions: tempCache)));
   }
 
   void updateLinesChecked(List<int> linesChecked) {
-    List<int> tempCache = state.output.linesCheckedList;
+    final List<int> tempCache = state.output.linesCheckedList;
     tempCache.addAll(linesChecked);
     emit(state.copyWith(output: state.output.copyWith(linesCheckedList: tempCache)));
   }
 
   void updateBoxesChecked(List<int> boxesChecked) {
-    List<int> tempCache = state.output.boxesCheckedList;
+    final List<int> tempCache = state.output.boxesCheckedList;
     tempCache.addAll(boxesChecked);
     emit(state.copyWith(output: state.output.copyWith(boxesCheckedList: tempCache)));
   }
 
   void updateOtherBoxesChecked(List<int> otherBoxesChecked) {
-    List<int> tempCache = state.output.otherBoxesCheckedList;
+    final List<int> tempCache = state.output.otherBoxesCheckedList;
     tempCache.addAll(otherBoxesChecked);
     emit(state.copyWith(output: state.output.copyWith(otherBoxesCheckedList: tempCache)));
   }
 
   void addSolutionSteps(List<SolutionStep> solutionSteps) {
-    List<SolutionStep> tempStep = state.output.solutionSteps;
+    final List<SolutionStep> tempStep = state.output.solutionSteps;
     tempStep.addAll(solutionSteps);
     emit(state.copyWith(output: state.output.copyWith(solutionSteps: tempStep)));
   }
 
   List<Map<int, NonoAxis>> initializeStackList(IsolateClues clues) {
-    List<Map<int, NonoAxis>> lineStack = [];
+    final List<Map<int, NonoAxis>> lineStack = <Map<int, NonoAxis>>[];
 
     for (int i = 0; i < clues.rows.length; i++) {
-      lineStack.add({i: NonoAxis.row});
+      lineStack.add(<int, NonoAxis>{i: NonoAxis.row});
     }
 
     for (int i = 0; i < clues.columns.length; i++) {
-      lineStack.add({i: NonoAxis.column});
+      lineStack.add(<int, NonoAxis>{i: NonoAxis.column});
     }
 
     return lineStack;

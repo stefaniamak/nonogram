@@ -9,6 +9,8 @@ class IsolateClues {
     required this.columns,
   });
 
+  factory IsolateClues.fromJson(final Map<String, dynamic> json) => _$IsolateCluesFromJson(json);
+
   final List<List<int>> rows;
   final List<List<int>> columns;
 
@@ -17,8 +19,6 @@ class IsolateClues {
 
   int get columnLength => columns.length;
   int get rowLength => rows.length;
-
-  factory IsolateClues.fromJson(final Map<String, dynamic> json) => _$IsolateCluesFromJson(json);
 
   Map<String, dynamic> toJson() => _$IsolateCluesToJson(this);
 

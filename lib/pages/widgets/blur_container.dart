@@ -19,7 +19,7 @@ class BlurContainer extends StatelessWidget {
   Widget build(BuildContext context) {
     return Stack(
       children: <Widget>[
-        Container(
+        DecoratedBox(
           decoration: BoxDecoration(
             color: (color ?? AppColor.white).withOpacity(.86),
             borderRadius: BorderRadius.circular(borderRadius),

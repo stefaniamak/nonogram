@@ -5,18 +5,6 @@ import 'package:nonogram/pages/game/nonogram_ui.dart';
 import 'package:nonogram/painters/nonogram_grid.dart';
 
 class NonogramGridAndClues extends StatelessWidget {
-  // final Nonogram nonogram;
-  final IsolateClues clues;
-  final String? solution;
-  final Size? boxItems;
-  // final NonogramState? nonogramState;
-  final EdgeInsets padding;
-  final Size? maxSize;
-  final Function(Axis axis, int index, List<int>)? onLineTap;
-  final Function(int)? onTap;
-  final Function(int)? onPan;
-  final Function(int)? onPanEnd;
-  final List<int> highlightedBoxes;
 
   const NonogramGridAndClues({
     // required this.nonogram,
@@ -31,18 +19,30 @@ class NonogramGridAndClues extends StatelessWidget {
     this.onTap,
     this.onPan,
     this.onPanEnd,
-    this.highlightedBoxes = const [],
+    this.highlightedBoxes = const <int>[],
     super.key,
   });
+  // final Nonogram nonogram;
+  final IsolateClues clues;
+  final String? solution;
+  final Size? boxItems;
+  // final NonogramState? nonogramState;
+  final EdgeInsets padding;
+  final Size? maxSize;
+  final Function(Axis axis, int index, List<int>)? onLineTap;
+  final Function(int)? onTap;
+  final Function(int)? onPan;
+  final Function(int)? onPanEnd;
+  final List<int> highlightedBoxes;
 
   @override
   Widget build(BuildContext context) {
-    var md = MediaQuery.of(context);
-    var maxSize = this.maxSize ?? md.size;
+    final MediaQueryData md = MediaQuery.of(context);
+    final Size maxSize = this.maxSize ?? md.size;
 
     // var nonogramState = this.nonogramState;
-    var nonogramUi = useNonogramUi(
-        Size(boxItems?.width ?? clues.columnLength + 0, boxItems?.height ?? clues.rowLength + 0), clues, maxSize, padding);
+    final NonogramUi nonogramUi = useNonogramUi(
+        Size(boxItems?.width ?? clues.columnLength + 0, boxItems?.height ?? clues.rowLength + 0), clues, maxSize, padding,);
 
     return Container(
       width: nonogramUi.size.width,
@@ -50,7 +50,7 @@ class NonogramGridAndClues extends StatelessWidget {
       padding: padding,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.end,
-        children: [
+        children: <Widget>[
           CluesUi(
             clues: clues,
             boxSize: nonogramUi.gridItemSide,
@@ -60,7 +60,7 @@ class NonogramGridAndClues extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
             crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
+            children: <Widget>[
               CluesUi(
                 clues: clues,
                 boxSize: nonogramUi.gridItemSide,

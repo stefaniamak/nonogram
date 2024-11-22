@@ -8,17 +8,17 @@ part 'solution_type.g.dart';
 // enum SolutionType { goal, solution, saved }
 
 class SolutionType extends EnumClass {
+
+  const SolutionType._(super.name);
   static const SolutionType goal = _$goal;
   static const SolutionType solution = _$solution;
   static const SolutionType saved = _$saved;
-
-  const SolutionType._(String name) : super(name);
 
   static BuiltSet<SolutionType> get values => _$solutionTypeValues;
   static SolutionType valueOf(String name) => _$solutionTypeValueOf(name);
 
   String serialize() {
-    return serializers.serializeWith(SolutionType.serializer, this) as String;
+    return serializers.serializeWith(SolutionType.serializer, this)! as String;
   }
 
   static SolutionType? deserialize(String string) {

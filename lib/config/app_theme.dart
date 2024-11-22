@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:nonogram/config/app_color.dart';
 import 'package:nonogram/config/slider_theme/app_slider_track_shape.dart';
-
-import 'app_color.dart';
 
 class AppTheme {
   static Radius sliderTrackRadius = const Radius.circular(8);
@@ -42,13 +41,13 @@ class AppTheme {
           padding: WidgetStateProperty.all<EdgeInsets>(const EdgeInsets.symmetric(horizontal: 8, vertical: 12)),
           // textStyle: WidgetStateProperty.all<TextStyle>(AppTextStyle.BOLD14),
           shape: WidgetStateProperty.all<RoundedRectangleBorder>(
-            RoundedRectangleBorder(borderRadius: BorderRadius.circular(2.0)),
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(2)),
           ),
           side: WidgetStateProperty.resolveWith<BorderSide>((Set<WidgetState> states) {
             if (states.contains(WidgetState.disabled)) {
               return const BorderSide(color: AppColor.disabled, width: 2);
             }
-            return const BorderSide(color: Colors.black, width: 2);
+            return const BorderSide(width: 2);
           }),
         ),
       ),
@@ -71,13 +70,13 @@ class AppTheme {
           padding: WidgetStateProperty.all<EdgeInsets>(const EdgeInsets.symmetric(horizontal: 8, vertical: 12)),
           // textStyle: WidgetStateProperty.all<TextStyle>(AppTextStyle.BOLD14),
           shape: WidgetStateProperty.all<RoundedRectangleBorder>(
-            RoundedRectangleBorder(borderRadius: BorderRadius.circular(2.0)),
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(2)),
           ),
           side: WidgetStateProperty.resolveWith<BorderSide>((Set<WidgetState> states) {
             if (states.contains(WidgetState.disabled)) {
               return const BorderSide(color: AppColor.disabled, width: 2);
             }
-            return const BorderSide(color: Colors.black, width: 2);
+            return const BorderSide(width: 2);
           }),
         ),
       ),

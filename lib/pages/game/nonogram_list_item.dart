@@ -10,8 +10,7 @@ import 'package:nonogram/pages/game/widgets/nonogram_title.dart';
 
 class NonogramListItem extends StatelessWidget {
   const NonogramListItem({
-    super.key,
-    required this.nonogram,
+    required this.nonogram, super.key,
   });
 
   final IsolateNonogram nonogram;
@@ -35,15 +34,15 @@ class NonogramListItem extends StatelessWidget {
           ),
         );
       },
-      child: Container(
+      child: DecoratedBox(
         // color: Colors.grey.withOpacity(0.5),
         decoration: BoxDecoration(
-          border: Border.all(color: Colors.black, width: 2),
+          border: Border.all(width: 2),
           borderRadius: BorderRadius.circular(2),
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
+          children: <Widget>[
             Expanded(
               flex: 4,
               child: IgnorePointer(
@@ -60,15 +59,15 @@ class NonogramListItem extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
+                  children: <Widget>[
                     NonogramTitle(nonogram: nonogram),
                     Wrap(
                       spacing: 6,
                       runSpacing: 6,
-                      children: [
+                      children: <Widget>[
                         if (nonogram.note != null)
                           ...nonogram.note!.split(',').map(
-                                (e) => Chip(
+                                (String e) => Chip(
                                   label: Text(e),
                                   materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                                 ),

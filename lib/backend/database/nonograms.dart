@@ -5,7 +5,7 @@ import 'package:nonogram/backend/database/nonograms_for_isolate/swing_isolate.da
 import 'package:nonogram/backend/models/isolate/isolate_nonogram.dart';
 
 class Nonograms {
-  static List<IsolateNonogram> get all => [
+  static List<IsolateNonogram> get all => <IsolateNonogram>[
         dancer,
         cat,
         knot,

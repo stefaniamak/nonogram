@@ -1,23 +1,23 @@
-import 'nono_axis_extension.dart';
+import 'package:nonogram/backend/type_extensions/nono_axis_extension.dart';
 
 extension NonoListExtension on List {
-  int get sum => fold<int>(0, (previousValue, element) => previousValue + (element as int));
+  int get sum => fold<int>(0, (int previousValue, element) => previousValue + (element as int));
 
   bool get everyElementIsZero => every((e) => e.toString() == '0');
 
   bool isInStack(int charIndex, NonoAxis lineType) {
-    return contains({charIndex: lineType});
+    return contains(<int, NonoAxis>{charIndex: lineType});
   }
 
   List<Map<int, NonoAxis>> updateStack(List<int> charIndexes, NonoAxis lineType) {
-    NonoAxis newAxis = lineType == NonoAxis.row ? NonoAxis.column : NonoAxis.row;
-    List<Map<int, NonoAxis>> newStackElements = charIndexes.map((charIndex) => {charIndex: newAxis}).toList();
+    final NonoAxis newAxis = lineType == NonoAxis.row ? NonoAxis.column : NonoAxis.row;
+    final List<Map<int, NonoAxis>> newStackElements = charIndexes.map((int charIndex) => <int, NonoAxis>{charIndex: newAxis}).toList();
     List<Map<int, NonoAxis>> finalStackElements = newStackElements;
 
     if (finalStackElements.length > 1) {
-      List<Map<int, NonoAxis>> commonStackElements = newStackElements.toSet().intersection(toSet()).toList();
+      final List<Map<int, NonoAxis>> commonStackElements = newStackElements.toSet().intersection(toSet()).toList();
       finalStackElements = newStackElements;
-      finalStackElements.removeWhere((element) => commonStackElements.contains(element));
+      finalStackElements.removeWhere((Map<int, NonoAxis> element) => commonStackElements.contains(element));
     }
 
     // if (finalStackElements.isNotEmpty) {

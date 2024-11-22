@@ -8,11 +8,12 @@ part 'isolate_nonogram.g.dart';
 class IsolateNonogram {
   const IsolateNonogram({
     required this.id,
-    this.info,
+    required this.clues, this.info,
     this.note,
-    required this.clues,
     // this.solutions,
   });
+
+  factory IsolateNonogram.fromJson(final Map<String, dynamic> json) => _$IsolateNonogramFromJson(json);
 
   final String id;
   final IsolateNonogramInfo? info;
@@ -28,8 +29,6 @@ class IsolateNonogram {
   bool? get isLineSolvable => note?.contains('definitely line/color solvable');
 
   String get emptySolution => Iterable.generate(height * width, (_) => '?').join();
-
-  factory IsolateNonogram.fromJson(final Map<String, dynamic> json) => _$IsolateNonogramFromJson(json);
 
   Map<String, dynamic> toJson() => _$IsolateNonogramToJson(this);
 

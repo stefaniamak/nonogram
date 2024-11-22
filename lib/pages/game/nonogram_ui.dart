@@ -4,10 +4,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:nonogram/backend/models/isolate/isolate_clues.dart';
 
 class NonogramUi {
-  final Size size;
-  final Size cluesSize;
-  final Size gridSize;
-  final double gridItemSide;
 
   const NonogramUi({
     required this.size,
@@ -15,14 +11,18 @@ class NonogramUi {
     required this.gridSize,
     required this.gridItemSide,
   });
+  final Size size;
+  final Size cluesSize;
+  final Size gridSize;
+  final double gridItemSide;
 }
 
 NonogramUi useNonogramUi(Size boxesNumb, IsolateClues clues, Size maxSize, [EdgeInsets padding = EdgeInsets.zero]) {
   double width = maxSize.width - padding.horizontal;
   double height = maxSize.height - padding.vertical;
 
-  final maxRowNumbs = clues.rows.map((r) => r.length).reduce(max);
-  final maxColNumbs = clues.columns.map((c) => c.length).reduce(max);
+  final int maxRowNumbs = clues.rows.map((List<int> r) => r.length).reduce(max);
+  final int maxColNumbs = clues.columns.map((List<int> c) => c.length).reduce(max);
 
   double gridItemSide = width / (boxesNumb.width + maxRowNumbs);
 
@@ -30,12 +30,12 @@ NonogramUi useNonogramUi(Size boxesNumb, IsolateClues clues, Size maxSize, [Edge
     gridItemSide = height / (boxesNumb.height + maxColNumbs);
   }
 
-  Size cluesSize = Size(
+  final Size cluesSize = Size(
     maxRowNumbs * gridItemSide,
     maxColNumbs * gridItemSide,
   );
 
-  Size gridSize = Size(
+  final Size gridSize = Size(
     boxesNumb.width * gridItemSide,
     boxesNumb.height * gridItemSide,
   );

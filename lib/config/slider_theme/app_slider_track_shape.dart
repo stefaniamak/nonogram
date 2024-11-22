@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../app_color.dart';
-import '../app_theme.dart';
+import 'package:nonogram/config/app_color.dart';
+import 'package:nonogram/config/app_theme.dart';
 
 /// The shape that will be used to draw the [Slider]'s track.
 ///

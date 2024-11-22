@@ -3,8 +3,7 @@ import 'package:nonogram/backend/models/isolate/isolate_nonogram.dart';
 
 class NonogramTitle extends StatelessWidget {
   const NonogramTitle({
-    super.key,
-    required this.nonogram,
+    required this.nonogram, super.key,
     this.showDescription = true,
   });
 
@@ -15,9 +14,9 @@ class NonogramTitle extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
+      children: <Widget>[
         Row(
-          children: [
+          children: <Widget>[
             Flexible(
               child: Text(
                 '${nonogram.info?.title ?? ' - '} #${nonogram.id}',
@@ -31,13 +30,13 @@ class NonogramTitle extends StatelessWidget {
             ),
           ],
         ),
-        if (showDescription) ...[
+        if (showDescription) ...<Widget>[
           const SizedBox(height: 4),
           Text(
             nonogram.info?.description ?? '-',
             style: const TextStyle(fontSize: 12, color: Colors.black54),
           ),
-        ]
+        ],
       ],
     );
   }

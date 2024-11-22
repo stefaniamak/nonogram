@@ -17,22 +17,22 @@ class CreateNonogramCubit extends Cubit<CreateNonogramState> {
     emit(state.copyWith(width: index));
 
     if (state.solution.length < state.height * state.width) {
-      int missingBoxes = state.height * state.width - state.solution.length;
-      int difference = (missingBoxes / state.height).ceil();
+      final int missingBoxes = state.height * state.width - state.solution.length;
+      final int difference = (missingBoxes / state.height).ceil();
 
       /// Adds as many missing boxes are needed at the end of the solution line.
       /// That happens by finding the number of boxes that should be added at the end of each line [missingBoxes] and
       /// replacing every match with the same match plus the missing boxes.
       emit(state.copyWith(
           solution: state.solution.replaceAllMapped(RegExp(r'.{' + (index - difference).toString() + r'}'),
-              (match) => "${match.group(0)}${Iterable.generate((missingBoxes / state.height).ceil(), (_) => '?').join()}")));
+              (Match match) => "${match.group(0)}${Iterable.generate((missingBoxes / state.height).ceil(), (_) => '?').join()}",),),);
     } else if (state.solution.length > state.height * state.width) {
-      int extraBoxes = state.solution.length - state.height * state.width;
-      int difference = (extraBoxes / state.height).ceil();
+      final int extraBoxes = state.solution.length - state.height * state.width;
+      final int difference = (extraBoxes / state.height).ceil();
 
-      String oldSolution = state.solution;
-      String newSolution = oldSolution.replaceAllMapped(
-          RegExp(r'(.{' + (index).toString() + r'})(.{' + (difference).toString() + r'})'), (match) => "${match.group(1)}");
+      final String oldSolution = state.solution;
+      final String newSolution = oldSolution.replaceAllMapped(
+          RegExp(r'(.{' + (index).toString() + r'})(.{' + (difference).toString() + r'})'), (Match match) => "${match.group(1)}",);
 
       /// Removes as many extra boxes are needed at the end of the solution line.
       /// That happens by finding the number of boxes that should be removed at the end of each line [extraBoxes] and
@@ -52,10 +52,10 @@ class CreateNonogramCubit extends Cubit<CreateNonogramState> {
 
     if (state.solution.length < state.height * state.width) {
       emit(state.copyWith(
-          solution: state.solution + Iterable.generate(state.height * state.width - state.solution.length, (_) => '?').join()));
+          solution: state.solution + Iterable.generate(state.height * state.width - state.solution.length, (_) => '?').join(),),);
     } else {
-      String oldSolution = state.solution;
-      String newSolution = oldSolution.substring(0, state.height * state.width);
+      final String oldSolution = state.solution;
+      final String newSolution = oldSolution.substring(0, state.height * state.width);
 
       emit(state.copyWith(solution: newSolution));
       if (newSolution.sumFilledBoxes < oldSolution.sumFilledBoxes) updateHorizontalClues();
@@ -63,33 +63,33 @@ class CreateNonogramCubit extends Cubit<CreateNonogramState> {
   }
 
   void updateVerticalClues() {
-    RegExp regExp = RegExp(r'1+'); // Match one or more consecutive ones
-    List<List<int>> newVerticalClues = state.verticalClues;
+    final RegExp regExp = RegExp(r'1+'); // Match one or more consecutive ones
+    final List<List<int>> newVerticalClues = state.verticalClues;
 
     for (int row = 0; row < state.height; row++) {
-      Iterable<RegExpMatch> rowMatches = regExp.allMatches(state.solution.getRowIsolate(row, state.width));
-      List<int> rowClues = rowMatches.map((match) => match.group(0)!.length).toList();
-      newVerticalClues[row] = rowClues.isNotEmpty ? rowClues : [0];
+      final Iterable<RegExpMatch> rowMatches = regExp.allMatches(state.solution.getRowIsolate(row, state.width));
+      final List<int> rowClues = rowMatches.map((RegExpMatch match) => match.group(0)!.length).toList();
+      newVerticalClues[row] = rowClues.isNotEmpty ? rowClues : <int>[0];
     }
 
     emit(state.copyWith(
       verticalClues: newVerticalClues,
-    ));
+    ),);
   }
 
   void updateHorizontalClues() {
-    RegExp regExp = RegExp(r'1+'); // Match one or more consecutive ones
-    List<List<int>> newHorizontalClues = state.horizontalClues;
+    final RegExp regExp = RegExp(r'1+'); // Match one or more consecutive ones
+    final List<List<int>> newHorizontalClues = state.horizontalClues;
 
     for (int column = 0; column < state.width; column++) {
-      Iterable<RegExpMatch> columnMatches = regExp.allMatches(state.solution.getColumnIsolate(column, state.width));
-      List<int> columnClues = columnMatches.map((match) => match.group(0)!.length).toList();
-      newHorizontalClues[column] = columnClues.isNotEmpty ? columnClues : [0];
+      final Iterable<RegExpMatch> columnMatches = regExp.allMatches(state.solution.getColumnIsolate(column, state.width));
+      final List<int> columnClues = columnMatches.map((RegExpMatch match) => match.group(0)!.length).toList();
+      newHorizontalClues[column] = columnClues.isNotEmpty ? columnClues : <int>[0];
     }
 
     emit(state.copyWith(
       horizontalClues: newHorizontalClues,
-    ));
+    ),);
   }
 
   void updateBox(int boxIndex, [bool autoUpdateClues = true]) {
@@ -106,24 +106,24 @@ class CreateNonogramCubit extends Cubit<CreateNonogramState> {
   }
 
   void updateClues(int boxIndex, bool isEmpty) {
-    int row = boxIndex ~/ state.width;
-    int column = boxIndex % state.width;
+    final int row = boxIndex ~/ state.width;
+    final int column = boxIndex % state.width;
 
     print('boxIndex: $boxIndex, row: $row, column: $column');
 
-    RegExp regExp = RegExp(r'1+'); // Match one or more consecutive ones
+    final RegExp regExp = RegExp(r'1+'); // Match one or more consecutive ones
 
-    Iterable<RegExpMatch> rowMatches = regExp.allMatches(state.solution.getRowIsolate(row, state.width));
-    List<int> rowClues = rowMatches.map((match) => match.group(0)!.length).toList();
+    final Iterable<RegExpMatch> rowMatches = regExp.allMatches(state.solution.getRowIsolate(row, state.width));
+    final List<int> rowClues = rowMatches.map((RegExpMatch match) => match.group(0)!.length).toList();
 
-    Iterable<RegExpMatch> columnMmatches = regExp.allMatches(state.solution.getColumnIsolate(column, state.width));
-    List<int> columnClues = columnMmatches.map((match) => match.group(0)!.length).toList();
+    final Iterable<RegExpMatch> columnMmatches = regExp.allMatches(state.solution.getColumnIsolate(column, state.width));
+    final List<int> columnClues = columnMmatches.map((RegExpMatch match) => match.group(0)!.length).toList();
 
-    List<List<int>> newVerticalClues = state.verticalClues;
-    newVerticalClues[row] = rowClues.isNotEmpty ? rowClues : [0];
+    final List<List<int>> newVerticalClues = state.verticalClues;
+    newVerticalClues[row] = rowClues.isNotEmpty ? rowClues : <int>[0];
 
-    List<List<int>> newHorizontalClues = state.horizontalClues;
-    newHorizontalClues[column] = columnClues.isNotEmpty ? columnClues : [0];
+    final List<List<int>> newHorizontalClues = state.horizontalClues;
+    newHorizontalClues[column] = columnClues.isNotEmpty ? columnClues : <int>[0];
 
     emit(state.copyWith(
       verticalClues: newVerticalClues,
@@ -131,7 +131,7 @@ class CreateNonogramCubit extends Cubit<CreateNonogramState> {
       editingSettings: (isEmpty ? EditingSettings.paintMode : EditingSettings.eraseMode).copyWith(
         updateOnPanEnd: state.editingSettings.updateOnPanEnd,
       ),
-    ));
+    ),);
   }
 
   bool _shouldUpdateBox(int boxIndex) {
@@ -169,8 +169,8 @@ class CreateNonogramCubit extends Cubit<CreateNonogramState> {
   }
 
   void updateSelectedLine(String line) {
-    List<int> list = line.split(',').map((e) => int.parse(e.trim())).toList();
-    list.removeWhere((e) => e == 0);
+    final List<int> list = line.split(',').map((String e) => int.parse(e.trim())).toList();
+    list.removeWhere((int e) => e == 0);
     if (list.isEmpty) list.add(0);
 
     List<List<int>> tempList;

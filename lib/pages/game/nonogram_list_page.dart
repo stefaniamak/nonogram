@@ -9,13 +9,13 @@ import 'package:nonogram/pages/game/nonogram_list_item.dart';
 import 'package:nonogram/pages/widgets/blur_container.dart';
 
 class NonogramListPage extends StatelessWidget {
-  static const String route = '/puzzles';
 
   const NonogramListPage({super.key});
+  static const String route = '/puzzles';
 
   @override
   Widget build(BuildContext context) {
-    double width = MediaQuery.of(context).size.width;
+    final double width = MediaQuery.of(context).size.width;
     return AppPage(
       floatingActionButton: BlurContainer(
         color: Colors.yellowAccent,
@@ -43,12 +43,12 @@ class NonogramListPage extends StatelessWidget {
           ),
         ),
       ),
-      children: [
+      children: <Widget>[
         if (Nonograms.all.isNotEmpty)
           SliverGrid(
             delegate: SliverChildBuilderDelegate(
-              (context, index) {
-                IsolateNonogram nonogram = Nonograms.all[index];
+              (BuildContext context, int index) {
+                final IsolateNonogram nonogram = Nonograms.all[index];
                 return NonogramListItem(nonogram: nonogram);
               },
               childCount: Nonograms.all.length,

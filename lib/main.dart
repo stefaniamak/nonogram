@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:nonogram/config/app_theme.dart';
 import 'package:nonogram/pages/game/nonogram_list_page.dart';
-
-import 'config/app_theme.dart';
 
 void main() {
   runApp(const MyApp());

@@ -9,9 +9,9 @@ class EditingSettings {
   final bool erase;
   final bool updateOnPanEnd;
 
-  static EditingSettings get noMode => const EditingSettings(paint: false, erase: false);
-  static EditingSettings get paintMode => const EditingSettings(paint: true, erase: false);
-  static EditingSettings get eraseMode => const EditingSettings(paint: false, erase: true);
+  static EditingSettings get noMode => const EditingSettings();
+  static EditingSettings get paintMode => const EditingSettings(paint: true);
+  static EditingSettings get eraseMode => const EditingSettings(erase: true);
 
   EditingSettings copyWith({
     bool? paint,

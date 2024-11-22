@@ -1,15 +1,17 @@
 import 'package:built_collection/built_collection.dart';
 import 'package:built_value/built_value.dart';
 import 'package:built_value/serializer.dart';
+import 'package:nonogram/backend/models/clues.dart';
 import 'package:nonogram/backend/models/nonogram_info.dart';
 import 'package:nonogram/backend/models/solution.dart';
 import 'package:nonogram/backend/serializers.dart';
 
-import 'clues.dart';
-
 part 'nonogram.g.dart';
 
 abstract class Nonogram implements Built<Nonogram, NonogramBuilder> {
+  factory Nonogram([void Function(NonogramBuilder) updates]) = _$Nonogram;
+
+  Nonogram._();
   String get id;
   NonogramInfo? get info;
   String? get note;
@@ -23,11 +25,8 @@ abstract class Nonogram implements Built<Nonogram, NonogramBuilder> {
   bool? get isUnique => note?.contains('definitely unique');
   bool? get isLineSolvable => note?.contains('definitely line/color solvable');
 
-  Nonogram._();
-  factory Nonogram([void Function(NonogramBuilder) updates]) = _$Nonogram;
-
   Map<String, dynamic> toJson() {
-    return serializers.serializeWith(Nonogram.serializer, this) as Map<String, dynamic>;
+    return serializers.serializeWith(Nonogram.serializer, this)! as Map<String, dynamic>;
   }
 
   static Nonogram fromJson(Map<String, dynamic> json) {

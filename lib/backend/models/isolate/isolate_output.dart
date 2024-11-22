@@ -9,16 +9,22 @@ class IsolateOutput {
   const IsolateOutput({
     this.stack = const <Map<int, NonoAxis>>[],
     this.solutionSteps = const <SolutionStep>[],
-    this.cachedBoxSolutions = const {},
-    this.linesCheckedList = const [0], // const {'linesChecked': 0},
-    this.boxesCheckedList = const [0],
+    this.cachedBoxSolutions = const <String, bool>{},
+    this.linesCheckedList = const <int>[0], // const {'linesChecked': 0},
+    this.boxesCheckedList = const <int>[0],
     this.actualBoxesChecked = 0,
-    this.otherBoxesCheckedList = const [0],
+    this.otherBoxesCheckedList = const <int>[0],
     this.linesChecked = 0,
     this.boxesChecked = 0,
     this.otherBoxesChecked = 0,
     this.totalCacheData = 0,
   });
+
+  // int get linesChecked => linesCheckedList.last;
+  // int get boxesChecked => boxesCheckedList.last;
+  // int get otherBoxesChecked => otherBoxesCheckedList.last;
+
+  factory IsolateOutput.fromJson(final Map<String, dynamic> json) => _$IsolateOutputFromJson(json);
 
   final List<Map<int, NonoAxis>> stack;
   final List<SolutionStep> solutionSteps;
@@ -31,12 +37,6 @@ class IsolateOutput {
   final int boxesChecked;
   final int otherBoxesChecked;
   final int totalCacheData;
-
-  // int get linesChecked => linesCheckedList.last;
-  // int get boxesChecked => boxesCheckedList.last;
-  // int get otherBoxesChecked => otherBoxesCheckedList.last;
-
-  factory IsolateOutput.fromJson(final Map<String, dynamic> json) => _$IsolateOutputFromJson(json);
 
   Map<String, dynamic> toJson() => _$IsolateOutputToJson(this);
 

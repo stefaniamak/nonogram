@@ -12,13 +12,13 @@ class SolverSettings {
     this.highlightNewFilledBoxes = true,
   });
 
+  factory SolverSettings.fromJson(final Map<String, dynamic> json) => _$SolverSettingsFromJson(json);
+
   final bool groupSteps;
   final bool keepCacheData;
   final bool countCheckedBoxes;
   final int isolateConcurrent;
   final bool highlightNewFilledBoxes;
-
-  factory SolverSettings.fromJson(final Map<String, dynamic> json) => _$SolverSettingsFromJson(json);
 
   Map<String, dynamic> toJson() => _$SolverSettingsToJson(this);
 

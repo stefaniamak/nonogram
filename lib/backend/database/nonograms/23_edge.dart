@@ -6,48 +6,52 @@ import 'package:nonogram/backend/models/solution.dart';
 import 'package:nonogram/backend/models/solution_type.dart';
 
 final Nonogram kEdge = Nonogram(
-  (n) => n
+  (NonogramBuilder n) => n
     ..id = "5"
-    ..info = NonogramInfo((i) => i
-      ..title = "Edge"
-      ..copyright = "(c) Copyright 2004 by Jan Wolter"
-      ..author = "Jan Wolter"
-      ..authorId = "jan"
-      ..description = "Two hats falling from a cloud?  No, just simple example of the usefulness of edges.").toBuilder()
+    ..info = NonogramInfo(
+      (NonogramInfoBuilder i) => i
+        ..title = "Edge"
+        ..copyright = "(c) Copyright 2004 by Jan Wolter"
+        ..author = "Jan Wolter"
+        ..authorId = "jan"
+        ..description = "Two hats falling from a cloud?  No, just simple example of the usefulness of edges.",
+    ).toBuilder()
     ..note = "published,definitely unique,definitely requires moderate lookahead"
     ..clues = Clues(
-      (c) => c
+      (CluesBuilder c) => c
         ..columns = ListBuilder([
-          [1],
-          [3],
-          [1],
-          [2, 2],
-          [2],
-          [4],
-          [1],
-          [3],
-          [3],
-          [1],
+          <int>[1],
+          <int>[3],
+          <int>[1],
+          <int>[2, 2],
+          <int>[2],
+          <int>[4],
+          <int>[1],
+          <int>[3],
+          <int>[3],
+          <int>[1],
         ])
         ..rows = ListBuilder([
-          [1],
-          [3],
-          [1],
-          [2],
-          [1],
-          [3],
-          [3],
-          [1],
-          [2],
-          [2],
-          [4],
+          <int>[1],
+          <int>[3],
+          <int>[1],
+          <int>[2],
+          <int>[1],
+          <int>[3],
+          <int>[3],
+          <int>[1],
+          <int>[2],
+          <int>[2],
+          <int>[4],
         ]),
     ).toBuilder()
     ..solutions = ListBuilder([
-      Solution((s) => s
-        ..type = SolutionType.goal
-        // ..solution = "01100011010010101110101001010000110010100101111000"
-        ..image = '''|...X......|
+      Solution(
+        (SolutionBuilder s) => s
+          ..type = SolutionType.goal
+          // ..solution = "01100011010010101110101001010000110010100101111000"
+          ..image = '''
+|...X......|
 |.XXX......|
 |.X........|
 |XX........|
@@ -57,6 +61,7 @@ final Nonogram kEdge = Nonogram(
 |.....X....|
 |.......XX.|
 |.......XX.|
-|......XXXX|''')
+|......XXXX|''',
+      ),
     ]),
 );

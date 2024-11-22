@@ -5,20 +5,18 @@ import 'package:nonogram/config/enums/point_state.dart';
 import 'package:nonogram/painters/grid_box.dart';
 
 class GridPainter extends CustomPainter {
+
+  GridPainter({
+    required this.boxItems, required this.solution, super.repaint,
+    this.side = 20,
+    this.highlightedBoxes = const <int>[],
+    this.onTap,
+  });
   final double side;
   final List<int> highlightedBoxes;
   final Size boxItems;
   final String? solution;
   final Function(int)? onTap;
-
-  GridPainter({
-    super.repaint,
-    this.side = 20,
-    this.highlightedBoxes = const [],
-    required this.boxItems,
-    required this.solution,
-    this.onTap,
-  });
 
   @override
   bool? hitTest(Offset position) {
@@ -26,7 +24,7 @@ class GridPainter extends CustomPainter {
   }
 
   PointState getGridBoxState(int index) {
-    var char = solution?.split('').elementAt(index);
+    final String? char = solution?.split('').elementAt(index);
     switch (char.toString()) {
       case '?':
         return PointState.unknown;
@@ -41,10 +39,10 @@ class GridPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    for (var x = 0; x < boxItems.width; x += 1) {
-      for (var y = 0; y < boxItems.height; y += 1) {
-        int index = (y * boxItems.width).ceil() + x;
-        PointState pointState = getGridBoxState(index);
+    for (int x = 0; x < boxItems.width; x += 1) {
+      for (int y = 0; y < boxItems.height; y += 1) {
+        final int index = (y * boxItems.width).ceil() + x;
+        final PointState pointState = getGridBoxState(index);
 
         GridBox(
           point: Point(x * side, y * side),

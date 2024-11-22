@@ -12,13 +12,13 @@ class IsolateNonogramInfo {
     this.description,
   });
 
+  factory IsolateNonogramInfo.fromJson(final Map<String, dynamic> json) => _$IsolateNonogramInfoFromJson(json);
+
   final String? title;
   final String? author;
   final String? authorId;
   final String? copyright;
   final String? description;
-
-  factory IsolateNonogramInfo.fromJson(final Map<String, dynamic> json) => _$IsolateNonogramInfoFromJson(json);
 
   Map<String, dynamic> toJson() => _$IsolateNonogramInfoToJson(this);
 

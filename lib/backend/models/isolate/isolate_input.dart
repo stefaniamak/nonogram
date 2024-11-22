@@ -13,11 +13,11 @@ class IsolateInput {
     this.solverSettings = const SolverSettings(),
   });
 
+  factory IsolateInput.fromJson(final Map<String, dynamic> json) => _$IsolateInputFromJson(json);
+
   final IsolateNonogram nonogram;
   final List<SolutionStep> solutionSteps;
   final SolverSettings solverSettings;
-
-  factory IsolateInput.fromJson(final Map<String, dynamic> json) => _$IsolateInputFromJson(json);
 
   Map<String, dynamic> toJson() => _$IsolateInputToJson(this);
 

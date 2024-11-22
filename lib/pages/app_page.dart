@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:nonogram/pages/game/nonogram_list_page.dart';
 import 'package:nonogram/pages/widgets/blur_container.dart';
 import 'package:sliver_tools/sliver_tools.dart';
-
-import 'game/nonogram_list_page.dart';
 
 class AppPage extends StatelessWidget {
   const AppPage({
@@ -32,19 +31,18 @@ class AppPage extends StatelessWidget {
         child: Padding(
           padding: EdgeInsets.all(16),
           child: Row(
-            children: [Expanded(child: Text('Designed and Developed by Stefania Mak | v0.6.1'))],
+            children: <Widget>[Expanded(child: Text('Designed and Developed by Stefania Mak | v0.6.1'))],
           ),
         ),
       ),
       floatingActionButton: floatingActionButton,
       body: CustomScrollView(
-        slivers: [
+        slivers: <Widget>[
           SliverCrossAxisConstrained(
             maxCrossAxisExtent: hasMaxCrossAxisExtend ? 1200 : MediaQuery.of(context).size.width,
-            alignment: 0,
             child: SliverPadding(
               padding: EdgeInsets.symmetric(vertical: hasVerticalPadding ? 32 : 0, horizontal: 24),
-              sliver: MultiSliver(children: [...children]),
+              sliver: MultiSliver(children: <Widget>[...children]),
             ),
           ),
           const SliverToBoxAdapter(child: BottomNavigationPadding()),

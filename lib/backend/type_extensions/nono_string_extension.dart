@@ -2,7 +2,7 @@ extension NonoStringExtension on String {
   String characterAt(int index) => split('').toList().elementAt(index);
 
   int get sumFilledBoxes =>
-      split('').fold(0, (previousValue, element) => previousValue + (element != '?' ? int.parse(element) : 0));
+      split('').fold(0, (int previousValue, String element) => previousValue + (element != '?' ? int.parse(element) : 0));
 
   bool isSameClueIndexWith(String element) => (this == element) && this != '?' && element != '0' && this != '?' && element != '0';
 
@@ -17,7 +17,7 @@ extension NonoStringExtension on String {
 
   String getColumnIsolate(int lineIndex, int width) {
     String columnSol = '';
-    for (var solChar = lineIndex; solChar < split('').toList().length; solChar = solChar + width) {
+    for (int solChar = lineIndex; solChar < split('').toList().length; solChar = solChar + width) {
       columnSol = '$columnSol${split('').toList().elementAt(solChar)}';
     }
     return columnSol;

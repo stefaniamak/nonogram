@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nonogram/backend/cubits/create_nonogram/create_nonogram_cubit.dart';
+import 'package:nonogram/backend/cubits/create_nonogram/create_nonogram_state.dart';
 import 'package:nonogram/backend/cubits/nonogram_solver_cubit/nonogram_solver_cubit.dart';
 import 'package:nonogram/backend/models/isolate/isolate_clues.dart';
+import 'package:nonogram/backend/models/isolate/isolate_nonogram.dart';
 import 'package:nonogram/config/app_color.dart';
 import 'package:nonogram/pages/app_page.dart';
 import 'package:nonogram/pages/game/nonogram_grid_and_clues.dart';
 import 'package:nonogram/pages/game/nonogram_page.dart';
-
-import '../../backend/cubits/create_nonogram/create_nonogram_state.dart';
 
 class CreateNonogramPage extends StatefulWidget {
   const CreateNonogramPage({
@@ -32,10 +32,10 @@ class _CreateNonogramPageState extends State<CreateNonogramPage> {
       builder: (_, CreateNonogramState state) {
         return AppPage(
           hasVerticalPadding: false,
-          children: [
+          children: <Widget>[
             // SizedBox(height: md.padding.top),
             Row(
-              children: [
+              children: <Widget>[
                 Expanded(
                   child: TextFormField(
                     controller: textEditingController,
@@ -62,7 +62,7 @@ class _CreateNonogramPageState extends State<CreateNonogramPage> {
               // flex: 10,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.end,
-                children: [
+                children: <Widget>[
                   Expanded(
                     child: Center(
                       child: NonogramGridAndClues(
@@ -103,7 +103,7 @@ class _CreateNonogramPageState extends State<CreateNonogramPage> {
                       min: 1,
                       max: _maxSizeValue + 0.0,
                       divisions: _maxSizeValue,
-                      onChanged: (value) {
+                      onChanged: (double value) {
                         createNonogramCubit.updateHeight(value.ceil());
                       },
                     ),
@@ -116,14 +116,14 @@ class _CreateNonogramPageState extends State<CreateNonogramPage> {
               min: 1,
               max: _maxSizeValue + 0.0,
               divisions: _maxSizeValue,
-              onChanged: (value) {
+              onChanged: (double value) {
                 createNonogramCubit.updateWidth(value.ceil());
               },
             ),
             const SizedBox(height: 24),
             OutlinedButton(
               onPressed: () {
-                final nonogram = state.nonogram;
+                final IsolateNonogram nonogram = state.nonogram;
                 Navigator.push(
                   context,
                   MaterialPageRoute<void>(
@@ -139,19 +139,19 @@ class _CreateNonogramPageState extends State<CreateNonogramPage> {
 
             const SizedBox(height: 24),
             Column(
-              children: [
+              children: <Widget>[
                 const Text('--Settings--'),
                 const SizedBox(height: 8),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
+                  children: <Widget>[
                     Switch(
                       value: state.editingSettings.updateOnPanEnd,
                       onChanged: (_) => createNonogramCubit.updateEditingSettingsOnPanEnd(),
                     ),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
+                      children: <Widget>[
                         Text(
                           'Update drag changes at onPanEnd',
                           style: TextStyle(color: state.editingSettings.updateOnPanEnd ? Colors.black : AppColor.disabled),

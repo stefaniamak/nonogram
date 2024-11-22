@@ -7,13 +7,13 @@ part 'solution_step.g.dart';
 class SolutionStep {
   const SolutionStep({
     required this.currentSolution,
-    this.lineSolution,
+    required this.explanation, required this.newFilledBoxes, this.lineSolution,
     this.axis,
     this.isNote,
     this.lineIndex,
-    required this.explanation,
-    required this.newFilledBoxes,
   });
+
+  factory SolutionStep.fromJson(final Map<String, dynamic> json) => _$SolutionStepFromJson(json);
 
   final String currentSolution;
   final List<List<String>>? lineSolution;
@@ -24,8 +24,6 @@ class SolutionStep {
   final List<int> newFilledBoxes;
 
   String getUpdatedSolution(int index, String value) => currentSolution.replaceRange(index, index + 1, value);
-
-  factory SolutionStep.fromJson(final Map<String, dynamic> json) => _$SolutionStepFromJson(json);
 
   Map<String, dynamic> toJson() => _$SolutionStepToJson(this);
 
