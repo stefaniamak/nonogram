@@ -5,7 +5,7 @@ import 'package:nonogram/backend/database/nonograms_for_isolate/swing_isolate.da
 import 'package:nonogram/backend/models/isolate/isolate_nonogram.dart';
 
 class Nonograms {
-  List<IsolateNonogram> get allNonograms => [
+  static List<IsolateNonogram> get all => [
         dancer,
         cat,
         knot,
@@ -13,9 +13,9 @@ class Nonograms {
         swing,
       ];
 
-  IsolateNonogram get dancer => kDancerIsolate;
-  IsolateNonogram get cat => kCatIsolate;
-  IsolateNonogram get knot => kKnotIsolate;
+  static IsolateNonogram get dancer => kDancerIsolate;
+  static IsolateNonogram get cat => kCatIsolate;
+  static IsolateNonogram get knot => kKnotIsolate;
 // IsolateNonogram get edge => kEdgeIsolate;
-  IsolateNonogram get swing => kSwingIsolate;
+  static IsolateNonogram get swing => kSwingIsolate;
 }

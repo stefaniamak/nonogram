@@ -1,4 +1,3 @@
-import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:nonogram/backend/models/solution_step.dart';
 import 'package:nonogram/backend/type_extensions/nono_axis_extension.dart';
@@ -6,7 +5,7 @@ import 'package:nonogram/backend/type_extensions/nono_axis_extension.dart';
 part 'isolate_output.g.dart';
 
 @JsonSerializable()
-class IsolateOutput extends Equatable {
+class IsolateOutput {
   const IsolateOutput({
     this.stack = const <Map<int, NonoAxis>>[],
     this.solutionSteps = const <SolutionStep>[],
@@ -71,19 +70,4 @@ class IsolateOutput extends Equatable {
       totalCacheData: totalCacheData ?? this.totalCacheData,
     );
   }
-
-  @override
-  List<Object?> get props => <Object?>[
-        stack,
-        solutionSteps,
-        cachedBoxSolutions,
-        linesCheckedList,
-        linesChecked,
-        boxesCheckedList,
-        actualBoxesChecked,
-        otherBoxesCheckedList,
-        boxesChecked,
-        otherBoxesChecked,
-        totalCacheData,
-      ];
 }

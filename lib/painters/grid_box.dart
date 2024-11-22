@@ -1,7 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:nonogram/game_loop/nonogram_state.dart';
+import 'package:nonogram/config/enums/point_state.dart';
 
 class GridBox extends CustomPainter {
   final PointState pointState;

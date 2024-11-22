@@ -8,7 +8,7 @@ extension SolverStatusExtension on SolverStatus {
   bool get isSolving => this == SolverStatus.solving;
 }
 
-class NonogramSolverState extends Equatable {
+class NonogramSolverState {
   const NonogramSolverState({
     this.solverStatus = SolverStatus.initial,
     this.nonogram,
@@ -53,15 +53,4 @@ class NonogramSolverState extends Equatable {
       endingDateTime: endingDateTime == null ? this.endingDateTime : endingDateTime.value,
     );
   }
-
-  @override
-  List<Object?> get props => <Object?>[
-        solverStatus,
-        nonogram,
-        solverSettings,
-        output,
-        startDateTime,
-        endingDateTime,
-        stepNumber,
-      ];
 }
