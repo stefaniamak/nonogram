@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:nonogram/pages/game/nonogram_list_page.dart';
-import 'package:nonogram/router.dart';
 
 import 'config/app_theme.dart';
 
@@ -18,10 +17,6 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: AppTheme.defaultTheme,
       home: const NonogramListPage(),
-    );
-    return MaterialApp.router(
-      debugShowCheckedModeBanner: false,
-      routerConfig: MyRouter().router,
     );
   }
 }
