@@ -5,11 +5,12 @@ import 'package:nonogram/backend/models/isolate/isolate_nonogram_info.dart';
 const IsolateNonogram kSwingIsolate = IsolateNonogram(
   id: "6",
   info: IsolateNonogramInfo(
-      title: "Swing",
-      copyright: "(c) Copyright 2004 by Jan Wolter",
-      author: "Jan Wolter",
-      authorId: "jan",
-      description: "A couple of merry dancers.",),
+    title: "Swing",
+    copyright: "(c) Copyright 2004 by Jan Wolter",
+    author: "Jan Wolter",
+    authorId: "jan",
+    description: "A couple of merry dancers.",
+  ),
   note: "published,definitely unique,definitely line/color solvable",
   clues: IsolateClues(
     columns: <List<int>>[
@@ -107,11 +108,11 @@ const IsolateNonogram kSwingIsolate = IsolateNonogram(
       <int>[1, 10, 1, 1, 1],
     ],
   ),
-//     solutions = ListBuilder([
-//       Solution((s) => s
-//         ..type = SolutionType.goal
-//       // ..solution = "01100011010010101110101001010000110010100101111000"
-//         ..image = '''|XXXXXXX...X......X......X.......X.......X....|
+);
+
+// Solution:
+// 01100011010010101110101001010000110010100101111000
+// |XXXXXXX...X......X......X.......X.......X....|
 // |XXX.X.XXX.X.XXXX.X.XXXX.X.XXXXX.X.XXXXX.X.XX.|
 // |X.X.X.XXX.X.XXXX.X.XXXX.X.XXXXX.X.XXXXX.X.XX.|
 // |XX.X..XX..X......X......X.......X..XXXXXX.XX.|
@@ -155,6 +156,4 @@ const IsolateNonogram kSwingIsolate = IsolateNonogram(
 // |....X..XX.X...XX..XX......X.......X.....X.XX.|
 // |.XX.X.XXXX.....XX..X.XXXX.X.XXXXX.X.XXX.X.XX.|
 // |.XX.X.XXXXX.....XXXX.XXXX.X.XXXXX.X.XXX.X.XX.|
-// |....X.....XXXXXXXXXX......X.......X.....X....|''')
-//     ]),
-);
+// |....X.....XXXXXXXXXX......X.......X.....X....|

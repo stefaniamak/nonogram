@@ -5,11 +5,12 @@ import 'package:nonogram/backend/models/isolate/isolate_nonogram_info.dart';
 const IsolateNonogram kDancerIsolate = IsolateNonogram(
   id: "1",
   info: IsolateNonogramInfo(
-      title: "Dancer",
-      copyright: "(c) Copyright 2004 by Jan Wolter",
-      author: "Jan Wolter",
-      authorId: "jan",
-      description: "A stick figure man, dancing his stickly little heart out.",),
+    title: "Dancer",
+    copyright: "(c) Copyright 2004 by Jan Wolter",
+    author: "Jan Wolter",
+    authorId: "jan",
+    description: "A stick figure man, dancing his stickly little heart out.",
+  ),
   note: "published,definitely unique,definitely line/color solvable",
   clues: IsolateClues(
     columns: <List<int>>[
@@ -32,11 +33,11 @@ const IsolateNonogram kDancerIsolate = IsolateNonogram(
       <int>[2],
     ],
   ),
-//     ..solutions = ListBuilder([
-//       Solution((s) => s
-//         ..type = SolutionType.goal
-//         ..solution = "01100011010010101110101001010000110010100101111000"
-//         ..image = '''|.XX..|
+);
+
+// Solution:
+// 01100011010010101110101001010000110010100101111000
+// |.XX..|
 // |.XX.X|
 // |..X.X|
 // |.XXX.|
@@ -45,6 +46,4 @@ const IsolateNonogram kDancerIsolate = IsolateNonogram(
 // |..XX.|
 // |.X.X.|
 // |.X.XX|
-// |XX...|''')
-//     ]),
-);
+// |XX...|

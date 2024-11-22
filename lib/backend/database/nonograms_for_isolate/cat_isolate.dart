@@ -35,3 +35,14 @@ const IsolateNonogram kCatIsolate = IsolateNonogram(
     ],
   ),
 );
+
+// Solution:
+// 01100011010010101110101001010000110010100101111000
+// |.....X..|
+// |.....XX.|
+// |X....XXX|
+// |.XXXXX..|
+// |.XXXXX..|
+// |.XX..XX.|
+// |XX...X.X|
+// |.X...X..|
