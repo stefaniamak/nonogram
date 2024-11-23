@@ -9,7 +9,7 @@ import 'package:nonogram/config/app_colors.dart';
 /// and border radius. It uses a `BackdropFilter` to apply a blur effect
 /// to the background.
 class BlurContainer extends StatelessWidget {
-  /// Creates an instance of `BlurContainer`.
+  /// Container with blurred background, meant to wrap some content.
   ///
   /// The [color], [child], and [borderRadius] parameters are optional.
   const BlurContainer({

@@ -8,7 +8,7 @@ import 'package:sliver_tools/sliver_tools.dart';
 /// This widget updates its children width automatically,
 /// based on the screen size.
 class AppPage extends StatelessWidget {
-  /// Creates an instance of `AppPage`.
+  /// Provides the wrapped page with the app's style and screen functionalities.
   ///
   /// The [children] parameter must not be null.
   /// The [floatingActionButton], [hasVerticalPadding], and [hasMaxCrossAxisExtend]

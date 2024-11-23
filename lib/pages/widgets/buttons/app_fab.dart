@@ -6,7 +6,7 @@ import 'package:nonogram/pages/widgets/blur_container.dart';
 /// The `AppFab` widget includes an icon and an onPressed callback function.
 /// It uses a `BlurContainer` for the background and an `IconButton` for the button itself.
 class AppFab extends StatelessWidget {
-  /// Creates an instance of `AppFab`.
+  /// Default FAB with app's theme.
   ///
   /// The [icon] and [onPressed] parameters must not be null.
   const AppFab({
