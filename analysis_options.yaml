@@ -22,7 +22,7 @@ linter:
   # producing the lint.
   rules:
     always_declare_return_types: true
-    always_put_control_body_on_new_line: true
+    always_put_control_body_on_new_line: false
     always_put_required_named_parameters_first: true
     always_specify_types: true
     always_use_package_imports: true
@@ -69,7 +69,7 @@ linter:
     conditional_uri_does_not_exist: true
     constant_identifier_names: true
     control_flow_in_finally: true
-    curly_braces_in_flow_control_structures: true
+#    curly_braces_in_flow_control_structures: true
     dangling_library_doc_comments: false
     depend_on_referenced_packages: true
     deprecated_consistency: true
