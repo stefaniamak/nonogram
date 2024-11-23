@@ -23,16 +23,23 @@ class CreateNonogramCubit extends Cubit<CreateNonogramState> {
       /// Adds as many missing boxes are needed at the end of the solution line.
       /// That happens by finding the number of boxes that should be added at the end of each line [missingBoxes] and
       /// replacing every match with the same match plus the missing boxes.
-      emit(state.copyWith(
-          solution: state.solution.replaceAllMapped(RegExp(r'.{' + (index - difference).toString() + r'}'),
-              (Match match) => "${match.group(0)}${Iterable.generate((missingBoxes / state.height).ceil(), (_) => '?').join()}",),),);
+      emit(
+        state.copyWith(
+          solution: state.solution.replaceAllMapped(
+            RegExp(r'.{' + (index - difference).toString() + r'}'),
+            (Match match) => "${match.group(0)}${Iterable.generate((missingBoxes / state.height).ceil(), (_) => '?').join()}",
+          ),
+        ),
+      );
     } else if (state.solution.length > state.height * state.width) {
       final int extraBoxes = state.solution.length - state.height * state.width;
       final int difference = (extraBoxes / state.height).ceil();
 
       final String oldSolution = state.solution;
       final String newSolution = oldSolution.replaceAllMapped(
-          RegExp(r'(.{' + (index).toString() + r'})(.{' + (difference).toString() + r'})'), (Match match) => "${match.group(1)}",);
+        RegExp(r'(.{' + (index).toString() + r'})(.{' + (difference).toString() + r'})'),
+        (Match match) => "${match.group(1)}",
+      );
 
       /// Removes as many extra boxes are needed at the end of the solution line.
       /// That happens by finding the number of boxes that should be removed at the end of each line [extraBoxes] and
@@ -51,8 +58,11 @@ class CreateNonogramCubit extends Cubit<CreateNonogramState> {
     emit(state.copyWith(height: index));
 
     if (state.solution.length < state.height * state.width) {
-      emit(state.copyWith(
-          solution: state.solution + Iterable.generate(state.height * state.width - state.solution.length, (_) => '?').join(),),);
+      emit(
+        state.copyWith(
+          solution: state.solution + Iterable.generate(state.height * state.width - state.solution.length, (_) => '?').join(),
+        ),
+      );
     } else {
       final String oldSolution = state.solution;
       final String newSolution = oldSolution.substring(0, state.height * state.width);
@@ -72,9 +82,11 @@ class CreateNonogramCubit extends Cubit<CreateNonogramState> {
       newVerticalClues[row] = rowClues.isNotEmpty ? rowClues : <int>[0];
     }
 
-    emit(state.copyWith(
-      verticalClues: newVerticalClues,
-    ),);
+    emit(
+      state.copyWith(
+        verticalClues: newVerticalClues,
+      ),
+    );
   }
 
   void updateHorizontalClues() {
@@ -87,15 +99,15 @@ class CreateNonogramCubit extends Cubit<CreateNonogramState> {
       newHorizontalClues[column] = columnClues.isNotEmpty ? columnClues : <int>[0];
     }
 
-    emit(state.copyWith(
-      horizontalClues: newHorizontalClues,
-    ),);
+    emit(
+      state.copyWith(
+        horizontalClues: newHorizontalClues,
+      ),
+    );
   }
 
   void updateBox(int boxIndex, [bool autoUpdateClues = true]) {
-    // if (!_shouldUpdateBox(boxIndex)) {
-    //   return;
-    // }
+    if (boxIndex < 0) return;
 
     final bool isEmpty = state.solution.characterAt(boxIndex) == '?';
     emit(state.copyWith(solution: state.solution.replaceRange(boxIndex, boxIndex + 1, isEmpty ? '1' : '?')));
@@ -125,13 +137,15 @@ class CreateNonogramCubit extends Cubit<CreateNonogramState> {
     final List<List<int>> newHorizontalClues = state.horizontalClues;
     newHorizontalClues[column] = columnClues.isNotEmpty ? columnClues : <int>[0];
 
-    emit(state.copyWith(
-      verticalClues: newVerticalClues,
-      horizontalClues: newHorizontalClues,
-      editingSettings: (isEmpty ? EditingSettings.paintMode : EditingSettings.eraseMode).copyWith(
-        updateOnPanEnd: state.editingSettings.updateOnPanEnd,
+    emit(
+      state.copyWith(
+        verticalClues: newVerticalClues,
+        horizontalClues: newHorizontalClues,
+        editingSettings: (isEmpty ? EditingSettings.paintMode : EditingSettings.eraseMode).copyWith(
+          updateOnPanEnd: state.editingSettings.updateOnPanEnd,
+        ),
       ),
-    ),);
+    );
   }
 
   bool _shouldUpdateBox(int boxIndex) {
@@ -145,9 +159,9 @@ class CreateNonogramCubit extends Cubit<CreateNonogramState> {
     return true;
   }
 
-  void onPan(
-    int boxIndex,
-  ) {
+  void onPan(int boxIndex) {
+    if (boxIndex < 0) return;
+
     if (boxIndex > -1 && boxIndex < state.solution.length) {
       if (state.solution.characterAt(boxIndex) == '?' && state.editingSettings.paint) {
         updateBox(boxIndex, !state.editingSettings.updateOnPanEnd);
@@ -158,8 +172,8 @@ class CreateNonogramCubit extends Cubit<CreateNonogramState> {
   }
 
   void onPanEnd(int boxIndex) {
-    final bool isEmpty = state.solution.characterAt(boxIndex) == '?';
-    // updateClues(boxIndex, isEmpty);
+    if (boxIndex < 0) return;
+
     updateHorizontalClues();
     updateVerticalClues();
   }

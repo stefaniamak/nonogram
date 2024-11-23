@@ -12,16 +12,14 @@ class NonogramGrid extends StatefulWidget {
   /// The [gridItemSide], [size], and [boxItems] parameters are required for the visual
   /// part of the grid and must not be null.
   ///
-  /// The [solution], [onTap], [onPan], [onPanEnd], and [highlightedBoxes] parameters declare
+  /// The [solution], [gestures], and [highlightedBoxes] parameters declare
   /// the functionality of the grid items, and are optional for the just view state.
   const NonogramGrid({
     required this.gridItemSide,
     required this.size,
     required this.boxItems,
     this.solution,
-    this.onTap,
-    this.onPan,
-    this.onPanEnd,
+    this.gestures,
     this.highlightedBoxes = const <int>[],
     super.key,
   });
@@ -38,14 +36,8 @@ class NonogramGrid extends StatefulWidget {
   /// The solution for the Nonogram puzzle.
   final String? solution;
 
-  /// Callback function to be called when a grid item is tapped.
-  final Function(int)? onTap;
-
-  /// Callback function to be called when a grid item is panned.
-  final Function(int)? onPan;
-
-  /// Callback function to be called when a pan gesture ends.
-  final Function(int)? onPanEnd;
+  /// The gestures for the grid.
+  final GridGestures? gestures;
 
   /// List of indices of highlighted boxes in the grid.
   final List<int> highlightedBoxes;
@@ -71,7 +63,7 @@ class _NonogramGridState extends State<NonogramGrid> {
   ///
   /// The [position] parameter must not be null.
   void _handleTap(Offset position) {
-    widget.onTap?.call(getIndex(position));
+    widget.gestures?.onTap?.call(getIndex(position));
     setState(() => _canceledOnTap = false);
   }
 
@@ -79,7 +71,7 @@ class _NonogramGridState extends State<NonogramGrid> {
   ///
   /// The [position] parameter must not be null.
   void _handlePan(Offset position) {
-    widget.onPan?.call(getIndex(position));
+    widget.gestures?.onPan?.call(getIndex(position));
     if (_canceledOnTap) _canceledOnTap = false;
   }
 
@@ -87,7 +79,7 @@ class _NonogramGridState extends State<NonogramGrid> {
   ///
   /// The [position] parameter must not be null.
   void _handlePanEnd(Offset position) {
-    widget.onPanEnd?.call(getIndex(position));
+    widget.gestures?.onPanEnd?.call(getIndex(position));
     setState(() => _canceledOnTap = false);
   }
 
@@ -112,10 +104,28 @@ class _NonogramGridState extends State<NonogramGrid> {
             side: widget.gridItemSide,
             highlightedBoxes: widget.highlightedBoxes,
             solution: widget.solution,
-            onTap: widget.onTap,
+            onTap: widget.gestures?.onTap,
           ),
         ),
       ),
     );
   }
+}
+
+/// A class that holds callback functions for grid gestures.
+class GridGestures {
+  const GridGestures({
+    this.onTap,
+    this.onPan,
+    this.onPanEnd,
+  });
+
+  /// Callback function to be called when a grid item is tapped.
+  final Function(int)? onTap;
+
+  /// Callback function to be called when a grid item is panned.
+  final Function(int)? onPan;
+
+  /// Callback function to be called when a pan gesture ends.
+  final Function(int)? onPanEnd;
 }
