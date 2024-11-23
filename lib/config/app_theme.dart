@@ -4,6 +4,20 @@ import 'package:nonogram/config/slider_theme/app_slider_track_shape.dart';
 
 class AppTheme {
   static Radius sliderTrackRadius = const Radius.circular(8);
+  static double maxScreenConstraint = 1200;
+  static double mediumScreenConstraint = 700;
+
+  static bool hasReachedMaxWidth(BuildContext context) {
+    return MediaQuery.of(context).size.width > maxScreenConstraint;
+  }
+
+  static bool hasReachedMediumWidth(BuildContext context) {
+    return MediaQuery.of(context).size.width > mediumScreenConstraint;
+  }
+
+  static int maxPageColumns(BuildContext context) {
+    return hasReachedMaxWidth(context) ? 3 : (hasReachedMediumWidth(context) ? 2 : 1);
+  }
 
   static RRect sliderTrackShape(double left, double top, double right, double bottom) {
     return RRect.fromLTRBAndCorners(
