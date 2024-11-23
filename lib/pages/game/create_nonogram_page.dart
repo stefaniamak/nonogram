@@ -12,15 +12,21 @@ import 'package:nonogram/pages/game/nonogram_grid_and_clues.dart';
 import 'package:nonogram/pages/game/nonogram_page.dart';
 import 'package:nonogram/painters/nonogram_grid.dart';
 
+/// A stateful widget that represents the page for creating a Nonogram puzzle.
 class CreateNonogramPage extends StatefulWidget {
+  /// Creates a [CreateNonogramPage].
   const CreateNonogramPage({super.key});
 
   @override
   State<CreateNonogramPage> createState() => _CreateNonogramPageState();
 }
 
+/// The state for the `CreateNonogramPage` widget.
 class _CreateNonogramPageState extends State<CreateNonogramPage> {
+  /// Controller for the text field used to input clues.
   final TextEditingController textEditingController = TextEditingController();
+
+  /// The maximum size value for the Nonogram grid.
   final int _maxSizeValue = 75;
 
   @override
@@ -60,6 +66,7 @@ class _CreateNonogramPageState extends State<CreateNonogramPage> {
     );
   }
 
+  /// Builds the text field for inputting clues.
   Row buildTextField(CreateNonogramCubit createNonogramCubit) {
     return Row(
       children: <Widget>[
@@ -73,6 +80,8 @@ class _CreateNonogramPageState extends State<CreateNonogramPage> {
     );
   }
 
+  /// Builds the Nonogram grid and clues widget with the required parameters for the UI
+  /// and all the grid gestures.
   NonogramGridAndClues buildGridAndClues(CreateNonogramState state, CreateNonogramCubit createNonogramCubit, MediaQueryData md) {
     return NonogramGridAndClues(
       solution: state.solution,
@@ -98,6 +107,7 @@ class _CreateNonogramPageState extends State<CreateNonogramPage> {
     );
   }
 
+  /// Builds the vertical slider for adjusting the grid's total rows.
   RotatedBox buildVerticalSlided(CreateNonogramState state, CreateNonogramCubit createNonogramCubit) {
     return RotatedBox(
       quarterTurns: 1,
@@ -113,6 +123,7 @@ class _CreateNonogramPageState extends State<CreateNonogramPage> {
     );
   }
 
+  /// Builds the horizontal slider for adjusting the grid's total columns.
   Slider buildHorizontalSlider(CreateNonogramState state, CreateNonogramCubit createNonogramCubit) {
     return Slider(
       value: state.width + 0.0,
@@ -125,6 +136,7 @@ class _CreateNonogramPageState extends State<CreateNonogramPage> {
     );
   }
 
+  /// Builds the button to solve the Nonogram puzzle by redirecting to the solving page.
   OutlinedButton buildSolveButton(CreateNonogramState state, BuildContext context) {
     return OutlinedButton(
       onPressed: () {
@@ -143,6 +155,7 @@ class _CreateNonogramPageState extends State<CreateNonogramPage> {
     );
   }
 
+  /// Builds the settings section for the Nonogram editor.
   Column buildSettings(CreateNonogramState state, CreateNonogramCubit createNonogramCubit) {
     return Column(
       children: <Widget>[
