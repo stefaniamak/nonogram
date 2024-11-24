@@ -4,16 +4,17 @@ import 'package:flutter/material.dart';
 import 'package:nonogram/config/enums/point_state.dart';
 
 class GridBox extends CustomPainter {
-
   GridBox({
-    required this.pointState, required this.point, super.repaint,
+    required this.pointState,
+    required this.point,
+    super.repaint,
     this.side = 20,
     this.isHighlighted = false,
   });
   final PointState pointState;
   final double side;
   final bool isHighlighted;
-  final Point point;
+  final Point<double> point;
 
   late final Paint _defaultPaint = Paint()
     ..color = isHighlighted ? Colors.lightGreen : Colors.black

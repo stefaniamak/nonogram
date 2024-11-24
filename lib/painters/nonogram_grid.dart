@@ -9,38 +9,24 @@ import 'package:nonogram/painters/grid_painter.dart';
 class NonogramGrid extends StatefulWidget {
   /// Creates a Nonogram Grid based on screen size.
   ///
-  /// The [gridItemSide], [size], and [boxItems] parameters are required for the visual
-  /// part of the grid and must not be null.
+  /// The [gridStateParams] parameter is required for the visual part of the grid and must not be null.
   ///
-  /// The [solution], [gestures], and [highlightedBoxes] parameters declare
-  /// the functionality of the grid items, and are optional for the just view state.
+  /// The [gestures] parameter declares the functionality of the grid items, and is optional for the just view state.
   const NonogramGrid({
-    required this.gridItemSide,
-    required this.size,
-    required this.boxItems,
-    this.solution,
+    required this.gridStateParams,
+    required this.gridViewParams,
     this.gestures,
-    this.highlightedBoxes = const <int>[],
     super.key,
   });
 
-  /// The size of each grid item.
-  final double gridItemSide;
+  /// The parameters for the grid state.
+  final GridStateParams? gridStateParams;
 
-  /// The overall size of the grid.
-  final Size size;
-
-  /// The total number of columns (x line) and rows (y line) in the grid at a `Size(x,y)` format.
-  final Size boxItems;
-
-  /// The solution for the Nonogram puzzle.
-  final String? solution;
+  /// The parameters for the grid view.
+  final GridViewParams gridViewParams;
 
   /// The gestures for the grid.
   final GridGestures? gestures;
-
-  /// List of indices of highlighted boxes in the grid.
-  final List<int> highlightedBoxes;
 
   @override
   State<NonogramGrid> createState() => _NonogramGridState();
@@ -55,8 +41,8 @@ class _NonogramGridState extends State<NonogramGrid> {
   ///
   /// The [position] parameter must not be null.
   int getIndex(Offset position) {
-    return (position.dx / widget.gridItemSide).floor() +
-        (position.dy / widget.gridItemSide).floor() * widget.boxItems.width.floor();
+    return (position.dx / widget.gridViewParams.side).floor() +
+        (position.dy / widget.gridViewParams.side).floor() * widget.gridViewParams.boxItems.width.floor();
   }
 
   /// Handles the tap gesture at the given position.
@@ -86,8 +72,8 @@ class _NonogramGridState extends State<NonogramGrid> {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: widget.size.width,
-      height: widget.size.height,
+      width: widget.gridViewParams.boxItems.width * widget.gridViewParams.side,
+      height: widget.gridViewParams.boxItems.height * widget.gridViewParams.side,
       child: GestureDetector(
         onTapDown: (TapDownDetails details) => _handleTap(details.localPosition),
         onTapCancel: () => setState(() => _canceledOnTap = true),
@@ -100,11 +86,8 @@ class _NonogramGridState extends State<NonogramGrid> {
         child: CustomPaint(
           isComplex: true,
           painter: GridPainter(
-            boxItems: widget.boxItems,
-            side: widget.gridItemSide,
-            highlightedBoxes: widget.highlightedBoxes,
-            solution: widget.solution,
-            onTap: widget.gestures?.onTap,
+            gridStateParams: widget.gridStateParams,
+            gridViewParams: widget.gridViewParams,
           ),
         ),
       ),

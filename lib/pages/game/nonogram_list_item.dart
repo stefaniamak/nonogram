@@ -10,7 +10,8 @@ import 'package:nonogram/pages/game/widgets/nonogram_title.dart';
 
 class NonogramListItem extends StatelessWidget {
   const NonogramListItem({
-    required this.nonogram, super.key,
+    required this.nonogram,
+    super.key,
   });
 
   final IsolateNonogram nonogram;

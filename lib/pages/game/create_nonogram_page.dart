@@ -10,6 +10,7 @@ import 'package:nonogram/config/app_theme.dart';
 import 'package:nonogram/pages/app_page.dart';
 import 'package:nonogram/pages/game/nonogram_grid_and_clues.dart';
 import 'package:nonogram/pages/game/nonogram_page.dart';
+import 'package:nonogram/painters/grid_painter.dart';
 import 'package:nonogram/painters/nonogram_grid.dart';
 
 /// A stateful widget that represents the page for creating a Nonogram puzzle.
@@ -84,7 +85,6 @@ class _CreateNonogramPageState extends State<CreateNonogramPage> {
   /// and all the grid gestures.
   NonogramGridAndClues buildGridAndClues(CreateNonogramState state, CreateNonogramCubit createNonogramCubit, MediaQueryData md) {
     return NonogramGridAndClues(
-      solution: state.solution,
       clues: IsolateClues(
         columns: state.horizontalClues,
         rows: state.verticalClues,
@@ -93,17 +93,17 @@ class _CreateNonogramPageState extends State<CreateNonogramPage> {
         createNonogramCubit.setSelectedLine(axis, index, cluesLine);
         textEditingController.text = cluesLine.join(',');
       },
-      padding: const EdgeInsets.all(32),
-      boxItems: Size(state.width.toDouble(), state.height.toDouble()),
-      maxSize: Size(
-        md.size.width > AppTheme.maxScreenConstraint ? 1000 : md.size.width * 0.8,
-        md.size.height - md.padding.vertical - 200 - kToolbarHeight,
-      ),
+      gridStateParams: GridStateParams(solution: state.solution),
       gridGestures: GridGestures(
         onTap: createNonogramCubit.updateBox,
         onPan: createNonogramCubit.onPan,
         onPanEnd: state.editingSettings.updateOnPanEnd ? createNonogramCubit.onPanEnd : null,
       ),
+      maxSize: Size(
+        md.size.width > AppTheme.maxScreenConstraint ? 1000 : md.size.width * 0.8,
+        md.size.height - md.padding.vertical - 200 - kToolbarHeight,
+      ),
+      padding: const EdgeInsets.all(32),
     );
   }
 

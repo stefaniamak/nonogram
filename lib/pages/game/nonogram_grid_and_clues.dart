@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:nonogram/backend/models/isolate/isolate_clues.dart';
 import 'package:nonogram/pages/game/nono_clues.dart';
 import 'package:nonogram/pages/game/nonogram_ui.dart';
+import 'package:nonogram/painters/grid_painter.dart';
 import 'package:nonogram/painters/nonogram_grid.dart';
 
 /// A stateless widget that represents a Nonogram grid and its clues.
@@ -15,45 +16,40 @@ class NonogramGridAndClues extends StatelessWidget {
   /// Provide just the [clues] parameter to display an empty grid with its clues.
   const NonogramGridAndClues({
     required this.clues,
-    this.solution,
-    this.maxSize,
-    this.boxItems,
     this.onLineTap,
-    this.padding = EdgeInsets.zero,
+    this.gridStateParams,
     this.gridGestures,
-    this.highlightedBoxes = const <int>[],
+    this.maxSize,
+    this.padding = EdgeInsets.zero,
     super.key,
   });
 
   /// The clues for the Nonogram puzzle.
   final IsolateClues clues;
 
-  /// The solution for the Nonogram puzzle.
-  final String? solution;
-
-  /// The size of each grid item.
-  final Size? boxItems;
-
-  /// The padding for the grid and clues.
-  final EdgeInsets padding;
-
-  /// The maximum size for the grid and clues.
-  final Size? maxSize;
-
-  /// Callback function to be called when a clue line is tapped.
-  final Function(Axis axis, int index, List<int>)? onLineTap;
+  /// The parameters for the grid state.
+  final GridStateParams? gridStateParams;
 
   /// The gestures for the grid.
   final GridGestures? gridGestures;
 
-  /// List of indices of highlighted boxes in the grid (usually the last solution step's boxes).
-  final List<int> highlightedBoxes;
+  /// Callback function to be called when a clue line is tapped.
+  final Function(Axis axis, int index, List<int>)? onLineTap;
+
+  /// The maximum size for the grid and clues.
+  final Size? maxSize;
+
+  /// The padding for the grid and clues.
+  final EdgeInsets padding;
 
   @override
   Widget build(BuildContext context) {
     final MediaQueryData md = MediaQuery.of(context);
     final Size maxSize = this.maxSize ?? md.size;
-    final Size puzzleSize = Size(boxItems?.width ?? clues.columnLength + 0, boxItems?.height ?? clues.rowLength + 0);
+    final Size puzzleSize = Size(
+      clues.columnLength.toDouble(),
+      clues.rowLength.toDouble(),
+    );
     final NonogramUi nonogramUi = useNonogramUi(puzzleSize, clues, maxSize, padding);
 
     return Container(
@@ -80,12 +76,12 @@ class NonogramGridAndClues extends StatelessWidget {
                 onEdit: onLineTap,
               ),
               NonogramGrid(
-                gridItemSide: nonogramUi.gridItemSide,
-                size: nonogramUi.gridSize,
-                boxItems: Size(clues.columnLength + 0, clues.rowLength + 0),
-                solution: solution ?? Iterable<String>.generate(clues.columnLength * clues.rowLength, (_) => '?').join(),
                 gestures: gridGestures,
-                highlightedBoxes: highlightedBoxes,
+                gridStateParams: gridStateParams,
+                gridViewParams: GridViewParams(
+                  boxItems: puzzleSize,
+                  side: nonogramUi.gridItemSide,
+                ),
               ),
             ],
           ),
