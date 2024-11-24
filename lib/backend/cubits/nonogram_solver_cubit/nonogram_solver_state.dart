@@ -34,6 +34,9 @@ class NonogramSolverState {
   // UI
   final int stepNumber;
 
+  String get dateTimeDifference =>
+      startDateTime != null ? (endingDateTime ?? DateTime.now()).difference(startDateTime!).toString() : '-';
+
   NonogramSolverState copyWith({
     final SolverStatus? solverStatus,
     final IsolateNonogram? nonogram,
