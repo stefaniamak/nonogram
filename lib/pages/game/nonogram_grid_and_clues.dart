@@ -46,11 +46,7 @@ class NonogramGridAndClues extends StatelessWidget {
   Widget build(BuildContext context) {
     final MediaQueryData md = MediaQuery.of(context);
     final Size maxSize = this.maxSize ?? md.size;
-    final Size puzzleSize = Size(
-      clues.columnLength.toDouble(),
-      clues.rowLength.toDouble(),
-    );
-    final NonogramUi nonogramUi = useNonogramUi(puzzleSize, clues, maxSize, padding);
+    final NonogramUi nonogramUi = useNonogramUi(clues, maxSize, padding);
 
     return Container(
       width: nonogramUi.size.width,
@@ -79,7 +75,7 @@ class NonogramGridAndClues extends StatelessWidget {
                 gestures: gridGestures,
                 gridStateParams: gridStateParams,
                 gridViewParams: GridViewParams(
-                  boxItems: puzzleSize,
+                  boxItems: nonogramUi.boxesNumb,
                   side: nonogramUi.gridItemSide,
                 ),
               ),
