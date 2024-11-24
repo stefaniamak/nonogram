@@ -292,7 +292,7 @@ packages:
     source: hosted
     version: "1.0.4"
   isolate_manager:
-    dependency: "direct main"
+    dependency: "direct dev"
     description:
       name: isolate_manager
       sha256: "4ced9a0c31d1ca5ed34885b5968dd8d4bb587cf3442f9573daf1967cb42a05d0"
@@ -316,7 +316,7 @@ packages:
     source: hosted
     version: "4.9.0"
   json_serializable:
-    dependency: "direct main"
+    dependency: "direct dev"
     description:
       name: json_serializable
       sha256: ea1432d167339ea9b5bb153f0571d0039607a873d6e04e0117af043f14a1fd4b

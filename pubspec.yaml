@@ -10,22 +10,20 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  bloc: ^8.1.4
   built_collection: ^5.1.1
   dio: ^5.3.3
-  sliver_tools: ^0.2.12
-  isolate_manager: ^5.2.1+1
-  bloc: ^8.1.4
   flutter_bloc: ^8.1.6
-  json_serializable: ^6.8.0
+  sliver_tools: ^0.2.12
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   build_runner: ^2.3.3
-  json_annotation: ^4.9.0
-
   flutter_lints: ^2.0.0
-
+  isolate_manager: ^5.2.1+1
+  json_annotation: ^4.9.0
+  json_serializable: ^6.8.0
 
 flutter:
   uses-material-design: true
