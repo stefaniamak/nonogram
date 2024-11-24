@@ -6,6 +6,7 @@ class AppTheme {
   static Radius sliderTrackRadius = const Radius.circular(8);
   static double maxScreenConstraint = 1200;
   static double mediumScreenConstraint = 700;
+  static double maxInfoBoxWidth = 460;
 
   static bool hasReachedMaxWidth(BuildContext context) {
     return MediaQuery.of(context).size.width > maxScreenConstraint;
