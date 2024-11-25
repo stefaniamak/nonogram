@@ -1,13 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:nonogram/backend/models/isolate/isolate_nonogram.dart';
 
+/// A stateless widget that displays the title and description of a Nonogram.
 class NonogramTitle extends StatelessWidget {
+  /// Creates a NonogramTitle widget.
+  ///
+  /// The [nonogram] parameter is required and represents the Nonogram data.
+  /// The [showDescription] parameter is optional and defaults to true. It determines whether the description should be shown.
   const NonogramTitle({
-    required this.nonogram, super.key,
+    required this.nonogram,
     this.showDescription = true,
+    super.key,
   });
 
+  /// The Nonogram data to be displayed.
   final IsolateNonogram nonogram;
+
+  /// Whether to show the description of the Nonogram.
   final bool showDescription;
 
   @override
