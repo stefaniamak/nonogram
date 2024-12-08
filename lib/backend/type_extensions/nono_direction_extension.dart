@@ -61,7 +61,7 @@ extension NonoDirectionExtension on NonoDirection {
       case NonoDirection.before:
         return charIndex - 1 >= 0;
       case NonoDirection.after:
-        return charIndex + clue + otherClues.reduce((int value, int element) => value + element) + otherClues.length <
+        return charIndex + clue + otherClues.reduce((int value, int element) => value + element) + otherClues.length - 1 <
             solutionListLength;
     }
   }
