@@ -17,10 +17,7 @@ class CreateNonogramState {
     this.editingSettings = const EditingSettings(),
   })  : horizontalClues = horizontalClues ?? List<List<int>>.generate(width, (_) => <int>[0]),
         verticalClues = verticalClues ?? List<List<int>>.generate(height, (_) => <int>[0]),
-        solution = solution ?? Iterable.generate(width * height, (_) => '?').join();
-  // assert(horizontalClues != null && horizontalClues.length == width),
-  // assert(verticalClues != null && verticalClues.length == height),
-  // assert(solution != null && solution.length == width * height);
+        solution = solution ?? List<String>.filled(width * height, '?').join();
 
   final int width;
   final int height;
