@@ -6,7 +6,9 @@ import 'package:nonogram/backend/models/isolate/isolate_nonogram_info.dart';
 
 const int _baseValue = 5;
 
+/// Represents the state of creating a Nonogram.
 class CreateNonogramState {
+  /// Creates a new instance of [CreateNonogramState].
   CreateNonogramState({
     this.width = _baseValue,
     this.height = _baseValue,
@@ -19,20 +21,37 @@ class CreateNonogramState {
         verticalClues = verticalClues ?? List<List<int>>.generate(height, (_) => <int>[0]),
         solution = solution ?? List<String>.filled(width * height, '?').join();
 
+  /// The width of the Nonogram grid.
   final int width;
+
+  /// The height of the Nonogram grid.
   final int height;
+
+  /// The horizontal clues for the Nonogram.
   final List<List<int>> horizontalClues;
+
+  /// The vertical clues for the Nonogram.
   final List<List<int>> verticalClues;
+
+  /// The solution string for the Nonogram.
   final String solution;
+
+  /// The currently selected line for editing.
   final SelectedLine? selectedLine;
+
+  /// The settings for editing the Nonogram.
   final EditingSettings editingSettings;
 
+  /// Returns an [IsolateNonogram] representation of the current state.
   IsolateNonogram get nonogram => IsolateNonogram(
         id: "-",
         clues: IsolateClues(columns: horizontalClues, rows: verticalClues),
         info: const IsolateNonogramInfo(title: 'Custom Puzzle', author: 'You'),
       );
 
+  /// Creates a copy of the current state with the given parameters.
+  ///
+  /// Returns a new instance of [CreateNonogramState] with the updated values.
   CreateNonogramState copyWith({
     final int? width,
     final int? height,
