@@ -292,7 +292,7 @@ packages:
     source: hosted
     version: "1.0.4"
   isolate_manager:
-    dependency: "direct dev"
+    dependency: "direct main"
     description:
       name: isolate_manager
       sha256: "4ced9a0c31d1ca5ed34885b5968dd8d4bb587cf3442f9573daf1967cb42a05d0"
