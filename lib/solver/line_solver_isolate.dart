@@ -69,7 +69,7 @@ void lineSolverIsolate(dynamic params) {
           // print('stackstack: $stack');
           // print('progress.stack: ${progress.stack}');
           // stack.addAll(progress.stack.where((e) => !stack.contains(e)));
-          if (progress.stack.isNotEmpty) stack.addAll(progress.stack);
+          if (progress.stack.isNotEmpty) stack.updateStack(progress.stack);
           // stack = progress.stack;
           if (progress.solutionSteps.isNotEmpty) solutionSteps = progress.solutionSteps;
         }
@@ -208,7 +208,7 @@ IsolateOutput? loopSides(
             // var tempStack = finalStack;
             // output.stack.addAll(tempStack.updateStack([charIndex], lineType));
 
-            tempStack = tempStack.updateStack(<int>[charIndex], lineType);
+            tempStack = tempStack.getNewStackElements(<int>[charIndex], lineType);
             newSolutionSteps.add(
               SolutionStep(
                 currentSolution: fullUpdatedSolution,
@@ -322,7 +322,7 @@ IsolateOutput? loopSides(
 
         // TODO(stef): restore these two bellow
         return IsolateOutput(
-          stack: output.stack.updateStack(charIndexesOfQMarks, lineType),
+          stack: output.stack.getNewStackElements(charIndexesOfQMarks, lineType),
           solutionSteps: <SolutionStep>[
             SolutionStep(
               currentSolution: fullUpdatedSolution,
@@ -470,12 +470,12 @@ IsolateOutput? loopSides(
               final List<Map<int, NonoAxis>> tempStack = finalStack;
               // print('runs..????');
               // print('finalStack before: ${tempStack.length} - $tempStack');
-              finalStack
-                  .addAll(tempStack.updateStack(<int>[lineIndex], lineType == NonoAxis.row ? NonoAxis.column : NonoAxis.row));
+              finalStack.addAll(
+                  tempStack.getNewStackElements(<int>[lineIndex], lineType == NonoAxis.row ? NonoAxis.column : NonoAxis.row));
               // print('finalStack after: ${finalStack.length} - $finalStack');
             }
 
-            finalStack.addAll(finalStack.updateStack(charIndexes, lineType));
+            finalStack.addAll(finalStack.getNewStackElements(charIndexes, lineType));
             final SolutionStep solutionStep = SolutionStep(
               currentSolution: fullUpdatedSolution,
               axis: lineType,
@@ -568,7 +568,7 @@ IsolateOutput? loopSides(
             //
             // output.stack.addAll(output.stack.updateStack([charIndex], lineType));
             // state.stack.updateStack([charIndex], lineType, state);
-            tempStack = tempStack.updateStack(<int>[charIndex], lineType);
+            tempStack = tempStack.getNewStackElements(<int>[charIndex], lineType);
             newSolutionSteps.add(
               SolutionStep(
                 currentSolution: fullUpdatedSolution,
@@ -612,8 +612,8 @@ IsolateOutput? loopSides(
               // ));
               // state.stack.updateStack([charIndex], lineType, state);
 
-              finalStack.addAll(tempStack.updateStack(<int>[charIndex], lineType));
-              finalStack.updateStack(<int>[charIndex], lineType);
+              finalStack.addAll(tempStack.getNewStackElements(<int>[charIndex], lineType));
+              finalStack.getNewStackElements(<int>[charIndex], lineType);
               // tempStack = tempStack.updateStack([charIndex], lineType);
               newSolutionSteps.add(
                 SolutionStep(
