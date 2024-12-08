@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nonogram/backend/cubits/nonogram_solver_cubit/nonogram_solver_cubit.dart';
 import 'package:nonogram/backend/models/isolate/isolate_nonogram.dart';
 import 'package:nonogram/config/app_theme.dart';
+import 'package:nonogram/config/enums/solver_status.dart';
 import 'package:nonogram/pages/app_page.dart';
 import 'package:nonogram/pages/game/nonogram_grid_and_clues.dart';
 import 'package:nonogram/pages/game/widgets/nonogram_title.dart';
