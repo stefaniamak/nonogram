@@ -747,15 +747,16 @@ bool doOtherCluesFit(NonoDirection solutionSide, List<int> clues, int clueIndex,
   }
   if (printPrints) print('It does. Continue checking.');
 
+  final List<int> cluesSublist = solutionSide.getCluesSublist(clueIndex, clues);
+
   if (printPrints) print('Does clue have boxes left for clues left?');
-  if (!solutionSide.hasBoxesLeft(solutionIndex, clue, solution.split('').length)) {
+  if (!solutionSide.hasBoxesLeft(solutionIndex, clue, solution, cluesSublist)) {
     if (printPrints) print('It does not. Return `false`.');
     return false;
   }
   if (printPrints) print('It does. Continue checking.');
 
   final String solutionSublist = solutionSide.getSolutionSublist(solution, solutionIndex, clue);
-  final List<int> cluesSublist = solutionSide.getCluesSublist(clueIndex, clues);
   if (printPrints) print('Does solution sublist $solutionSublist fit clues $cluesSublist?');
   for (int solutionSublistIndex = 0; solutionSublistIndex < solutionSublist.length; solutionSublistIndex++) {
     if (canCluesFit(cluesSublist, solutionSublist, solutionSublistIndex, 0, output, settings)) {

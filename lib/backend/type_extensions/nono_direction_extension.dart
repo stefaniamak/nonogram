@@ -26,11 +26,14 @@ extension NonoDirectionExtension on NonoDirection {
   }
 
   bool hasBoxesLeft(int charIndex, int clue, int solutionListLength) {
+  bool hasBoxesLeft(int charIndex, int clue, String solution, List<int> otherClues) {
+    final int solutionListLength = solution.split('').length;
     switch (this) {
       case NonoDirection.before:
         return charIndex - 1 >= 0;
       case NonoDirection.after:
-        return charIndex + clue + 1 < solutionListLength;
+        return charIndex + clue + otherClues.reduce((int value, int element) => value + element) + otherClues.length <
+            solutionListLength;
     }
   }
 
