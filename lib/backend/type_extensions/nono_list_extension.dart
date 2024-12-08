@@ -17,21 +17,21 @@ extension NonoMapListExtension on List<Map<int, NonoAxis>> {
     final NonoAxis newAxis = lineType == NonoAxis.row ? NonoAxis.column : NonoAxis.row;
     final List<Map<int, NonoAxis>> newStackElements =
         charIndexes.map((int charIndex) => <int, NonoAxis>{charIndex: newAxis}).toList();
-    List<Map<int, NonoAxis>> finalStackElements = newStackElements;
-
-    if (finalStackElements.length > 1) {
-      final List<Map<int, NonoAxis>> commonStackElements = newStackElements.toSet().intersection(toSet()).toList();
-      finalStackElements = newStackElements;
-      finalStackElements.removeWhere((Map<int, NonoAxis> element) => commonStackElements.contains(element));
-    }
-    return finalStackElements;
+    return newStackElements;
   }
 
   List<Map<int, NonoAxis>> updateStack(List<Map<int, NonoAxis>> newStackElements) {
+    // print('this: $this');
+    // print('newStackElements: $newStackElements');
+
     for (final Map<int, NonoAxis> element in newStackElements) {
-      if (contains(element)) {
+      // print('runn: $element');
+      int duplicateIndex =
+          indexWhere((Map<int, NonoAxis> e) => e.keys.first == element.keys.first && e.values.first == element.values.first);
+      if (duplicateIndex >= 0) {
+        print('front?');
         remove(element);
-        insert(0, element);
+        insert((duplicateIndex / 2).ceil(), element);
       } else {
         add(element);
       }

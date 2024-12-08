@@ -40,6 +40,8 @@ void lineSolverIsolate(dynamic params) {
         // print('stack: $stack');
         final Map<int, NonoAxis> line = stack.first;
 
+        // print('checks line $line');
+
         final List<int> clues = (line.values.first == NonoAxis.row ? input.nonogram.clues.rows : input.nonogram.clues.columns)
             .elementAt(line.keys.first);
         progress = loopSides(
@@ -69,7 +71,8 @@ void lineSolverIsolate(dynamic params) {
           // print('stackstack: $stack');
           // print('progress.stack: ${progress.stack}');
           // stack.addAll(progress.stack.where((e) => !stack.contains(e)));
-          if (progress.stack.isNotEmpty) stack.updateStack(progress.stack);
+          // if (progress.stack.isNotEmpty) stack.updateStack(progress.stack);
+          if (progress.stack.isNotEmpty) stack.addAll(progress.stack);
           // stack = progress.stack;
           if (progress.solutionSteps.isNotEmpty) solutionSteps = progress.solutionSteps;
         }
@@ -100,7 +103,7 @@ void lineSolverIsolate(dynamic params) {
 }
 
 // @isolateManagerCustomWorker
-IsolateOutput? loopSides(
+IsolateOutput loopSides(
   int lineIndex,
   List<int> clues,
   NonoAxis lineType,
@@ -196,7 +199,7 @@ IsolateOutput? loopSides(
     if (initialSolution.split('').toList().contains('?')) {
       // TODO(stef): restore groupSteps
       if (!settings.groupSteps) {
-        List<Map<int, NonoAxis>> tempStack = output.stack;
+        final List<Map<int, NonoAxis>> tempStack = <Map<int, NonoAxis>>[];
         final List<SolutionStep> newSolutionSteps = <SolutionStep>[];
         for (int charIndex = 0; charIndex < initialSolution.length; charIndex++) {
           if (initialSolution.characterAt(charIndex) == '?') {
@@ -208,7 +211,7 @@ IsolateOutput? loopSides(
             // var tempStack = finalStack;
             // output.stack.addAll(tempStack.updateStack([charIndex], lineType));
 
-            tempStack = tempStack.getNewStackElements(<int>[charIndex], lineType);
+            tempStack.addAll(tempStack.getNewStackElements(<int>[charIndex], lineType));
             newSolutionSteps.add(
               SolutionStep(
                 currentSolution: fullUpdatedSolution,
@@ -402,7 +405,7 @@ IsolateOutput? loopSides(
       final Map<int, List<int>> result = matchMap.map((int key, Set<int> value) => MapEntry(key, value.toList()));
       // print('result: $result');
 
-      final List<Map<int, NonoAxis>> finalStack = output.stack; // List.from(output.stack);
+      final List<Map<int, NonoAxis>> finalStack = []; //output.stack; // List.from(output.stack);
       List<int> newFilledBoxes = <int>[];
       final List<SolutionStep> newSolutionSteps = <SolutionStep>[];
       String fullUpdatedSolution = output.solutionSteps.last.currentSolution;
@@ -530,7 +533,7 @@ IsolateOutput? loopSides(
     } else {
       String updatedSolution = initialSolution;
 
-      final List<Map<int, NonoAxis>> finalStack = output.stack;
+      final List<Map<int, NonoAxis>> finalStack = []; // output.stack;
       List<Map<int, NonoAxis>> tempStack = finalStack;
       final List<SolutionStep> newSolutionSteps = <SolutionStep>[];
 
@@ -568,7 +571,8 @@ IsolateOutput? loopSides(
             //
             // output.stack.addAll(output.stack.updateStack([charIndex], lineType));
             // state.stack.updateStack([charIndex], lineType, state);
-            tempStack = tempStack.getNewStackElements(<int>[charIndex], lineType);
+            // tempStack = tempStack.getNewStackElements(<int>[charIndex], lineType);
+            finalStack.addAll(tempStack.getNewStackElements(<int>[charIndex], lineType));
             newSolutionSteps.add(
               SolutionStep(
                 currentSolution: fullUpdatedSolution,
@@ -613,7 +617,7 @@ IsolateOutput? loopSides(
               // state.stack.updateStack([charIndex], lineType, state);
 
               finalStack.addAll(tempStack.getNewStackElements(<int>[charIndex], lineType));
-              finalStack.getNewStackElements(<int>[charIndex], lineType);
+              // finalStack.getNewStackElements(<int>[charIndex], lineType);
               // tempStack = tempStack.updateStack([charIndex], lineType);
               newSolutionSteps.add(
                 SolutionStep(
@@ -685,7 +689,7 @@ IsolateOutput? loopSides(
     // boxesCheckedList: output.boxesCheckedList,
     // otherBoxesCheckedList: output.otherBoxesCheckedList,
   );
-  return null;
+  // return null;
 }
 
 // @isolateManagerCustomWorker
