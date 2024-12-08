@@ -1,3 +1,8 @@
-enum NonoAxisAlignment { start, end }
+/// An enumeration representing the alignment options for Nonogram axes [NonoAxis].
+enum NonoAxisAlignment {
+  /// Aligns the Nonogram axis to the start.
+  start,
 
-extension NonoAxisAlignmentExtension on NonoAxisAlignment {}
+  /// Aligns the Nonogram axis to the end.
+  end
+}
