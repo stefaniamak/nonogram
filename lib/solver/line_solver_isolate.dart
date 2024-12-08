@@ -101,8 +101,14 @@ void lineSolverIsolate(dynamic params) {
 
 // @isolateManagerCustomWorker
 IsolateOutput? loopSides(
-    int lineIndex, List<int> clues, NonoAxis lineType, IsolateNonogram nonogram, IsolateOutput output, SolverSettings settings,
-    [bool printPrints = false,]) {
+  int lineIndex,
+  List<int> clues,
+  NonoAxis lineType,
+  IsolateNonogram nonogram,
+  IsolateOutput output,
+  SolverSettings settings, [
+  bool printPrints = false,
+]) {
   output.linesCheckedList.add(output.linesCheckedList.last + 1);
   output.linesCheckedList.removeAt(0);
 
@@ -297,11 +303,13 @@ IsolateOutput? loopSides(
 
         // TODO(stef): add "useLookbehind" variable
         if (false) {
-          final String lookbehinds =
-              charIndexesOfQMarks.map((int pos) => '^.{${lineType.getSolutionPosition(lineIndex, pos, nonogram.width)}}').join('|');
+          final String lookbehinds = charIndexesOfQMarks
+              .map((int pos) => '^.{${lineType.getSolutionPosition(lineIndex, pos, nonogram.width)}}')
+              .join('|');
           final RegExp solutionIndexesRegexp = RegExp(r'(?<=' + lookbehinds + r').');
 
-          fullUpdatedSolution = output.solutionSteps.last.currentSolution.replaceAllMapped(solutionIndexesRegexp, (Match match) => '0');
+          fullUpdatedSolution =
+              output.solutionSteps.last.currentSolution.replaceAllMapped(solutionIndexesRegexp, (Match match) => '0');
           if (printPrints) print('fullUpdatedSolution: $fullUpdatedSolution');
         } else {
           for (final int charIndex in charIndexesOfQMarks) {
@@ -462,7 +470,8 @@ IsolateOutput? loopSides(
               final List<Map<int, NonoAxis>> tempStack = finalStack;
               // print('runs..????');
               // print('finalStack before: ${tempStack.length} - $tempStack');
-              finalStack.addAll(tempStack.updateStack(<int>[lineIndex], lineType == NonoAxis.row ? NonoAxis.column : NonoAxis.row));
+              finalStack
+                  .addAll(tempStack.updateStack(<int>[lineIndex], lineType == NonoAxis.row ? NonoAxis.column : NonoAxis.row));
               // print('finalStack after: ${finalStack.length} - $finalStack');
             }
 
@@ -532,7 +541,8 @@ IsolateOutput? loopSides(
           if (printPrints) print('Yes it is.');
           if (printPrints) {
             print(
-                'Are all possible solutions (${allLineSolutions.elementAt(charIndex)}) of box at index $charIndex only zeros (0)?',);
+              'Are all possible solutions (${allLineSolutions.elementAt(charIndex)}) of box at index $charIndex only zeros (0)?',
+            );
           }
 
           if (allLineSolutions.elementAt(charIndex).everyElementIsZero) {
@@ -679,12 +689,18 @@ IsolateOutput? loopSides(
 }
 
 // @isolateManagerCustomWorker
-List<List<String>> getAllLinePossibleSolutions(List<int> clues, String line, IsolateOutput output, SolverSettings settings,
-    [bool printPrints = false,]) {
+List<List<String>> getAllLinePossibleSolutions(
+  List<int> clues,
+  String line,
+  IsolateOutput output,
+  SolverSettings settings, [
+  bool printPrints = false,
+]) {
   if (printPrints) print('Get all possible solutions of line $line with clues $clues');
   final List<List<String>> possibleSolutions = Iterable.generate(line.length, (_) => <String>[]).toList();
   for (int clueIndex = 0; clueIndex < clues.length; clueIndex++) {
-    final int minStartingPoint = clueIndex == 0 ? 0 : clues.take(clueIndex).reduce((int value, int element) => value + element + 1);
+    final int minStartingPoint =
+        clueIndex == 0 ? 0 : clues.take(clueIndex).reduce((int value, int element) => value + element + 1);
     final int maxStartingPoint = clueIndex == clues.length - 1
         ? line.length
         : line.length - clues.sublist(clueIndex + 1).reduce((int value, int element) => value + element + 1) - clues[clueIndex];
@@ -724,9 +740,16 @@ List<List<String>> getAllLinePossibleSolutions(List<int> clues, String line, Iso
 }
 
 // @isolateManagerCustomWorker
-bool doOtherCluesFit(NonoDirection solutionSide, List<int> clues, int clueIndex, String solution, int solutionIndex,
-    IsolateOutput output, SolverSettings settings,
-    [bool printPrints = false,]) {
+bool doOtherCluesFit(
+  NonoDirection solutionSide,
+  List<int> clues,
+  int clueIndex,
+  String solution,
+  int solutionIndex,
+  IsolateOutput output,
+  SolverSettings settings, [
+  bool printPrints = false,
+]) {
   final int clue = clues.elementAt(clueIndex);
 
   // if (state.countCheckedBoxes) state.updateOtherBoxesChecked();
@@ -776,8 +799,15 @@ bool doOtherCluesFit(NonoDirection solutionSide, List<int> clues, int clueIndex,
 }
 
 // @isolateManagerCustomWorker
-bool canCluesFit(List<int> clues, String solution, int s, int cl, IsolateOutput output, SolverSettings settings,
-    [bool printPrints = false,]) {
+bool canCluesFit(
+  List<int> clues,
+  String solution,
+  int s,
+  int cl,
+  IsolateOutput output,
+  SolverSettings settings, [
+  bool printPrints = false,
+]) {
   final List<String> solutionList = solution.split('');
   final int clue = clues.elementAt(cl);
   bool canFit;
@@ -812,8 +842,12 @@ bool canCluesFit(List<int> clues, String solution, int s, int cl, IsolateOutput 
 }
 
 // @isolateManagerCustomWorker
-List<String> getSideMostSolution(List<List<String>> solution, List<int> clues, NonoAxisAlignment axis,
-    [bool printPrints = false,]) {
+List<String> getSideMostSolution(
+  List<List<String>> solution,
+  List<int> clues,
+  NonoAxisAlignment axis, [
+  bool printPrints = false,
+]) {
   if (printPrints) print('Get ${axis.name}ing most solution of solution $solution with clues $clues');
 
   List<int> clueIndexes = Iterable<int>.generate(clues.length, (int c) => c + 2).toList();
@@ -844,9 +878,11 @@ List<String> getSideMostSolution(List<List<String>> solution, List<int> clues, N
 
     if (printPrints) print('Is solution completed?');
     if (printPrints) {
-      print(sideMostSolution.length < solution.length
-          ? 'No, not finished. Add "0" for space at sideMostSolution list and create a new sublist after clue added'
-          : 'Yes it is. Move on',);
+      print(
+        sideMostSolution.length < solution.length
+            ? 'No, not finished. Add "0" for space at sideMostSolution list and create a new sublist after clue added'
+            : 'Yes it is. Move on',
+      );
     }
     if (sideMostSolution.length < solution.length) {
       sideMostSolution.add('0');
