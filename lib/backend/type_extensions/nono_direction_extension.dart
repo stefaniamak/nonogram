@@ -40,7 +40,7 @@ extension NonoDirectionExtension on NonoDirection {
   String getSolutionSublist(String solution, int charIndex, int clue) {
     switch (this) {
       case NonoDirection.before:
-        return '${solution.split('').sublist(0, charIndex - 1).join()}0';
+        return solution.split('').sublist(0, charIndex - 1).join();
       case NonoDirection.after:
         return solution.split('').sublist(charIndex + clue + 1).join();
     }
