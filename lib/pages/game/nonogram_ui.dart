@@ -1,7 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
-import 'package:nonogram/backend/models/isolate/isolate_clues.dart';
+import 'package:nonogram/backend/models/nonogram/clues.dart';
 
 /// A class which calculates the final sizes of the clues list and grid size
 /// for a Nonogram puzzle.
@@ -38,7 +38,7 @@ class NonogramUi {
 /// The [padding] parameter specifies the padding around the Nonogram UI, and is optional.
 ///
 /// Returns an instance of `NonogramUi` containing the calculated UI parameters.
-NonogramUi useNonogramUi(IsolateClues clues, Size maxSize, [EdgeInsets padding = EdgeInsets.zero]) {
+NonogramUi useNonogramUi(Clues clues, Size maxSize, [EdgeInsets padding = EdgeInsets.zero]) {
   final Size boxesNumb = Size(clues.columnLength.toDouble(), clues.rowLength.toDouble());
 
   double width = maxSize.width - padding.horizontal;

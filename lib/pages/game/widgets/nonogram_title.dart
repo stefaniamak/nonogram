@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:nonogram/backend/models/isolate/isolate_nonogram.dart';
+import 'package:nonogram/backend/models/nonogram/nonogram.dart';
 
 /// A stateless widget that displays the title and description of a Nonogram.
 class NonogramTitle extends StatelessWidget {
@@ -14,7 +14,7 @@ class NonogramTitle extends StatelessWidget {
   });
 
   /// The Nonogram data to be displayed.
-  final IsolateNonogram nonogram;
+  final Nonogram nonogram;
 
   /// Whether to show the description of the Nonogram.
   final bool showDescription;

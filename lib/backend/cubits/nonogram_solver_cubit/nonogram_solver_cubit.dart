@@ -2,12 +2,12 @@ import 'dart:convert';
 
 import 'package:bloc/bloc.dart';
 import 'package:isolate_manager/isolate_manager.dart';
-import 'package:nonogram/backend/models/isolate/isolate_clues.dart';
 import 'package:nonogram/backend/models/isolate/isolate_input.dart';
-import 'package:nonogram/backend/models/isolate/isolate_nonogram.dart';
 import 'package:nonogram/backend/models/isolate/isolate_output.dart';
-import 'package:nonogram/backend/models/isolate/solver_settings.dart';
+import 'package:nonogram/backend/models/nonogram/clues.dart';
+import 'package:nonogram/backend/models/nonogram/nonogram.dart';
 import 'package:nonogram/backend/models/solution_step.dart';
+import 'package:nonogram/backend/models/solver_settings.dart';
 import 'package:nonogram/backend/type_extensions/nono_axis_extension.dart';
 import 'package:nonogram/config/enums/solver_status.dart';
 import 'package:nonogram/config/nullable.dart';
@@ -25,7 +25,7 @@ class NonogramSolverCubit extends Cubit<NonogramSolverState> {
   /// This method updates the Nonogram and resets the puzzle.
   ///
   /// [nonogram]: The Nonogram to be solved.
-  Future<void> initialize({required IsolateNonogram nonogram}) async {
+  Future<void> initialize({required Nonogram nonogram}) async {
     updateNonogram(nonogram);
     resetPuzzle();
   }
@@ -134,7 +134,7 @@ class NonogramSolverCubit extends Cubit<NonogramSolverState> {
   /// Updates the Nonogram with the given [nonogram].
   ///
   /// [nonogram]: The new Nonogram to be updated.
-  void updateNonogram(IsolateNonogram nonogram) {
+  void updateNonogram(Nonogram nonogram) {
     emit(state.copyWith(nonogram: nonogram));
   }
 
@@ -225,7 +225,7 @@ class NonogramSolverCubit extends Cubit<NonogramSolverState> {
   /// [clues]: The clues to initialize the stack list.
   ///
   /// Returns a list of maps representing the stack list.
-  List<Map<int, NonoAxis>> initializeStackList(IsolateClues clues) {
+  List<Map<int, NonoAxis>> initializeStackList(Clues clues) {
     final List<Map<int, NonoAxis>> lineStack = <Map<int, NonoAxis>>[];
 
     for (int i = 0; i < clues.rows.length; i++) {

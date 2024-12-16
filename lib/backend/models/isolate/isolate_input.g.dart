@@ -7,8 +7,7 @@ part of 'isolate_input.dart';
 // **************************************************************************
 
 IsolateInput _$IsolateInputFromJson(Map<String, dynamic> json) => IsolateInput(
-      nonogram:
-          IsolateNonogram.fromJson(json['nonogram'] as Map<String, dynamic>),
+      nonogram: Nonogram.fromJson(json['nonogram'] as Map<String, dynamic>),
       solutionSteps: (json['solutionSteps'] as List<dynamic>)
           .map((e) => SolutionStep.fromJson(e as Map<String, dynamic>))
           .toList(),

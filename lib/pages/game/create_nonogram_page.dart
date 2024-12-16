@@ -3,8 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nonogram/backend/cubits/create_nonogram/create_nonogram_cubit.dart';
 import 'package:nonogram/backend/cubits/create_nonogram/create_nonogram_state.dart';
 import 'package:nonogram/backend/cubits/nonogram_solver_cubit/nonogram_solver_cubit.dart';
-import 'package:nonogram/backend/models/isolate/isolate_clues.dart';
-import 'package:nonogram/backend/models/isolate/isolate_nonogram.dart';
+import 'package:nonogram/backend/models/nonogram/clues.dart';
+import 'package:nonogram/backend/models/nonogram/nonogram.dart';
 import 'package:nonogram/config/app_colors.dart';
 import 'package:nonogram/config/app_theme.dart';
 import 'package:nonogram/pages/app_page.dart';
@@ -85,7 +85,7 @@ class _CreateNonogramPageState extends State<CreateNonogramPage> {
   /// and all the grid gestures.
   NonogramGridAndClues buildGridAndClues(CreateNonogramState state, CreateNonogramCubit createNonogramCubit, MediaQueryData md) {
     return NonogramGridAndClues(
-      clues: IsolateClues(
+      clues: Clues(
         columns: state.horizontalClues,
         rows: state.verticalClues,
       ),
@@ -140,7 +140,7 @@ class _CreateNonogramPageState extends State<CreateNonogramPage> {
   OutlinedButton buildSolveButton(CreateNonogramState state, BuildContext context) {
     return OutlinedButton(
       onPressed: () {
-        final IsolateNonogram nonogram = state.nonogram;
+        final Nonogram nonogram = state.nonogram;
         Navigator.push(
           context,
           MaterialPageRoute<void>(

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:nonogram/backend/models/isolate/isolate_clues.dart';
+import 'package:nonogram/backend/models/nonogram/clues.dart';
 
 /// A stateless widget that displays the UI for Nonogram clues.
 class CluesUi extends StatelessWidget {
@@ -18,7 +18,7 @@ class CluesUi extends StatelessWidget {
   });
 
   /// The Nonogram clues to be displayed.
-  final IsolateClues clues;
+  final Clues clues;
 
   /// The size of each clue box.
   final double boxSize;

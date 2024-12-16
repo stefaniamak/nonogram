@@ -1,33 +1,33 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:nonogram/backend/models/isolate/isolate_clues.dart';
-import 'package:nonogram/backend/models/isolate/isolate_nonogram_info.dart';
+import 'package:nonogram/backend/models/nonogram/clues.dart';
+import 'package:nonogram/backend/models/nonogram/nonogram_info.dart';
 
-part 'isolate_nonogram.g.dart';
+part 'nonogram.g.dart';
 
 /// A class representing a nonogram puzzle for an isolate.
 @JsonSerializable()
-class IsolateNonogram {
-  /// Creates a new [IsolateNonogram].
-  const IsolateNonogram({
+class Nonogram {
+  /// Creates a new [Nonogram].
+  const Nonogram({
     required this.id,
     required this.clues,
     this.info,
     this.note,
   });
 
-  factory IsolateNonogram.fromJson(final Map<String, dynamic> json) => _$IsolateNonogramFromJson(json);
+  factory Nonogram.fromJson(final Map<String, dynamic> json) => _$NonogramFromJson(json);
 
   /// The unique identifier of the nonogram.
   final String id;
 
   /// Optional additional information about the nonogram.
-  final IsolateNonogramInfo? info;
+  final NonogramInfo? info;
 
   /// Optional notes about the nonogram.
   final String? note;
 
   /// The clues for the nonogram.
-  final IsolateClues clues;
+  final Clues clues;
 
   /// Gets the width of the nonogram.
   int get width => clues.columns.length;
@@ -49,8 +49,8 @@ class IsolateNonogram {
   /// Returns a string filled with '?' characters representing an empty solution.
   String get emptySolution => List<String>.filled(height * width, '?').join();
 
-  Map<String, dynamic> toJson() => _$IsolateNonogramToJson(this);
+  Map<String, dynamic> toJson() => _$NonogramToJson(this);
 
-  static List<IsolateNonogram> fromJsonList(final List<dynamic> json) =>
-      List<Map<String, dynamic>>.from(json).map((Map<String, dynamic> item) => IsolateNonogram.fromJson(item)).toList();
+  static List<Nonogram> fromJsonList(final List<dynamic> json) =>
+      List<Map<String, dynamic>>.from(json).map((Map<String, dynamic> item) => Nonogram.fromJson(item)).toList();
 }

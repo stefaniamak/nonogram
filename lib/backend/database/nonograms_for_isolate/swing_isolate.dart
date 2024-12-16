@@ -1,10 +1,10 @@
-import 'package:nonogram/backend/models/isolate/isolate_clues.dart';
-import 'package:nonogram/backend/models/isolate/isolate_nonogram.dart';
-import 'package:nonogram/backend/models/isolate/isolate_nonogram_info.dart';
+import 'package:nonogram/backend/models/nonogram/clues.dart';
+import 'package:nonogram/backend/models/nonogram/nonogram.dart';
+import 'package:nonogram/backend/models/nonogram/nonogram_info.dart';
 
-const IsolateNonogram kSwingIsolate = IsolateNonogram(
+const Nonogram kSwingIsolate = Nonogram(
   id: "6",
-  info: IsolateNonogramInfo(
+  info: NonogramInfo(
     title: "Swing",
     copyright: "(c) Copyright 2004 by Jan Wolter",
     author: "Jan Wolter",
@@ -12,7 +12,7 @@ const IsolateNonogram kSwingIsolate = IsolateNonogram(
     description: "A couple of merry dancers.",
   ),
   note: "published,definitely unique,definitely line/color solvable",
-  clues: IsolateClues(
+  clues: Clues(
     columns: <List<int>>[
       <int>[7, 1, 1, 1, 1, 1],
       <int>[2, 2, 4, 1, 4, 1, 5, 1, 4, 1, 4, 1, 2],

@@ -3,7 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nonogram/backend/cubits/nonogram_solver_cubit/nonogram_solver_cubit.dart';
-import 'package:nonogram/backend/models/isolate/isolate_nonogram.dart';
+import 'package:nonogram/backend/models/nonogram/nonogram.dart';
 import 'package:nonogram/config/app_theme.dart';
 import 'package:nonogram/pages/game/nonogram_grid_and_clues.dart';
 import 'package:nonogram/pages/game/nonogram_page.dart';
@@ -20,7 +20,7 @@ class NonogramListItem extends StatelessWidget {
   });
 
   /// The Nonogram data to be displayed in the list item.
-  final IsolateNonogram nonogram;
+  final Nonogram nonogram;
 
   @override
   Widget build(BuildContext context) {

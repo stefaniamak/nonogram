@@ -1,10 +1,10 @@
-import 'package:nonogram/backend/models/isolate/isolate_clues.dart';
-import 'package:nonogram/backend/models/isolate/isolate_nonogram.dart';
-import 'package:nonogram/backend/models/isolate/isolate_nonogram_info.dart';
+import 'package:nonogram/backend/models/nonogram/clues.dart';
+import 'package:nonogram/backend/models/nonogram/nonogram.dart';
+import 'package:nonogram/backend/models/nonogram/nonogram_info.dart';
 
-const IsolateNonogram kCatIsolate = IsolateNonogram(
+const Nonogram kCatIsolate = Nonogram(
   id: "2",
-  info: IsolateNonogramInfo(
+  info: NonogramInfo(
     title: "Cat",
     copyright: "(c) Copyright 2004 by Jan Wolter",
     author: "Jan Wolter",
@@ -12,7 +12,7 @@ const IsolateNonogram kCatIsolate = IsolateNonogram(
     description: "My five year old son was able to tell that this was a dog.",
   ),
   note: "published,definitely unique,definitely line/color solvable",
-  clues: IsolateClues(
+  clues: Clues(
     columns: <List<int>>[
       <int>[1, 1],
       <int>[5],

@@ -1,17 +1,17 @@
 import 'package:json_annotation/json_annotation.dart';
 
-part 'isolate_clues.g.dart';
+part 'clues.g.dart';
 
 /// A class representing the clues for a nonogram puzzle.
 @JsonSerializable()
-class IsolateClues {
-  /// Creates a new [IsolateClues].
-  const IsolateClues({
+class Clues {
+  /// Creates a new [Clues].
+  const Clues({
     required this.rows,
     required this.columns,
   });
 
-  factory IsolateClues.fromJson(final Map<String, dynamic> json) => _$IsolateCluesFromJson(json);
+  factory Clues.fromJson(final Map<String, dynamic> json) => _$CluesFromJson(json);
 
   /// A list of lists containing the row clues.
   final List<List<int>> rows;
@@ -25,8 +25,8 @@ class IsolateClues {
   /// Gets the number of rows.
   int get rowLength => rows.length;
 
-  Map<String, dynamic> toJson() => _$IsolateCluesToJson(this);
+  Map<String, dynamic> toJson() => _$CluesToJson(this);
 
-  static List<IsolateClues> fromJsonList(final List<dynamic> json) =>
-      List<Map<String, dynamic>>.from(json).map((Map<String, dynamic> item) => IsolateClues.fromJson(item)).toList();
+  static List<Clues> fromJsonList(final List<dynamic> json) =>
+      List<Map<String, dynamic>>.from(json).map((Map<String, dynamic> item) => Clues.fromJson(item)).toList();
 }

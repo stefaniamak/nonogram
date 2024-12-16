@@ -1,13 +1,12 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'isolate_nonogram_info.dart';
+part of 'nonogram_info.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-IsolateNonogramInfo _$IsolateNonogramInfoFromJson(Map<String, dynamic> json) =>
-    IsolateNonogramInfo(
+NonogramInfo _$NonogramInfoFromJson(Map<String, dynamic> json) => NonogramInfo(
       title: json['title'] as String?,
       author: json['author'] as String?,
       authorId: json['authorId'] as String?,
@@ -15,8 +14,7 @@ IsolateNonogramInfo _$IsolateNonogramInfoFromJson(Map<String, dynamic> json) =>
       description: json['description'] as String?,
     );
 
-Map<String, dynamic> _$IsolateNonogramInfoToJson(
-        IsolateNonogramInfo instance) =>
+Map<String, dynamic> _$NonogramInfoToJson(NonogramInfo instance) =>
     <String, dynamic>{
       'title': instance.title,
       'author': instance.author,

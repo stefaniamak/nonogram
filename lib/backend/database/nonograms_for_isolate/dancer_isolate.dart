@@ -1,10 +1,10 @@
-import 'package:nonogram/backend/models/isolate/isolate_clues.dart';
-import 'package:nonogram/backend/models/isolate/isolate_nonogram.dart';
-import 'package:nonogram/backend/models/isolate/isolate_nonogram_info.dart';
+import 'package:nonogram/backend/models/nonogram/clues.dart';
+import 'package:nonogram/backend/models/nonogram/nonogram.dart';
+import 'package:nonogram/backend/models/nonogram/nonogram_info.dart';
 
-const IsolateNonogram kDancerIsolate = IsolateNonogram(
+const Nonogram kDancerIsolate = Nonogram(
   id: "1",
-  info: IsolateNonogramInfo(
+  info: NonogramInfo(
     title: "Dancer",
     copyright: "(c) Copyright 2004 by Jan Wolter",
     author: "Jan Wolter",
@@ -12,7 +12,7 @@ const IsolateNonogram kDancerIsolate = IsolateNonogram(
     description: "A stick figure man, dancing his stickly little heart out.",
   ),
   note: "published,definitely unique,definitely line/color solvable",
-  clues: IsolateClues(
+  clues: Clues(
     columns: <List<int>>[
       <int>[2, 1],
       <int>[2, 1, 3],

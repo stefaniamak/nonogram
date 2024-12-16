@@ -17,7 +17,7 @@ class NonogramSolverState {
   final SolverStatus solverStatus;
 
   /// The Nonogram puzzle being solved.
-  final IsolateNonogram? nonogram;
+  final Nonogram? nonogram;
 
   /// The settings for the solver.
   final SolverSettings solverSettings;
@@ -41,7 +41,7 @@ class NonogramSolverState {
   /// Creates a copy of this state with the given fields replaced with new values.
   NonogramSolverState copyWith({
     final SolverStatus? solverStatus,
-    final IsolateNonogram? nonogram,
+    final Nonogram? nonogram,
     final SolverSettings? solverSettings,
     final int? stepNumber,
     final IsolateOutput? output,

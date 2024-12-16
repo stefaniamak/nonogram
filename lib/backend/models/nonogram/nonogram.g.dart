@@ -1,23 +1,21 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'isolate_nonogram.dart';
+part of 'nonogram.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-IsolateNonogram _$IsolateNonogramFromJson(Map<String, dynamic> json) =>
-    IsolateNonogram(
+Nonogram _$NonogramFromJson(Map<String, dynamic> json) => Nonogram(
       id: json['id'] as String,
-      clues: IsolateClues.fromJson(json['clues'] as Map<String, dynamic>),
+      clues: Clues.fromJson(json['clues'] as Map<String, dynamic>),
       info: json['info'] == null
           ? null
-          : IsolateNonogramInfo.fromJson(json['info'] as Map<String, dynamic>),
+          : NonogramInfo.fromJson(json['info'] as Map<String, dynamic>),
       note: json['note'] as String?,
     );
 
-Map<String, dynamic> _$IsolateNonogramToJson(IsolateNonogram instance) =>
-    <String, dynamic>{
+Map<String, dynamic> _$NonogramToJson(Nonogram instance) => <String, dynamic>{
       'id': instance.id,
       'info': instance.info,
       'note': instance.note,

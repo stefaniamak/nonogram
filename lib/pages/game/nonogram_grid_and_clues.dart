@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:nonogram/backend/models/isolate/isolate_clues.dart';
+import 'package:nonogram/backend/models/nonogram/clues.dart';
 import 'package:nonogram/pages/game/nono_clues.dart';
 import 'package:nonogram/pages/game/nonogram_ui.dart';
 import 'package:nonogram/painters/grid_painter.dart';
@@ -25,7 +25,7 @@ class NonogramGridAndClues extends StatelessWidget {
   });
 
   /// The clues for the Nonogram puzzle.
-  final IsolateClues clues;
+  final Clues clues;
 
   /// The parameters for the grid state.
   final GridStateParams? gridStateParams;

@@ -1,10 +1,10 @@
-import 'package:nonogram/backend/models/isolate/isolate_clues.dart';
-import 'package:nonogram/backend/models/isolate/isolate_nonogram.dart';
-import 'package:nonogram/backend/models/isolate/isolate_nonogram_info.dart';
+import 'package:nonogram/backend/models/nonogram/clues.dart';
+import 'package:nonogram/backend/models/nonogram/nonogram.dart';
+import 'package:nonogram/backend/models/nonogram/nonogram_info.dart';
 
-const IsolateNonogram kKnotIsolate = IsolateNonogram(
+const Nonogram kKnotIsolate = Nonogram(
   id: "3",
-  info: IsolateNonogramInfo(
+  info: NonogramInfo(
     title: "Probably Not",
     copyright: "(c) Copyright 2004 by Jan Wolter",
     author: "Jan Wolter",
@@ -12,7 +12,7 @@ const IsolateNonogram kKnotIsolate = IsolateNonogram(
     description: "A classic two loop Celtic Knot design.",
   ),
   note: "published,definitely unique,definitely line/color solvable",
-  clues: IsolateClues(
+  clues: Clues(
     columns: <List<int>>[
       <int>[1, 1],
       <int>[2, 2],

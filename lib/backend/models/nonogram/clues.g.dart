@@ -1,12 +1,12 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'isolate_clues.dart';
+part of 'clues.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-IsolateClues _$IsolateCluesFromJson(Map<String, dynamic> json) => IsolateClues(
+Clues _$CluesFromJson(Map<String, dynamic> json) => Clues(
       rows: (json['rows'] as List<dynamic>)
           .map((e) =>
               (e as List<dynamic>).map((e) => (e as num).toInt()).toList())
@@ -17,8 +17,7 @@ IsolateClues _$IsolateCluesFromJson(Map<String, dynamic> json) => IsolateClues(
           .toList(),
     );
 
-Map<String, dynamic> _$IsolateCluesToJson(IsolateClues instance) =>
-    <String, dynamic>{
+Map<String, dynamic> _$CluesToJson(Clues instance) => <String, dynamic>{
       'rows': instance.rows,
       'columns': instance.columns,
     };

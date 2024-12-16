@@ -1,12 +1,12 @@
 import 'dart:convert';
 
 import 'package:isolate_manager/isolate_manager.dart';
-import 'package:nonogram/backend/models/isolate/isolate_clues.dart';
 import 'package:nonogram/backend/models/isolate/isolate_input.dart';
-import 'package:nonogram/backend/models/isolate/isolate_nonogram.dart';
 import 'package:nonogram/backend/models/isolate/isolate_output.dart';
-import 'package:nonogram/backend/models/isolate/solver_settings.dart';
+import 'package:nonogram/backend/models/nonogram/clues.dart';
+import 'package:nonogram/backend/models/nonogram/nonogram.dart';
 import 'package:nonogram/backend/models/solution_step.dart';
+import 'package:nonogram/backend/models/solver_settings.dart';
 import 'package:nonogram/backend/type_extensions/nono_axis_alignment_extension.dart';
 import 'package:nonogram/backend/type_extensions/nono_axis_extension.dart';
 import 'package:nonogram/backend/type_extensions/nono_direction_extension.dart';
@@ -107,7 +107,7 @@ IsolateOutput loopSides(
   int lineIndex,
   List<int> clues,
   NonoAxis lineType,
-  IsolateNonogram nonogram,
+  Nonogram nonogram,
   IsolateOutput output,
   SolverSettings settings, [
   bool printPrints = false,
@@ -905,7 +905,7 @@ List<String> getSideMostSolution(
   return axis == NonoAxisAlignment.end ? sideMostSolution.reversed.toList() : sideMostSolution;
 }
 
-List<Map<int, NonoAxis>> initializeStackList(IsolateClues clues) {
+List<Map<int, NonoAxis>> initializeStackList(Clues clues) {
   final List<Map<int, NonoAxis>> lineStack = <Map<int, NonoAxis>>[];
 
   for (int i = 0; i < clues.rows.length; i++) {

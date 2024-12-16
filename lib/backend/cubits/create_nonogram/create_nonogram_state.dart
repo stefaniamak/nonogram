@@ -1,8 +1,8 @@
 import 'package:nonogram/backend/cubits/create_nonogram/editing_settings.dart';
 import 'package:nonogram/backend/cubits/create_nonogram/selected_line.dart';
-import 'package:nonogram/backend/models/isolate/isolate_clues.dart';
-import 'package:nonogram/backend/models/isolate/isolate_nonogram.dart';
-import 'package:nonogram/backend/models/isolate/isolate_nonogram_info.dart';
+import 'package:nonogram/backend/models/nonogram/clues.dart';
+import 'package:nonogram/backend/models/nonogram/nonogram.dart';
+import 'package:nonogram/backend/models/nonogram/nonogram_info.dart';
 
 const int _baseValue = 5;
 
@@ -42,11 +42,11 @@ class CreateNonogramState {
   /// The settings for editing the Nonogram.
   final EditingSettings editingSettings;
 
-  /// Returns an [IsolateNonogram] representation of the current state.
-  IsolateNonogram get nonogram => IsolateNonogram(
+  /// Returns an [Nonogram] representation of the current state.
+  Nonogram get nonogram => Nonogram(
         id: "-",
-        clues: IsolateClues(columns: horizontalClues, rows: verticalClues),
-        info: const IsolateNonogramInfo(title: 'Custom Puzzle', author: 'You'),
+        clues: Clues(columns: horizontalClues, rows: verticalClues),
+        info: const NonogramInfo(title: 'Custom Puzzle', author: 'You'),
       );
 
   /// Creates a copy of the current state with the given parameters.
