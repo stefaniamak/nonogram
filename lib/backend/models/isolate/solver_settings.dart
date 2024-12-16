@@ -2,8 +2,10 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'solver_settings.g.dart';
 
+/// A class representing the settings for the nonogram solver.
 @JsonSerializable()
 class SolverSettings {
+  /// Creates a new [SolverSettings].
   const SolverSettings({
     this.groupSteps = true,
     this.keepCacheData = true,
@@ -14,10 +16,19 @@ class SolverSettings {
 
   factory SolverSettings.fromJson(final Map<String, dynamic> json) => _$SolverSettingsFromJson(json);
 
+  /// Whether to group steps in the solver.
   final bool groupSteps;
+
+  /// Whether to keep cache data.
   final bool keepCacheData;
+
+  /// Whether to count checked boxes.
   final bool countCheckedBoxes;
+
+  /// The number of concurrent isolates.
   final int isolateConcurrent;
+
+  /// Whether to highlight newly filled boxes.
   final bool highlightNewFilledBoxes;
 
   Map<String, dynamic> toJson() => _$SolverSettingsToJson(this);

@@ -23,20 +23,20 @@ IsolateOutput _$IsolateOutputFromJson(Map<String, dynamic> json) =>
           (json['cachedBoxSolutions'] as Map<String, dynamic>?)?.map(
                 (k, e) => MapEntry(k, e as bool),
               ) ??
-              const {},
+              const <String, bool>{},
       linesCheckedList: (json['linesCheckedList'] as List<dynamic>?)
               ?.map((e) => (e as num).toInt())
               .toList() ??
-          const [0],
+          const <int>[0],
       boxesCheckedList: (json['boxesCheckedList'] as List<dynamic>?)
               ?.map((e) => (e as num).toInt())
               .toList() ??
-          const [0],
+          const <int>[0],
       actualBoxesChecked: (json['actualBoxesChecked'] as num?)?.toInt() ?? 0,
       otherBoxesCheckedList: (json['otherBoxesCheckedList'] as List<dynamic>?)
               ?.map((e) => (e as num).toInt())
               .toList() ??
-          const [0],
+          const <int>[0],
       linesChecked: (json['linesChecked'] as num?)?.toInt() ?? 0,
       boxesChecked: (json['boxesChecked'] as num?)?.toInt() ?? 0,
       otherBoxesChecked: (json['otherBoxesChecked'] as num?)?.toInt() ?? 0,
