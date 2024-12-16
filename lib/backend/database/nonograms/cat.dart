@@ -2,6 +2,7 @@ import 'package:nonogram/backend/models/nonogram/clues.dart';
 import 'package:nonogram/backend/models/nonogram/nonogram.dart';
 import 'package:nonogram/backend/models/nonogram/nonogram_info.dart';
 
+/// A constant representing a nonogram puzzle of a cat.
 const Nonogram kCat = Nonogram(
   id: "2",
   info: NonogramInfo(
@@ -36,13 +37,13 @@ const Nonogram kCat = Nonogram(
   ),
 );
 
-// Solution:
-// 01100011010010101110101001010000110010100101111000
-// |.....X..|
-// |.....XX.|
-// |X....XXX|
-// |.XXXXX..|
-// |.XXXXX..|
-// |.XX..XX.|
-// |XX...X.X|
-// |.X...X..|
+/// Solution:
+/// 01100011010010101110101001010000110010100101111000
+/// |.....X..|
+/// |.....XX.|
+/// |X....XXX|
+/// |.XXXXX..|
+/// |.XXXXX..|
+/// |.XX..XX.|
+/// |XX...X.X|
+/// |.X...X..|

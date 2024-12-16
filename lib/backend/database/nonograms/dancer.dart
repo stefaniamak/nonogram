@@ -2,6 +2,7 @@ import 'package:nonogram/backend/models/nonogram/clues.dart';
 import 'package:nonogram/backend/models/nonogram/nonogram.dart';
 import 'package:nonogram/backend/models/nonogram/nonogram_info.dart';
 
+/// A constant representing a nonogram puzzle of a dancer.
 const Nonogram kDancer = Nonogram(
   id: "1",
   info: NonogramInfo(
@@ -35,15 +36,15 @@ const Nonogram kDancer = Nonogram(
   ),
 );
 
-// Solution:
-// 01100011010010101110101001010000110010100101111000
-// |.XX..|
-// |.XX.X|
-// |..X.X|
-// |.XXX.|
-// |X.X..|
-// |X.X..|
-// |..XX.|
-// |.X.X.|
-// |.X.XX|
-// |XX...|
+/// Solution:
+/// 01100011010010101110101001010000110010100101111000
+/// |.XX..|
+/// |.XX.X|
+/// |..X.X|
+/// |.XXX.|
+/// |X.X..|
+/// |X.X..|
+/// |..XX.|
+/// |.X.X.|
+/// |.X.XX|
+/// |XX...|
