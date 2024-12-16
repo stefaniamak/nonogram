@@ -2,7 +2,7 @@ import 'package:nonogram/backend/models/nonogram/clues.dart';
 import 'package:nonogram/backend/models/nonogram/nonogram.dart';
 import 'package:nonogram/backend/models/nonogram/nonogram_info.dart';
 
-const Nonogram kDancerIsolate = Nonogram(
+const Nonogram kDancer = Nonogram(
   id: "1",
   info: NonogramInfo(
     title: "Dancer",

@@ -2,7 +2,7 @@ import 'package:nonogram/backend/models/nonogram/clues.dart';
 import 'package:nonogram/backend/models/nonogram/nonogram.dart';
 import 'package:nonogram/backend/models/nonogram/nonogram_info.dart';
 
-const Nonogram kKnotIsolate = Nonogram(
+const Nonogram kKnot = Nonogram(
   id: "3",
   info: NonogramInfo(
     title: "Probably Not",

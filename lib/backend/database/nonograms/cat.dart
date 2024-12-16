@@ -2,7 +2,7 @@ import 'package:nonogram/backend/models/nonogram/clues.dart';
 import 'package:nonogram/backend/models/nonogram/nonogram.dart';
 import 'package:nonogram/backend/models/nonogram/nonogram_info.dart';
 
-const Nonogram kCatIsolate = Nonogram(
+const Nonogram kCat = Nonogram(
   id: "2",
   info: NonogramInfo(
     title: "Cat",
