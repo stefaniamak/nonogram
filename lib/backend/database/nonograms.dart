@@ -1,21 +1,28 @@
-import 'package:nonogram/backend/database/nonograms_for_isolate/cat_isolate.dart';
-import 'package:nonogram/backend/database/nonograms_for_isolate/dancer_isolate.dart';
-import 'package:nonogram/backend/database/nonograms_for_isolate/knot_isolate.dart';
-import 'package:nonogram/backend/database/nonograms_for_isolate/swing_isolate.dart';
-import 'package:nonogram/backend/models/isolate/isolate_nonogram.dart';
+import 'package:nonogram/backend/database/nonograms/cat.dart';
+import 'package:nonogram/backend/database/nonograms/dancer.dart';
+import 'package:nonogram/backend/database/nonograms/knot.dart';
+import 'package:nonogram/backend/database/nonograms/swing.dart';
+import 'package:nonogram/backend/models/nonogram/nonogram.dart';
 
+/// A class that provides access to all nonograms.
 class Nonograms {
-  List<IsolateNonogram> get allNonograms => [
-        dancer,
-        cat,
-        knot,
-        // edge,
-        swing,
-      ];
+  /// A list of all nonogram.
+  static final List<Nonogram> all = <Nonogram>[
+    dancer,
+    cat,
+    knot,
+    swing,
+  ];
 
-  IsolateNonogram get dancer => kDancerIsolate;
-  IsolateNonogram get cat => kCatIsolate;
-  IsolateNonogram get knot => kKnotIsolate;
-// IsolateNonogram get edge => kEdgeIsolate;
-  IsolateNonogram get swing => kSwingIsolate;
+  /// Gets the dancer nonogram.
+  static Nonogram get dancer => kDancer;
+
+  /// Gets the cat nonogram.
+  static Nonogram get cat => kCat;
+
+  /// Gets the knot nonogram.
+  static Nonogram get knot => kKnot;
+
+  /// Gets the swing nonogram.
+  static Nonogram get swing => kSwing;
 }

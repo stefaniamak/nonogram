@@ -1,28 +1,51 @@
 import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
-import 'package:nonogram/backend/models/isolate/isolate_clues.dart';
+import 'package:nonogram/backend/models/nonogram/clues.dart';
 
+/// A class which calculates the final sizes of the clues list and grid size
+/// for a Nonogram puzzle.
 class NonogramUi {
-  final Size size;
-  final Size cluesSize;
-  final Size gridSize;
-  final double gridItemSide;
-
+  /// Creates a NonogramUi.
   const NonogramUi({
     required this.size,
     required this.cluesSize,
     required this.gridSize,
     required this.gridItemSide,
+    required this.boxesNumb,
   });
+
+  /// The overall size of both clues and grid.
+  final Size size;
+
+  /// The size of the clues area.
+  final Size cluesSize;
+
+  /// The size of the grid area.
+  final Size gridSize;
+
+  /// The side size of each square grid item.
+  final double gridItemSide;
+
+  /// The number of boxes in the Nonogram puzzle.
+  final Size boxesNumb;
 }
 
-NonogramUi useNonogramUi(Size boxesNumb, IsolateClues clues, Size maxSize, [EdgeInsets padding = EdgeInsets.zero]) {
+/// Calculates and returns the UI sizes for a Nonogram puzzle.
+///
+/// The [clues] parameter provides the clues for the Nonogram puzzle.
+/// The [maxSize] parameter specifies the maximum size of the Nonogram UI.
+/// The [padding] parameter specifies the padding around the Nonogram UI, and is optional.
+///
+/// Returns an instance of `NonogramUi` containing the calculated UI parameters.
+NonogramUi useNonogramUi(Clues clues, Size maxSize, [EdgeInsets padding = EdgeInsets.zero]) {
+  final Size boxesNumb = Size(clues.columnLength.toDouble(), clues.rowLength.toDouble());
+
   double width = maxSize.width - padding.horizontal;
   double height = maxSize.height - padding.vertical;
 
-  final maxRowNumbs = clues.rows.map((r) => r.length).reduce(max);
-  final maxColNumbs = clues.columns.map((c) => c.length).reduce(max);
+  final int maxRowNumbs = clues.rows.map((List<int> r) => r.length).reduce(max);
+  final int maxColNumbs = clues.columns.map((List<int> c) => c.length).reduce(max);
 
   double gridItemSide = width / (boxesNumb.width + maxRowNumbs);
 
@@ -30,15 +53,8 @@ NonogramUi useNonogramUi(Size boxesNumb, IsolateClues clues, Size maxSize, [Edge
     gridItemSide = height / (boxesNumb.height + maxColNumbs);
   }
 
-  Size cluesSize = Size(
-    maxRowNumbs * gridItemSide,
-    maxColNumbs * gridItemSide,
-  );
-
-  Size gridSize = Size(
-    boxesNumb.width * gridItemSide,
-    boxesNumb.height * gridItemSide,
-  );
+  final Size cluesSize = Size(maxRowNumbs * gridItemSide, maxColNumbs * gridItemSide);
+  final Size gridSize = Size(boxesNumb.width * gridItemSide, boxesNumb.height * gridItemSide);
 
   width = gridSize.width + cluesSize.width + padding.horizontal;
   height = gridSize.height + cluesSize.height + padding.vertical;
@@ -48,5 +64,6 @@ NonogramUi useNonogramUi(Size boxesNumb, IsolateClues clues, Size maxSize, [Edge
     cluesSize: cluesSize,
     gridSize: gridSize,
     gridItemSide: gridItemSide,
+    boxesNumb: boxesNumb,
   );
 }

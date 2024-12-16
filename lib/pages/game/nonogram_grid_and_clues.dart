@@ -1,48 +1,52 @@
 import 'package:flutter/material.dart';
-import 'package:nonogram/backend/models/isolate/isolate_clues.dart';
+import 'package:nonogram/backend/models/nonogram/clues.dart';
 import 'package:nonogram/pages/game/nono_clues.dart';
 import 'package:nonogram/pages/game/nonogram_ui.dart';
+import 'package:nonogram/painters/grid_painter.dart';
 import 'package:nonogram/painters/nonogram_grid.dart';
 
+/// A stateless widget that represents a Nonogram grid and its clues.
+///
+/// The `NonogramGridAndClues` widget includes various parameters to configure the grid,
+/// such as the clues, solution, maximum size, box items, padding, and callback functions
+/// for tap and pan events.
 class NonogramGridAndClues extends StatelessWidget {
-  // final Nonogram nonogram;
-  final IsolateClues clues;
-  final String? solution;
-  final Size? boxItems;
-  // final NonogramState? nonogramState;
-  final EdgeInsets padding;
-  final Size? maxSize;
-  final Function(Axis axis, int index, List<int>)? onLineTap;
-  final Function(int)? onTap;
-  final Function(int)? onPan;
-  final Function(int)? onPanEnd;
-  final List<int> highlightedBoxes;
-
+  /// Creates a Nonogram Grid and Clues based on screen size.
+  ///
+  /// Provide just the [clues] parameter to display an empty grid with its clues.
   const NonogramGridAndClues({
-    // required this.nonogram,
     required this.clues,
-    this.solution,
-    this.maxSize,
-    this.boxItems,
     this.onLineTap,
-
-    // this.nonogramState,
+    this.gridStateParams,
+    this.gridGestures,
+    this.maxSize,
     this.padding = EdgeInsets.zero,
-    this.onTap,
-    this.onPan,
-    this.onPanEnd,
-    this.highlightedBoxes = const [],
     super.key,
   });
 
+  /// The clues for the Nonogram puzzle.
+  final Clues clues;
+
+  /// The parameters for the grid state.
+  final GridStateParams? gridStateParams;
+
+  /// The gestures for the grid.
+  final GridGestures? gridGestures;
+
+  /// Callback function to be called when a clue line is tapped.
+  final Function(Axis axis, int index, List<int>)? onLineTap;
+
+  /// The maximum size for the grid and clues.
+  final Size? maxSize;
+
+  /// The padding for the grid and clues.
+  final EdgeInsets padding;
+
   @override
   Widget build(BuildContext context) {
-    var md = MediaQuery.of(context);
-    var maxSize = this.maxSize ?? md.size;
-
-    // var nonogramState = this.nonogramState;
-    var nonogramUi = useNonogramUi(
-        Size(boxItems?.width ?? clues.columnLength + 0, boxItems?.height ?? clues.rowLength + 0), clues, maxSize, padding);
+    final MediaQueryData md = MediaQuery.of(context);
+    final Size maxSize = this.maxSize ?? md.size;
+    final NonogramUi nonogramUi = useNonogramUi(clues, maxSize, padding);
 
     return Container(
       width: nonogramUi.size.width,
@@ -50,7 +54,7 @@ class NonogramGridAndClues extends StatelessWidget {
       padding: padding,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.end,
-        children: [
+        children: <Widget>[
           CluesUi(
             clues: clues,
             boxSize: nonogramUi.gridItemSide,
@@ -60,27 +64,20 @@ class NonogramGridAndClues extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
             crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
+            children: <Widget>[
               CluesUi(
                 clues: clues,
                 boxSize: nonogramUi.gridItemSide,
                 axis: Axis.vertical,
                 onEdit: onLineTap,
               ),
-              // if (solution != null)
               NonogramGrid(
-                // nonogram: nonogram,
-                // nonogramState: nonogramState,
-                gridItemSide: nonogramUi.gridItemSide,
-                size: nonogramUi.gridSize, // Size(nonogramUi.gridSize.width, nonogramUi.gridSize.height),
-                boxItems: Size(clues.columnLength + 0, clues.rowLength + 0),
-                // solution: nonogramState!.solutionSteps.elementAt(nonogramState.stepNumber).currentSolution,
-                solution: solution ?? Iterable.generate(clues.columnLength * clues.rowLength, (_) => '?').join(),
-                onTap: onTap,
-                onPan: onPan,
-                onPanEnd: onPanEnd,
-                // clues: clues,
-                highlightedBoxes: highlightedBoxes,
+                gestures: gridGestures,
+                gridStateParams: gridStateParams,
+                gridViewParams: GridViewParams(
+                  boxItems: nonogramUi.boxesNumb,
+                  side: nonogramUi.gridItemSide,
+                ),
               ),
             ],
           ),

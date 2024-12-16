@@ -1,12 +1,14 @@
 import 'package:nonogram/backend/cubits/create_nonogram/editing_settings.dart';
 import 'package:nonogram/backend/cubits/create_nonogram/selected_line.dart';
-import 'package:nonogram/backend/models/isolate/isolate_clues.dart';
-import 'package:nonogram/backend/models/isolate/isolate_nonogram.dart';
-import 'package:nonogram/backend/models/isolate/isolate_nonogram_info.dart';
+import 'package:nonogram/backend/models/nonogram/clues.dart';
+import 'package:nonogram/backend/models/nonogram/nonogram.dart';
+import 'package:nonogram/backend/models/nonogram/nonogram_info.dart';
 
 const int _baseValue = 5;
 
+/// Represents the state of creating a Nonogram.
 class CreateNonogramState {
+  /// Creates a new instance of [CreateNonogramState].
   CreateNonogramState({
     this.width = _baseValue,
     this.height = _baseValue,
@@ -17,25 +19,39 @@ class CreateNonogramState {
     this.editingSettings = const EditingSettings(),
   })  : horizontalClues = horizontalClues ?? List<List<int>>.generate(width, (_) => <int>[0]),
         verticalClues = verticalClues ?? List<List<int>>.generate(height, (_) => <int>[0]),
-        solution = solution ?? Iterable.generate(width * height, (_) => '?').join();
-  // assert(horizontalClues != null && horizontalClues.length == width),
-  // assert(verticalClues != null && verticalClues.length == height),
-  // assert(solution != null && solution.length == width * height);
+        solution = solution ?? List<String>.filled(width * height, '?').join();
 
+  /// The width of the Nonogram grid.
   final int width;
+
+  /// The height of the Nonogram grid.
   final int height;
+
+  /// The horizontal clues for the Nonogram.
   final List<List<int>> horizontalClues;
+
+  /// The vertical clues for the Nonogram.
   final List<List<int>> verticalClues;
+
+  /// The solution string for the Nonogram.
   final String solution;
+
+  /// The currently selected line for editing.
   final SelectedLine? selectedLine;
+
+  /// The settings for editing the Nonogram.
   final EditingSettings editingSettings;
 
-  IsolateNonogram get nonogram => IsolateNonogram(
+  /// Returns an [Nonogram] representation of the current state.
+  Nonogram get nonogram => Nonogram(
         id: "-",
-        clues: IsolateClues(columns: horizontalClues, rows: verticalClues),
-        info: const IsolateNonogramInfo(title: 'Custom Puzzle', author: 'You'),
+        clues: Clues(columns: horizontalClues, rows: verticalClues),
+        info: const NonogramInfo(title: 'Custom Puzzle', author: 'You'),
       );
 
+  /// Creates a copy of the current state with the given parameters.
+  ///
+  /// Returns a new instance of [CreateNonogramState] with the updated values.
   CreateNonogramState copyWith({
     final int? width,
     final int? height,

@@ -1,62 +1,45 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:nonogram/backend/cubits/create_nonogram/create_nonogram_cubit.dart';
-import 'package:nonogram/backend/models/isolate/isolate_nonogram.dart';
-import 'package:nonogram/game_loop/nonogram_list_state.dart';
+import 'package:nonogram/backend/database/nonograms.dart';
+import 'package:nonogram/config/app_theme.dart';
 import 'package:nonogram/pages/app_page.dart';
 import 'package:nonogram/pages/game/create_nonogram_page.dart';
 import 'package:nonogram/pages/game/nonogram_list_item.dart';
-import 'package:nonogram/pages/widgets/blur_container.dart';
+import 'package:nonogram/pages/widgets/buttons/app_fab.dart';
 
-class NonogramListPage extends HookWidget {
-  static const String route = '/puzzles';
-
+/// The screen where you can view a list of nonogram puzzles.
+class NonogramListPage extends StatelessWidget {
+  /// Creates a NonogramListPage widget.
   const NonogramListPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final NonogramListState nonogramListState = useNonogramList();
-    double width = MediaQuery.of(context).size.width;
     return AppPage(
-      floatingActionButton: BlurContainer(
-        color: Colors.yellowAccent,
-        borderRadius: 32,
-        child: Ink(
-          width: 56,
-          height: 56,
-          decoration: const ShapeDecoration(
-            shape: CircleBorder(),
-          ),
-          child: IconButton(
-            icon: const Icon(Icons.add),
-            color: Colors.black,
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute<void>(
-                  builder: (BuildContext context) => BlocProvider(
-                    create: (_) => CreateNonogramCubit(),
-                    child: const CreateNonogramPage(),
-                  ),
-                ),
-              );
-            },
-          ),
-        ),
+      floatingActionButton: AppFab(
+        icon: const Icon(Icons.add),
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute<void>(
+              builder: (_) => BlocProvider<CreateNonogramCubit>(
+                create: (_) => CreateNonogramCubit(),
+                child: const CreateNonogramPage(),
+              ),
+            ),
+          );
+        },
       ),
-      children: [
-        if (nonogramListState.nonograms.isNotEmpty)
+      children: <Widget>[
+        if (Nonograms.all.isNotEmpty)
           SliverGrid(
             delegate: SliverChildBuilderDelegate(
-              (context, index) {
-                IsolateNonogram nonogram = nonogramListState.nonograms[index];
-                return NonogramListItem(nonogram: nonogram);
-              },
-              childCount: nonogramListState.nonograms.length,
+              /// Builds a NonogramListItem for each nonogram in the list.
+              (BuildContext context, int index) => NonogramListItem(nonogram: Nonograms.all[index]),
+              childCount: Nonograms.all.length,
             ),
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: width > 1200 ? 3 : (width > 700 ? 2 : 1),
+              crossAxisCount: AppTheme.maxPageColumns(context),
               mainAxisSpacing: 24,
               crossAxisSpacing: 24,
               childAspectRatio: 4 / 5,
@@ -64,16 +47,5 @@ class NonogramListPage extends HookWidget {
           ),
       ],
     );
-  }
-}
-
-class BottomNavigationPadding extends StatelessWidget {
-  const BottomNavigationPadding({
-    super.key,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(height: MediaQuery.of(context).padding.bottom);
   }
 }

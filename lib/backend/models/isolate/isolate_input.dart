@@ -1,23 +1,30 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:nonogram/backend/models/isolate/isolate_nonogram.dart';
-import 'package:nonogram/backend/models/isolate/solver_settings.dart';
+import 'package:nonogram/backend/models/nonogram/nonogram.dart';
 import 'package:nonogram/backend/models/solution_step.dart';
+import 'package:nonogram/backend/models/solver_settings.dart';
 
 part 'isolate_input.g.dart';
 
+/// A class representing the input for an isolate in the nonogram solver.
 @JsonSerializable()
 class IsolateInput {
+  /// Creates a new [IsolateInput].
   const IsolateInput({
     required this.nonogram,
     required this.solutionSteps,
     this.solverSettings = const SolverSettings(),
   });
 
-  final IsolateNonogram nonogram;
-  final List<SolutionStep> solutionSteps;
-  final SolverSettings solverSettings;
-
   factory IsolateInput.fromJson(final Map<String, dynamic> json) => _$IsolateInputFromJson(json);
+
+  /// The nonogram puzzle to be solved.
+  final Nonogram nonogram;
+
+  /// A list of steps taken to solve the nonogram.
+  final List<SolutionStep> solutionSteps;
+
+  /// Optional settings for the solver.
+  final SolverSettings solverSettings;
 
   Map<String, dynamic> toJson() => _$IsolateInputToJson(this);
 
