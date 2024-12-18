@@ -15,19 +15,33 @@ import 'package:nonogram/backend/type_extensions/nono_list_extension.dart';
 import 'package:nonogram/backend/type_extensions/nono_string_extension.dart';
 import 'package:nonogram/solver/line_solver_helper.dart';
 
+/// The `lineSolverIsolate` function is an entry point for an isolate that processes nonogram puzzle solving tasks.
+/// It manages a stack of rows and columns, iteratively solving each line and updating the solution state.
+///
+/// The function receives a [params] object containing the [IsolateInput] data.
+/// It enters a loop to process each line in the stack, solving the line and updating the solution state.
+/// It then sends the updated solution state to the main isolate for further processing.
+///
+/// When the stack of lines is empty, the function adds a final solution step to the solution state, indicating
+/// whether the nonogram was solved or not.
+/// The function returns a JSON-encoded string containing the final solution state.
 @isolateManagerCustomWorker
 void lineSolverIsolate(dynamic params) {
   IsolateManagerFunction.customFunction<String, String>(
     params,
     onEvent: (IsolateManagerController<String, String> controller, String message) {
+      // Decode the input parameters to an IsolateInput object.
       final IsolateInput input = IsolateInput.fromJson(jsonDecode(message));
+      // Initialize the stack list with the nonogram clues.
       final List<Map<int, NonoAxis>> stack = initializeStackList(input.nonogram.clues);
+      // Set up initial values for solution steps, cached box solutions, and lists to track checked lines and boxes.
       List<SolutionStep> solutionSteps = input.solutionSteps;
       final Map<String, bool> cachedBoxSolutions = <String, bool>{};
       final List<int> linesCheckedList = <int>[0];
       final List<int> boxesChecked = <int>[0];
       final List<int> otherBoxesChecked = <int>[0];
 
+      // Create an initial IsolateOutput object to track progress.
       IsolateOutput progress = IsolateOutput(
         stack: stack,
         solutionSteps: solutionSteps,
@@ -37,11 +51,15 @@ void lineSolverIsolate(dynamic params) {
         otherBoxesCheckedList: otherBoxesChecked,
       );
 
+      // Enter a loop to process each line in the stack.
       while (stack.isNotEmpty) {
+        // Retrieve the line index and type (row or column).
         final Map<int, NonoAxis> line = stack.first;
+        // Retrieve the clues for the current line.
         final List<int> clues = (line.values.first == NonoAxis.row ? input.nonogram.clues.rows : input.nonogram.clues.columns)
             .elementAt(line.keys.first);
 
+        // Call the loopSides function to process the line and update the solution.
         progress = loopSides(
           lineIndex: line.keys.first,
           clues: clues,
@@ -58,6 +76,7 @@ void lineSolverIsolate(dynamic params) {
           settings: input.solverSettings,
         );
 
+        // Send the progress back to the main isolate.
         controller.sendResult(
           jsonEncode(
             <String, Map<String, dynamic>>{
@@ -66,12 +85,15 @@ void lineSolverIsolate(dynamic params) {
           ),
         );
 
+        // Update the stack and solution steps based on the progress.
         if (progress.stack.isNotEmpty) stack.addAll(progress.stack);
         if (progress.solutionSteps.isNotEmpty) solutionSteps = progress.solutionSteps;
 
+        // Remove the processed line from the stack.
         stack.removeAt(0);
       }
 
+      // Add a final solution step indicating whether the nonogram is solved.
       solutionSteps.add(
         SolutionStep(
           currentSolution: solutionSteps.last.currentSolution,
@@ -80,6 +102,7 @@ void lineSolverIsolate(dynamic params) {
         ),
       );
 
+      // Return the final results, including the stack, solution steps, cached box solutions, and checked lines and boxes.
       final IsolateOutput results = IsolateOutput(
         stack: stack,
         solutionSteps: solutionSteps,
