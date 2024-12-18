@@ -117,165 +117,103 @@ IsolateOutput loopSides({
     lineType,
   );
 
+  final List<int> charIndexesOfQMarks = LineSolverHelper.instance.getCharIndexesOfQuestionMarks(initialSolution);
+
   if (printLogs) log("${lineType.name}'s initialSolution: $initialSolution");
   int filledBoxes = initialSolution.sumFilledBoxes;
   bool isLineCompleted = filledBoxes == clues.sum;
 
   if (printLogs) log("Are filled boxes ($filledBoxes) equal with clue's sum (${clues.sum})?");
-
-  final List<int> charIndexesOfQMarks = LineSolverHelper.instance.getCharIndexesOfQuestionMarks(initialSolution);
-
   if (isLineCompleted) {
     if (printLogs) log('It is. Shall cross out remaining empty boxes if any left.');
     if (initialSolution.split('').toList().contains('?')) {
       // TODO(stef): restore groupSteps
-      if (!settings.groupSteps) {
-        final List<Map<int, NonoAxis>> tempStack = <Map<int, NonoAxis>>[];
-        final List<SolutionStep> newSolutionSteps = <SolutionStep>[];
-        for (int charIndex = 0; charIndex < initialSolution.length; charIndex++) {
-          if (initialSolution.characterAt(charIndex) == '?') {
-            final int indexSol = lineType.getSolutionPosition(lineIndex, charIndex, nonogram.width);
-            final String fullUpdatedSolution = output.solutionSteps.last.getUpdatedSolution(indexSol, '0');
-            if (printLogs) log('fullUpdatedSolution: $fullUpdatedSolution');
-
-            // List<Map<int, NonoAxis>> finalStack = output.stack;
-            // var tempStack = finalStack;
-            // output.stack.addAll(tempStack.updateStack([charIndex], lineType));
-
-            tempStack.addAll(tempStack.getNewStackElements(<int>[charIndex], lineType));
-            newSolutionSteps.add(
-              SolutionStep(
-                currentSolution: fullUpdatedSolution,
-                axis: lineType,
-                lineIndex: lineIndex,
-                explanation: 'Cross out remaining empty boxes of ${lineType.name} with index $lineIndex.',
-                newFilledBoxes: <int>[charIndex],
-              ),
-            );
-
-            // return IsolateOutput(
-            //   stack: output.stack.updateStack([charIndex], lineType),
-            //   solutionSteps: [
-            //     SolutionStep(
-            //       currentSolution: fullUpdatedSolution,
-            //       axis: lineType,
-            //       lineIndex: lineIndex,
-            //       explanation: 'Cross out remaining empty boxes of ${lineType.name} with index $lineIndex.',
-            //     ),
-            //   ],
-            // );
-
-            // state.addStep(SolutionStep(
-            //   currentSolution: fullUpdatedSolution,
-            //   axis: lineType,
-            //   lineIndex: lineIndex,
-            //   explanation: 'Cross out remaining empty boxes of ${lineType.name} with index $lineIndex.',
-            // ));
-            // state.stack.updateStack([charIndex], lineType, state);
-          }
-        }
-        // log('newSolutionSteps: $newSolutionSteps');
-        return IsolateOutput(
-          stack: tempStack,
-          solutionSteps: newSolutionSteps,
-          linesChecked: output.linesCheckedList.last,
-          boxesChecked: output.boxesCheckedList.last,
-          otherBoxesChecked: output.otherBoxesCheckedList.last,
-          totalCacheData: output.cachedBoxSolutions.length,
-          // linesCheckedList: output.linesCheckedList,
-          // cachedBoxSolutions: output.cachedBoxSolutions,
-          // boxesCheckedList: output.boxesCheckedList,
-          // otherBoxesCheckedList: output.otherBoxesCheckedList,
-        );
-      } else {
-        final int charStart = initialSolution.split('').toList().indexWhere((String char) => char == '?');
-        final int charEnd = initialSolution.split('').toList().lastIndexWhere((String char) => char == '?') + 1;
-        if (printLogs) {
-          log('charStart: $charStart');
-          log('charEnd: $charEnd');
-        }
-
-        /// The following 3 lines use the list of indexes of "?" in the line solution to find and replace them
-        /// with "0"s in the entire puzzle solution String.
-        ///
-        /// We use RegEx for this task because the positions of a column in the solution String are spread out,
-        /// unlike those of a row, which are contiguous.
-        ///
-        /// To find the global positions of each column index in the entire puzzle solution, we convert the local
-        /// indexes from the line solution String to global indexes, taking into account the line we are searching.
-        ///
-        /// We create a RegEx to find and replace the specific characters in the global solution with "0".
-        ///
-        /// The RegEx searches for single character Strings with a specific number of characters before them.
-        /// We generate the required number of characters based on the list of indexes from the local solution,
-        /// and the RegEx matches Strings with exactly that many characters before them.
-        ///
-        /// The RegEx is `(?<=lookbehinds).` where [lookbehinds] is another RegEx String, generated from the local positions list.
-        /// This String consists of multiple RegEx patterns like `(?<=^.{7}).` (where "7" is any number 0 or above),
-        /// grouped and separated by "|". Let's break down the parts of the RegEx:
-        ///
-        /// Explaining `(?<=lookbehinds).`:
-        ///   (?<=lookbehinds): Matches where [lookbehinds] is true.
-        ///   .               : Matches the next character after the lookbehind condition.
-        ///
-        /// Explaining `lookbehinds`, e.g. ((?<=^.{7}).)|(?<=^.{10}).):
-        ///   (?<=^.{7}).    :
-        ///     (?<= : Lookbehind assertion to ensure what precedes the match...
-        ///     ^    : Is the start of the String...
-        ///     .    : Followed by any single character...
-        ///     {7}  : Previous case repeated exactly 7 times (where "7" is any number 0 or above)...
-        ///     .    : Matches the character immediately following this sequence.
-        ///   |    : Or (alternates between the above generated number conditions).
-        ///
-        /// e.g. RegEx `((?<=^.{7}).)|(?<=^.{10}).)` applied to a String will return the 8th and 11th
-        /// characters, as they have exactly 7 and 10 characters before them, respectively.
-        ///
-        /// We use this regex with replaceAllMapped to change the "?" characters to "0".
-        ///
-        String fullUpdatedSolution = output.solutionSteps.last.currentSolution;
-        final List<int> newFilledBoxes = <int>[];
-
-        // TODO(stef): add "useLookbehind" variable
-        if (false) {
-          final String lookbehinds = charIndexesOfQMarks
-              .map((int pos) => '^.{${lineType.getSolutionPosition(lineIndex, pos, nonogram.width)}}')
-              .join('|');
-          final RegExp solutionIndexesRegexp = RegExp(r'(?<=' + lookbehinds + r').');
-
-          fullUpdatedSolution =
-              output.solutionSteps.last.currentSolution.replaceAllMapped(solutionIndexesRegexp, (Match match) => '0');
-          if (printLogs) log('fullUpdatedSolution: $fullUpdatedSolution');
-        } else {
-          for (final int charIndex in charIndexesOfQMarks) {
-            final int tempPos = lineType.getSolutionPosition(lineIndex, charIndex, nonogram.width);
-            newFilledBoxes.add(tempPos);
-            fullUpdatedSolution = '${fullUpdatedSolution.substring(0, tempPos)}0${fullUpdatedSolution.substring(tempPos + 1)}';
-          }
-        }
-        // here
-
-        // TODO(stef): restore these two bellow
-        return IsolateOutput(
-          stack: output.stack.getNewStackElements(charIndexesOfQMarks, lineType),
-          solutionSteps: <SolutionStep>[
-            SolutionStep(
-              currentSolution: fullUpdatedSolution,
-              axis: lineType,
-              lineIndex: lineIndex,
-              explanation: 'Cross out all remaining empty boxes of ${lineType.name} with index $lineIndex.',
-              newFilledBoxes: newFilledBoxes,
-            ),
-          ],
-          linesChecked: output.linesCheckedList.last,
-          boxesChecked: output.boxesCheckedList.last,
-          otherBoxesChecked: output.otherBoxesCheckedList.last,
-          totalCacheData: output.cachedBoxSolutions.length,
-          // linesCheckedList: output.linesCheckedList,
-          // cachedBoxSolutions: output.cachedBoxSolutions,
-          // boxesCheckedList: output.boxesCheckedList,
-          // otherBoxesCheckedList: output.otherBoxesCheckedList,
-        );
+      final int charStart = initialSolution.split('').toList().indexWhere((String char) => char == '?');
+      final int charEnd = initialSolution.split('').toList().lastIndexWhere((String char) => char == '?') + 1;
+      if (printLogs) {
+        log('charStart: $charStart');
+        log('charEnd: $charEnd');
       }
+
+      /// The following 3 lines use the list of indexes of "?" in the line solution to find and replace them
+      /// with "0"s in the entire puzzle solution String.
+      ///
+      /// We use RegEx for this task because the positions of a column in the solution String are spread out,
+      /// unlike those of a row, which are contiguous.
+      ///
+      /// To find the global positions of each column index in the entire puzzle solution, we convert the local
+      /// indexes from the line solution String to global indexes, taking into account the line we are searching.
+      ///
+      /// We create a RegEx to find and replace the specific characters in the global solution with "0".
+      ///
+      /// The RegEx searches for single character Strings with a specific number of characters before them.
+      /// We generate the required number of characters based on the list of indexes from the local solution,
+      /// and the RegEx matches Strings with exactly that many characters before them.
+      ///
+      /// The RegEx is `(?<=lookbehinds).` where [lookbehinds] is another RegEx String, generated from the local positions list.
+      /// This String consists of multiple RegEx patterns like `(?<=^.{7}).` (where "7" is any number 0 or above),
+      /// grouped and separated by "|". Let's break down the parts of the RegEx:
+      ///
+      /// Explaining `(?<=lookbehinds).`:
+      ///   (?<=lookbehinds): Matches where [lookbehinds] is true.
+      ///   .               : Matches the next character after the lookbehind condition.
+      ///
+      /// Explaining `lookbehinds`, e.g. ((?<=^.{7}).)|(?<=^.{10}).):
+      ///   (?<=^.{7}).    :
+      ///     (?<= : Lookbehind assertion to ensure what precedes the match...
+      ///     ^    : Is the start of the String...
+      ///     .    : Followed by any single character...
+      ///     {7}  : Previous case repeated exactly 7 times (where "7" is any number 0 or above)...
+      ///     .    : Matches the character immediately following this sequence.
+      ///   |    : Or (alternates between the above generated number conditions).
+      ///
+      /// e.g. RegEx `((?<=^.{7}).)|(?<=^.{10}).)` applied to a String will return the 8th and 11th
+      /// characters, as they have exactly 7 and 10 characters before them, respectively.
+      ///
+      /// We use this regex with replaceAllMapped to change the "?" characters to "0".
+      ///
+      String fullUpdatedSolution = output.solutionSteps.last.currentSolution;
+      final List<int> newFilledBoxes = <int>[];
+
+      // TODO(stef): add "useLookbehind" variable
+      if (false) {
+        final String lookbehinds =
+            charIndexesOfQMarks.map((int pos) => '^.{${lineType.getSolutionPosition(lineIndex, pos, nonogram.width)}}').join('|');
+        final RegExp solutionIndexesRegexp = RegExp(r'(?<=' + lookbehinds + r').');
+
+        fullUpdatedSolution =
+            output.solutionSteps.last.currentSolution.replaceAllMapped(solutionIndexesRegexp, (Match match) => '0');
+        if (printLogs) log('fullUpdatedSolution: $fullUpdatedSolution');
+      } else {
+        for (final int charIndex in charIndexesOfQMarks) {
+          final int tempPos = lineType.getSolutionPosition(lineIndex, charIndex, nonogram.width);
+          newFilledBoxes.add(tempPos);
+          fullUpdatedSolution = '${fullUpdatedSolution.substring(0, tempPos)}0${fullUpdatedSolution.substring(tempPos + 1)}';
+        }
+      }
+      // here
+
+      // TODO(stef): restore these two bellow
+      return IsolateOutput(
+        stack: output.stack.getNewStackElements(charIndexesOfQMarks, lineType),
+        solutionSteps: <SolutionStep>[
+          SolutionStep(
+            currentSolution: fullUpdatedSolution,
+            axis: lineType,
+            lineIndex: lineIndex,
+            explanation: 'Cross out all remaining empty boxes of ${lineType.name} with index $lineIndex.',
+            newFilledBoxes: newFilledBoxes,
+          ),
+        ],
+        linesChecked: output.linesCheckedList.last,
+        boxesChecked: output.boxesCheckedList.last,
+        otherBoxesChecked: output.otherBoxesCheckedList.last,
+        totalCacheData: output.cachedBoxSolutions.length,
+        // linesCheckedList: output.linesCheckedList,
+        // cachedBoxSolutions: output.cachedBoxSolutions,
+        // boxesCheckedList: output.boxesCheckedList,
+        // otherBoxesCheckedList: output.otherBoxesCheckedList,
+      );
     }
   } else {
     // if (activateReturnOnNotEnoughSolvedLines && filledBoxes < (clues.sum / 4) && (state.nonogram.width / 4) > clues.sum) {
@@ -299,294 +237,147 @@ IsolateOutput loopSides({
     const String updatedSolution = '';
 
     // TODO(stef): restore groupSteps
-    if (settings.groupSteps) {
-      // Generate a regex pattern to match any number except those in the exclusion list
-      final String inclusionPattern = charIndexesOfQMarks.map((int e) => e).join('|');
-      // Precompile regex patterns
-      final RegExp regZeroFilledMatches = RegExp(r'\((' + inclusionPattern + r'), \[(0)\]\)');
-      // Convert input lists to string once
-      final String inputZeros = allLineSolutions.indexed.toList().toString();
-      // Find matches using precompiled regex patterns
-      final Iterable<RegExpMatch> matchesZeros = regZeroFilledMatches.allMatches(inputZeros);
+    // Generate a regex pattern to match any number except those in the exclusion list
+    final String inclusionPattern = charIndexesOfQMarks.map((int e) => e).join('|');
+    // Precompile regex patterns
+    final RegExp regZeroFilledMatches = RegExp(r'\((' + inclusionPattern + r'), \[(0)\]\)');
+    // Convert input lists to string once
+    final String inputZeros = allLineSolutions.indexed.toList().toString();
+    // Find matches using precompiled regex patterns
+    final Iterable<RegExpMatch> matchesZeros = regZeroFilledMatches.allMatches(inputZeros);
 
-      // Use a map to store the right number as keys and a set of left numbers as values for pairs that appear twice
-      final Map<int, Set<int>> matchMap = <int, Set<int>>{};
+    // Use a map to store the right number as keys and a set of left numbers as values for pairs that appear twice
+    final Map<int, Set<int>> matchMap = <int, Set<int>>{};
 
-      final Set<(int, String)> inputNumbersStart = startingMostSolution.indexed.toSet();
-      final Set<(int, String)> inputNumbersEnd = endingMostSolution.indexed.toSet();
-      final Set<(int, String)> duplicateInputNumbers = inputNumbersStart.intersection(inputNumbersEnd);
-      // log('duplicateInputNumbers: $duplicateInputNumbers');
+    final Set<(int, String)> inputNumbersStart = startingMostSolution.indexed.toSet();
+    final Set<(int, String)> inputNumbersEnd = endingMostSolution.indexed.toSet();
+    final Set<(int, String)> duplicateInputNumbers = inputNumbersStart.intersection(inputNumbersEnd);
+    // log('duplicateInputNumbers: $duplicateInputNumbers');
 
-      for (final (int, String) match in duplicateInputNumbers) {
-        (int, String) pair = match;
-        final int leftNumber = pair.$1;
-        final int rightNumber = int.parse(pair.$2);
-        if (rightNumber != 0 && charIndexesOfQMarks.contains(leftNumber)) {
-          matchMap.putIfAbsent(rightNumber, () => <int>{});
-          matchMap[rightNumber]!.add(leftNumber);
-        }
+    for (final (int, String) match in duplicateInputNumbers) {
+      (int, String) pair = match;
+      final int leftNumber = pair.$1;
+      final int rightNumber = int.parse(pair.$2);
+      if (rightNumber != 0 && charIndexesOfQMarks.contains(leftNumber)) {
+        matchMap.putIfAbsent(rightNumber, () => <int>{});
+        matchMap[rightNumber]!.add(leftNumber);
       }
+    }
 
-      if (matchesZeros.isNotEmpty) {
-        matchMap.putIfAbsent(0, () => <int>{});
-        matchMap[0]!.addAll(matchesZeros.map((RegExpMatch match) => int.parse(match.group(1)!)));
-      }
+    if (matchesZeros.isNotEmpty) {
+      matchMap.putIfAbsent(0, () => <int>{});
+      matchMap[0]!.addAll(matchesZeros.map((RegExpMatch match) => int.parse(match.group(1)!)));
+    }
 
-      // Convert the sets to lists and print the final map
-      final Map<int, List<int>> result = matchMap.map((int key, Set<int> value) => MapEntry(key, value.toList()));
-      // log('result: $result');
+    // Convert the sets to lists and print the final map
+    final Map<int, List<int>> result = matchMap.map((int key, Set<int> value) => MapEntry(key, value.toList()));
+    // log('result: $result');
 
-      final List<Map<int, NonoAxis>> finalStack = []; //output.stack; // List.from(output.stack);
-      List<int> newFilledBoxes = <int>[];
-      final List<SolutionStep> newSolutionSteps = <SolutionStep>[];
-      String fullUpdatedSolution = output.solutionSteps.last.currentSolution;
+    final List<Map<int, NonoAxis>> finalStack = []; //output.stack; // List.from(output.stack);
+    List<int> newFilledBoxes = <int>[];
+    final List<SolutionStep> newSolutionSteps = <SolutionStep>[];
+    String fullUpdatedSolution = output.solutionSteps.last.currentSolution;
 
-      // here 2
-      if (result.isNotEmpty) {
-        for (final int clueKey in result.keys) {
-          final List<int> charIndexes = result[clueKey]!;
-          final int clueIndex = clueKey == 0 ? 0 : clueKey - 2;
+    // here 2
+    if (result.isNotEmpty) {
+      for (final int clueKey in result.keys) {
+        final List<int> charIndexes = result[clueKey]!;
+        final int clueIndex = clueKey == 0 ? 0 : clueKey - 2;
 
-          // TODO(stef): add "useLookbehind" variable
-          if (false) {
-            final String lookbehinds =
-                charIndexes.map((int pos) => '^.{${lineType.getSolutionPosition(lineIndex, pos, nonogram.width)}}').join('|');
-            final RegExp solutionIndexesRegexp = RegExp(r'(?<=' + lookbehinds + r').');
+        // TODO(stef): add "useLookbehind" variable
+        if (false) {
+          final String lookbehinds =
+              charIndexes.map((int pos) => '^.{${lineType.getSolutionPosition(lineIndex, pos, nonogram.width)}}').join('|');
+          final RegExp solutionIndexesRegexp = RegExp(r'(?<=' + lookbehinds + r').');
 
-            fullUpdatedSolution = output.solutionSteps.last.currentSolution
-                .replaceAllMapped(solutionIndexesRegexp, (Match match) => clueKey == 0 ? '0' : '1');
-          } else {
-            for (final int charIndex in charIndexes) {
-              final int tempPos = lineType.getSolutionPosition(lineIndex, charIndex, nonogram.width);
-              newFilledBoxes.add(tempPos);
-              fullUpdatedSolution = fullUpdatedSolution.substring(0, tempPos) +
-                  (clueKey == 0 ? '0' : '1') +
-                  fullUpdatedSolution.substring(tempPos + 1);
-            }
-          }
-
-          if (printLogs) log('fullUpdatedSolution: $fullUpdatedSolution');
-
-          // TODO(stef): restore these two bellow
-          if (newFilledBoxes.isNotEmpty) {
-            String initialSolution2; // = solutionSteps.last.currentSolution.getLine(lineIndex, nonogram, lineType);
-            switch (lineType) {
-              case NonoAxis.row:
-                initialSolution2 = fullUpdatedSolution
-                    .split('')
-                    .toList()
-                    .getRange(lineIndex * nonogram.width, nonogram.width * (lineIndex + 1))
-                    .join()
-                    .replaceAll(' ', '')
-                    .replaceAll('(', '')
-                    .replaceAll(')', '')
-                    .replaceAll(',', '');
-              case NonoAxis.column:
-                String columnSol = '';
-                for (int solChar = lineIndex;
-                    solChar < output.solutionSteps.last.currentSolution.split('').toList().length;
-                    solChar = solChar + nonogram.width) {
-                  columnSol = '$columnSol${output.solutionSteps.last.currentSolution.split('').toList().elementAt(solChar)}';
-                }
-                initialSolution2 = columnSol;
-            }
-
-            filledBoxes = initialSolution2.sumFilledBoxes;
-            isLineCompleted = filledBoxes == clues.sum;
-            // finalStack = finalStack.updateStack(charIndexes, lineType);
-            // if (clues.elementAt(clueIndex) == 14 && clueIndex == 1 && lineIndex == 18) {
-            //   log('initialSolution2.sumFilledBoxes: ${initialSolution2.sumFilledBoxes} and clues.sum: ${clues.sum}');
-            //   log('isLineCompleted: $isLineCompleted && initialSolution2: $initialSolution2');
-            //   log(
-            //       'isLineCompleted && fullUpdatedSolution.split(\'\').contains(\'?\'): ${isLineCompleted && fullUpdatedSolution.split('').contains('?')}');
-            // }
-            if (isLineCompleted && fullUpdatedSolution.split('').contains('?')) {
-              final List<Map<int, NonoAxis>> tempStack = finalStack;
-              // log('runs..????');
-              // log('finalStack before: ${tempStack.length} - $tempStack');
-              finalStack.addAll(
-                  tempStack.getNewStackElements(<int>[lineIndex], lineType == NonoAxis.row ? NonoAxis.column : NonoAxis.row));
-              // log('finalStack after: ${finalStack.length} - $finalStack');
-            }
-
-            finalStack.addAll(finalStack.getNewStackElements(charIndexes, lineType));
-            final SolutionStep solutionStep = SolutionStep(
-              currentSolution: fullUpdatedSolution,
-              axis: lineType,
-              lineIndex: lineIndex,
-              explanation:
-                  '${clueKey == 0 ? 'Cross out' : 'Fill in'} sure boxes for clue ${clues.elementAt(clueIndex)} with index $clueIndex of ${lineType.name} with index $lineIndex.',
-              newFilledBoxes: newFilledBoxes,
-            );
-            // if (!newSolutionSteps.contains(solutionStep))
-            newSolutionSteps.add(solutionStep);
-            newFilledBoxes = <int>[];
-
-            // return IsolateOutput(
-            //   stack: finalStack.updateStack(charIndexes, lineType),
-            //   solutionSteps: [
-            //     SolutionStep(
-            //       currentSolution: fullUpdatedSolution,
-            //       axis: lineType,
-            //       lineIndex: lineIndex,
-            //       explanation:
-            //           '${clueKey == 0 ? 'Cross out' : 'Fill in'} sure boxes for clue ${clues.elementAt(clueIndex)} with index $clueIndex of ${lineType.name} with index $lineIndex.',
-            //       newFilledBoxes: newFilledBoxes,
-            //     ),
-            //   ],
-            // );
+          fullUpdatedSolution = output.solutionSteps.last.currentSolution
+              .replaceAllMapped(solutionIndexesRegexp, (Match match) => clueKey == 0 ? '0' : '1');
+        } else {
+          for (final int charIndex in charIndexes) {
+            final int tempPos = lineType.getSolutionPosition(lineIndex, charIndex, nonogram.width);
+            newFilledBoxes.add(tempPos);
+            fullUpdatedSolution = fullUpdatedSolution.substring(0, tempPos) +
+                (clueKey == 0 ? '0' : '1') +
+                fullUpdatedSolution.substring(tempPos + 1);
           }
         }
-        // if (newSolutionSteps.isNotEmpty || finalStack != output.stack) {
-        // log('newSolutionSteps: ${newSolutionSteps.firstOrNull?.explanation} - ${newSolutionSteps.lastOrNull?.explanation}');
-        return IsolateOutput(
-          stack: finalStack != output.stack ? finalStack : <Map<int, NonoAxis>>[],
-          solutionSteps: newSolutionSteps,
-          linesChecked: output.linesCheckedList.last,
-          boxesChecked: output.boxesCheckedList.last,
-          otherBoxesChecked: output.otherBoxesCheckedList.last,
-          totalCacheData: output.cachedBoxSolutions.length,
-          // linesCheckedList: output.linesCheckedList,
-          // cachedBoxSolutions: output.cachedBoxSolutions,
-          // boxesCheckedList: output.boxesCheckedList,
-          // otherBoxesCheckedList: output.otherBoxesCheckedList,
-        );
-        // }
-      }
-      // state.addStep(SolutionStep(
-      //   currentSolution: fullUpdatedSolution,
-      //   axis: lineType,
-      //   lineIndex: lineIndex,
-      //   explanation:
-      //       '${clueKey == 0 ? 'Cross out' : 'Fill in'} sure boxes for clue ${clues.elementAt(clueIndex)} with index $clueIndex of ${lineType.name} with index $lineIndex.',
-      // ));
-      // state.stack.updateStack(charIndexes, lineType, state);
-    } else {
-      String updatedSolution = initialSolution;
 
-      final List<Map<int, NonoAxis>> finalStack = []; // output.stack;
-      List<Map<int, NonoAxis>> tempStack = finalStack;
-      final List<SolutionStep> newSolutionSteps = <SolutionStep>[];
+        if (printLogs) log('fullUpdatedSolution: $fullUpdatedSolution');
 
-      for (final int charIndex in charIndexesOfQMarks) {
-        if (printLogs) log('Is box unknown and should be checked?');
-        // TODOcheck if characters update works as expected
-        if (initialSolution.split('').elementAt(charIndex) == '?') {
-          if (printLogs) log('Yes it is.');
-          if (printLogs) {
-            log(
-              'Are all possible solutions (${allLineSolutions.elementAt(charIndex)}) of box at index $charIndex only zeros (0)?',
-            );
+        // TODO(stef): restore these two bellow
+        if (newFilledBoxes.isNotEmpty) {
+          String initialSolution2; // = solutionSteps.last.currentSolution.getLine(lineIndex, nonogram, lineType);
+          switch (lineType) {
+            case NonoAxis.row:
+              initialSolution2 = fullUpdatedSolution
+                  .split('')
+                  .toList()
+                  .getRange(lineIndex * nonogram.width, nonogram.width * (lineIndex + 1))
+                  .join()
+                  .replaceAll(' ', '')
+                  .replaceAll('(', '')
+                  .replaceAll(')', '')
+                  .replaceAll(',', '');
+            case NonoAxis.column:
+              String columnSol = '';
+              for (int solChar = lineIndex;
+                  solChar < output.solutionSteps.last.currentSolution.split('').toList().length;
+                  solChar = solChar + nonogram.width) {
+                columnSol = '$columnSol${output.solutionSteps.last.currentSolution.split('').toList().elementAt(solChar)}';
+              }
+              initialSolution2 = columnSol;
           }
 
-          if (allLineSolutions.elementAt(charIndex).everyElementIsZero) {
-            if (printLogs) log('Yes. Cross out this box.');
-            updatedSolution = updatedSolution.replaceRange(charIndex, charIndex + 1, '0');
-
-            final int indexSol = lineType.getSolutionPosition(lineIndex, charIndex, nonogram.width);
-            final String fullUpdatedSolution = output.solutionSteps.last.getUpdatedSolution(indexSol, '0');
-            if (printLogs) log('fullUpdatedSolution: $fullUpdatedSolution');
-            // output.solutionSteps.add(
-            //   SolutionStep(
-            //     currentSolution: fullUpdatedSolution,
-            //     axis: lineType,
-            //     lineIndex: lineIndex,
-            //     explanation: 'Cross out box.',
-            //   ),
-            // );
-
-            // List<Map<int, NonoAxis>> finalStack = output.stack;
-            // var tempStack = finalStack;
-            // output.stack.addAll(tempStack.updateStack([charIndex], lineType));
-            // output.stack.updateStack([charIndex], lineType);
-            //
-            // output.stack.addAll(output.stack.updateStack([charIndex], lineType));
-            // state.stack.updateStack([charIndex], lineType, state);
-            // tempStack = tempStack.getNewStackElements(<int>[charIndex], lineType);
-            finalStack.addAll(tempStack.getNewStackElements(<int>[charIndex], lineType));
-            newSolutionSteps.add(
-              SolutionStep(
-                currentSolution: fullUpdatedSolution,
-                axis: lineType,
-                lineIndex: lineIndex,
-                explanation: 'Cross out box.',
-                newFilledBoxes: <int>[charIndex],
-              ),
-            );
-            // return IsolateOutput(
-            //   stack: output.stack.updateStack([charIndex], lineType),
-            //   solutionSteps: [
-            //     SolutionStep(
-            //       currentSolution: fullUpdatedSolution,
-            //       axis: lineType,
-            //       lineIndex: lineIndex,
-            //       explanation: 'Cross out box.',
-            //     ),
-            //   ],
-            // );
-          } else {
-            if (printLogs) log('No.');
-            final String startingSolutionIndex = startingMostSolution.elementAt(charIndex);
-            final String endingSolutionIndex = endingMostSolution.elementAt(charIndex);
-            if (printLogs) log('Do both side solutions of box at index $charIndex contain the same clue index?');
-
-            if (printLogs) log('startingSolutionIndex: $startingSolutionIndex');
-            if (printLogs) log('endingSolutionIndex  : $endingSolutionIndex');
-            if (startingSolutionIndex.isSameClueIndexWith(endingSolutionIndex)) {
-              if (printLogs) log('Yes. Fill in this box.');
-              updatedSolution = updatedSolution.replaceRange(charIndex, charIndex + 1, '1');
-              final int indexSol = lineType.getSolutionPosition(lineIndex, charIndex, nonogram.width);
-              // state.setFilled(lineType.getSolutionPosition(lineIndex, charIndex, nonogram.width));
-              final String fullUpdatedSolution = output.solutionSteps.last.getUpdatedSolution(indexSol, '1');
-              if (printLogs) log('fullUpdatedSolution: $fullUpdatedSolution');
-              // state.addStep(SolutionStep(
-              //   currentSolution: fullUpdatedSolution,
-              //   axis: lineType,
-              //   lineIndex: lineIndex,
-              //   explanation: 'Fill in box.',
-              // ));
-              // state.stack.updateStack([charIndex], lineType, state);
-
-              finalStack.addAll(tempStack.getNewStackElements(<int>[charIndex], lineType));
-              // finalStack.getNewStackElements(<int>[charIndex], lineType);
-              // tempStack = tempStack.updateStack([charIndex], lineType);
-              newSolutionSteps.add(
-                SolutionStep(
-                  currentSolution: fullUpdatedSolution,
-                  axis: lineType,
-                  lineIndex: lineIndex,
-                  explanation: 'Fill in box.',
-                  newFilledBoxes: <int>[charIndex],
-                ),
-              );
-              // output.solutionSteps.add(
-              //   SolutionStep(
-              //     currentSolution: fullUpdatedSolution,
-              //     axis: lineType,
-              //     lineIndex: lineIndex,
-              //     explanation: 'Fill in box.',
-              //   ),
-              // );
-
-              // List<Map<int, NonoAxis>> finalStack = output.stack;
-              // var tempStack = finalStack;
-              // output.stack.addAll(tempStack.updateStack([charIndex], lineType));
-
-              // List<Map<int, NonoAxis>> finalStack = output.stack;
-              // var tempStack = finalStack;
-              // finalStack
-              // output.stack.addAll(output.stack.updateStack([charIndex], lineType));
-              // output.stack.updateStack([charIndex], lineType);
-            } else {
-              if (printLogs) log('No. It contains different indexes.');
-            }
+          filledBoxes = initialSolution2.sumFilledBoxes;
+          isLineCompleted = filledBoxes == clues.sum;
+          // finalStack = finalStack.updateStack(charIndexes, lineType);
+          // if (clues.elementAt(clueIndex) == 14 && clueIndex == 1 && lineIndex == 18) {
+          //   log('initialSolution2.sumFilledBoxes: ${initialSolution2.sumFilledBoxes} and clues.sum: ${clues.sum}');
+          //   log('isLineCompleted: $isLineCompleted && initialSolution2: $initialSolution2');
+          //   log(
+          //       'isLineCompleted && fullUpdatedSolution.split(\'\').contains(\'?\'): ${isLineCompleted && fullUpdatedSolution.split('').contains('?')}');
+          // }
+          if (isLineCompleted && fullUpdatedSolution.split('').contains('?')) {
+            final List<Map<int, NonoAxis>> tempStack = finalStack;
+            // log('runs..????');
+            // log('finalStack before: ${tempStack.length} - $tempStack');
+            finalStack.addAll(
+                tempStack.getNewStackElements(<int>[lineIndex], lineType == NonoAxis.row ? NonoAxis.column : NonoAxis.row));
+            // log('finalStack after: ${finalStack.length} - $finalStack');
           }
+
+          finalStack.addAll(finalStack.getNewStackElements(charIndexes, lineType));
+          final SolutionStep solutionStep = SolutionStep(
+            currentSolution: fullUpdatedSolution,
+            axis: lineType,
+            lineIndex: lineIndex,
+            explanation:
+                '${clueKey == 0 ? 'Cross out' : 'Fill in'} sure boxes for clue ${clues.elementAt(clueIndex)} with index $clueIndex of ${lineType.name} with index $lineIndex.',
+            newFilledBoxes: newFilledBoxes,
+          );
+          // if (!newSolutionSteps.contains(solutionStep))
+          newSolutionSteps.add(solutionStep);
+          newFilledBoxes = <int>[];
+
+          // return IsolateOutput(
+          //   stack: finalStack.updateStack(charIndexes, lineType),
+          //   solutionSteps: [
+          //     SolutionStep(
+          //       currentSolution: fullUpdatedSolution,
+          //       axis: lineType,
+          //       lineIndex: lineIndex,
+          //       explanation:
+          //           '${clueKey == 0 ? 'Cross out' : 'Fill in'} sure boxes for clue ${clues.elementAt(clueIndex)} with index $clueIndex of ${lineType.name} with index $lineIndex.',
+          //       newFilledBoxes: newFilledBoxes,
+          //     ),
+          //   ],
+          // );
         }
-        if (printLogs) log('No it is not.');
       }
-
+      // if (newSolutionSteps.isNotEmpty || finalStack != output.stack) {
+      // log('newSolutionSteps: ${newSolutionSteps.firstOrNull?.explanation} - ${newSolutionSteps.lastOrNull?.explanation}');
       return IsolateOutput(
-        stack: finalStack,
+        stack: finalStack != output.stack ? finalStack : <Map<int, NonoAxis>>[],
         solutionSteps: newSolutionSteps,
         linesChecked: output.linesCheckedList.last,
         boxesChecked: output.boxesCheckedList.last,
@@ -597,7 +388,16 @@ IsolateOutput loopSides({
         // boxesCheckedList: output.boxesCheckedList,
         // otherBoxesCheckedList: output.otherBoxesCheckedList,
       );
+      // }
     }
+    // state.addStep(SolutionStep(
+    //   currentSolution: fullUpdatedSolution,
+    //   axis: lineType,
+    //   lineIndex: lineIndex,
+    //   explanation:
+    //       '${clueKey == 0 ? 'Cross out' : 'Fill in'} sure boxes for clue ${clues.elementAt(clueIndex)} with index $clueIndex of ${lineType.name} with index $lineIndex.',
+    // ));
+    // state.stack.updateStack(charIndexes, lineType, state);
     if (printLogs) log('Overlapped solution: $updatedSolution');
   }
   // TODO(stef): updateLinesChecked

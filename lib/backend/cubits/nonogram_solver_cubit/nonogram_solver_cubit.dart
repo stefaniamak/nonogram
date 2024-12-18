@@ -156,11 +156,6 @@ class NonogramSolverCubit extends Cubit<NonogramSolverState> {
     emit(state.copyWith(solverSettings: state.solverSettings.copyWith(isolateConcurrent: index)));
   }
 
-  /// Toggles the group steps setting.
-  void updateGroupSteps() {
-    emit(state.copyWith(solverSettings: state.solverSettings.copyWith(groupSteps: !state.solverSettings.groupSteps)));
-  }
-
   /// Toggles the highlight new filled boxes setting.
   void updateHighlightNewFilledBoxes() {
     emit(
