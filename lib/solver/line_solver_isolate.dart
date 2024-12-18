@@ -22,12 +22,11 @@ void lineSolverIsolate(dynamic params) {
       final List<Map<int, NonoAxis>> stack = initializeStackList(input.nonogram.clues);
       List<SolutionStep> solutionSteps = input.solutionSteps;
       final Map<String, bool> cachedBoxSolutions = <String, bool>{};
-      // Map<String, int> linesCheckedList = {'linesChecked': 0};
       final List<int> linesCheckedList = <int>[0];
       final List<int> boxesChecked = <int>[0];
       final List<int> otherBoxesChecked = <int>[0];
 
-      IsolateOutput? progress = IsolateOutput(
+      IsolateOutput progress = IsolateOutput(
         stack: stack,
         solutionSteps: solutionSteps,
         cachedBoxSolutions: cachedBoxSolutions,
@@ -37,45 +36,30 @@ void lineSolverIsolate(dynamic params) {
       );
 
       while (stack.isNotEmpty) {
-        // print('stack: $stack');
         final Map<int, NonoAxis> line = stack.first;
-
-        // print('checks line $line');
-
         final List<int> clues = (line.values.first == NonoAxis.row ? input.nonogram.clues.rows : input.nonogram.clues.columns)
             .elementAt(line.keys.first);
+
         progress = loopSides(
-          line.keys.first,
-          clues,
-          line.values.first,
-          input.nonogram,
-          IsolateOutput(
-            stack: stack,
-            cachedBoxSolutions: cachedBoxSolutions,
-            linesCheckedList: linesCheckedList,
-            boxesCheckedList: boxesChecked,
-            solutionSteps: solutionSteps,
-            otherBoxesCheckedList: otherBoxesChecked,
-          ),
-          input.solverSettings,
+          lineIndex: line.keys.first,
+          clues: clues,
+          lineType: line.values.first,
+          nonogram: input.nonogram,
+          output: progress,
+          settings: input.solverSettings,
         );
 
-        if (progress != null) {
-          controller.sendResult(
-            jsonEncode(
-              <String, Map<String, dynamic>>{
-                'progress': progress.toJson(),
-              },
-            ),
-          );
-          // print('stackstack: $stack');
-          // print('progress.stack: ${progress.stack}');
-          // stack.addAll(progress.stack.where((e) => !stack.contains(e)));
-          // if (progress.stack.isNotEmpty) stack.updateStack(progress.stack);
-          if (progress.stack.isNotEmpty) stack.addAll(progress.stack);
-          // stack = progress.stack;
-          if (progress.solutionSteps.isNotEmpty) solutionSteps = progress.solutionSteps;
-        }
+        controller.sendResult(
+          jsonEncode(
+            <String, Map<String, dynamic>>{
+              'progress': progress.toJson(),
+            },
+          ),
+        );
+
+        if (progress.stack.isNotEmpty) stack.addAll(progress.stack);
+        if (progress.solutionSteps.isNotEmpty) solutionSteps = progress.solutionSteps;
+
         stack.removeAt(0);
       }
 
@@ -103,15 +87,15 @@ void lineSolverIsolate(dynamic params) {
 }
 
 // @isolateManagerCustomWorker
-IsolateOutput loopSides(
-  int lineIndex,
-  List<int> clues,
-  NonoAxis lineType,
-  Nonogram nonogram,
-  IsolateOutput output,
-  SolverSettings settings, [
+IsolateOutput loopSides({
+  required int lineIndex,
+  required List<int> clues,
+  required NonoAxis lineType,
+  required Nonogram nonogram,
+  required IsolateOutput output,
+  required SolverSettings settings,
   bool printPrints = false,
-]) {
+}) {
   output.linesCheckedList.add(output.linesCheckedList.last + 1);
   output.linesCheckedList.removeAt(0);
 
