@@ -110,7 +110,12 @@ IsolateOutput loopSides({
 
   if (printLogs) log('Check ${lineType.name} with index $lineIndex.');
   if (printLogs) log("${lineType.name}'s clues: $clues");
-  final String initialSolution = output.solutionSteps.last.currentSolution.getSolutionLine(lineIndex, nonogram, lineType);
+  final String initialSolution = LineSolverHelper.instance.getSolutionLine(
+    output.solutionSteps.last.currentSolution,
+    nonogram.width,
+    lineIndex,
+    lineType,
+  );
 
   if (printLogs) log("${lineType.name}'s initialSolution: $initialSolution");
   int filledBoxes = initialSolution.sumFilledBoxes;
