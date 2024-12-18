@@ -277,15 +277,12 @@ List<List<String>> getAllLinePossibleSolutions(
         if (settings.keepCacheData) {
           output.cachedBoxSolutions.addAll(updateCachedBoxSolutions(clues, clueIndex, line, charIndex, result));
         }
-        if (!result) {}
-        // if (state.countCheckedBoxes)
         if (settings.countCheckedBoxes) {
           output.boxesCheckedList.add(output.boxesCheckedList.last + 1);
           output.boxesCheckedList.removeAt(0);
         }
       }
       final String solutionNumb = result ? '${clueIndex + 2}' : '0';
-      // log('can fit: $result');
 
       final int loops = solutionNumb == '0' ? 1 : clues[clueIndex];
       for (int i = charIndex; i < charIndex + loops; i++) {
@@ -293,7 +290,6 @@ List<List<String>> getAllLinePossibleSolutions(
           possibleSolutions.elementAt(i).add(solutionNumb);
         }
       }
-
       if (printLogs) log('possibleSolutions of charIndex $charIndex and clueIndex $clueIndex are: $possibleSolutions');
     }
   }
@@ -314,7 +310,6 @@ bool doOtherCluesFit(
 ]) {
   final int clue = clues.elementAt(clueIndex);
 
-  // if (state.countCheckedBoxes) state.updateOtherBoxesChecked();
   if (settings.countCheckedBoxes) {
     output.otherBoxesCheckedList.add(output.otherBoxesCheckedList.last + 1);
     output.otherBoxesCheckedList.removeAt(0);
@@ -324,10 +319,6 @@ bool doOtherCluesFit(
   if (!solutionSide.hasOtherClues(clueIndex, clues.length)) {
     if (printLogs) log('It does not.');
     if (printLogs) log('Check if there are any filled boxes which match to no clue.');
-    // if (solution.substring(clueIndex).characters.contains('1')) {
-    //   return false;
-    // }
-    // if (printLogs) log('Return `true`.');
     return solutionSide.isSolutionValid(solution, solutionIndex, clues[clueIndex]);
   }
   if (printLogs) log('It does. Continue checking.');
@@ -347,8 +338,6 @@ bool doOtherCluesFit(
     if (canCluesFit(cluesSublist, solutionSublist, solutionSublistIndex, 0, output, settings)) {
       if (printLogs) log('It does fit. Return `true`.');
 
-      // return solutionSide.isSolutionValid(solution, solutionIndex);
-      // TODO(stef): restore cache data here
       if (settings.keepCacheData) {
         output.cachedBoxSolutions.addAll(updateCachedBoxSolutions(cluesSublist, 0, solutionSublist, solutionSublistIndex, true));
       }
@@ -374,8 +363,6 @@ bool canCluesFit(
   final int clue = clues.elementAt(cl);
   bool canFit;
 
-  // log('clues: $clues , clue: $cl , position $s , solution $solution , line $solution');
-
   if (printLogs) log('Does clue $clue fit at $solutionList from position $s to position ${s + clue}?');
   if (clue > solutionList.getRange(s, solutionList.length).length) {
     if (printLogs) log('false');
@@ -399,23 +386,24 @@ bool canCluesFit(
   final bool cluesAfterGood = doOtherCluesFit(NonoDirection.after, clues, cl, solution, s, output, settings);
 
   if (printLogs) log('Do both clues before and clues after fit? Answer: ${cluesBeforeGood && cluesAfterGood}');
-  // if (state.countCheckedBoxes) state.updateActualBoxesChecked();
   return cluesBeforeGood && cluesAfterGood;
 }
 
 // @isolateManagerCustomWorker
 List<String> getSideMostSolution(
-  List<List<String>> solution,
-  List<int> clues,
+  List<List<String>> initialSolution,
+  List<int> initialClues,
   NonoAxisAlignment axis, [
   bool printLogs = false,
 ]) {
-  if (printLogs) log('Get ${axis.name}ing most solution of solution $solution with clues $clues');
+  if (printLogs) log('Get ${axis.name}ing most solution of solution $initialSolution with clues $initialClues');
 
+  List<List<String>> solution = initialSolution;
+  List<int> clues = initialClues;
   List<int> clueIndexes = Iterable<int>.generate(clues.length, (int c) => c + 2).toList();
   if (axis == NonoAxisAlignment.end) {
     if (printLogs) log('All values should reverse');
-    solution = solution.reversed.toList();
+    solution = initialSolution.reversed.toList();
     clues = clues.reversed.toList();
     clueIndexes = clueIndexes.reversed.toList();
   }
@@ -434,9 +422,9 @@ List<String> getSideMostSolution(
 
     if (printLogs) log('Is cluePos $cluePos larger than 0?');
     if (printLogs) log(cluePos > 0 ? 'Yes, it is. Add $cluePos "0"s to sideMostSolution list' : "No, it isn't. Move on");
-    if (cluePos > 0) sideMostSolution.addAll(Iterable.generate(cluePos, (_) => '0').toList());
+    if (cluePos > 0) sideMostSolution.addAll(Iterable<String>.generate(cluePos, (_) => '0').toList());
     if (printLogs) log('Add $clue times clueIndex $clueIndex of clue $clue at sideMostSolution list');
-    sideMostSolution.addAll(Iterable.generate(clue, (_) => '$clueIndex').toList());
+    sideMostSolution.addAll(Iterable<String>.generate(clue, (_) => '$clueIndex').toList());
 
     if (printLogs) log('Is solution completed?');
     if (printLogs) {
@@ -457,7 +445,7 @@ List<String> getSideMostSolution(
   if (printLogs) log('Finished checking all clues. Is sideMostSolution completed?');
   if (printLogs) log(sideMostSolution.length < solution.length ? 'No. Complete solution with "0"s' : 'Yes. Move on');
   if (sideMostSolution.length < solution.length) {
-    sideMostSolution.addAll(Iterable.generate(remainingSolution.length, (_) => '0').toList());
+    sideMostSolution.addAll(Iterable<String>.generate(remainingSolution.length, (_) => '0').toList());
   }
   if (printLogs) log('Final sideMostSolution: $sideMostSolution');
   return axis == NonoAxisAlignment.end ? sideMostSolution.reversed.toList() : sideMostSolution;
