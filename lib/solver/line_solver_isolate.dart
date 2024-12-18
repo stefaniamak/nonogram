@@ -109,19 +109,19 @@ IsolateOutput loopSides({
   output.linesCheckedList.removeAt(0);
 
   if (printPrints) log('Check ${lineType.name} with index $lineIndex.');
-  if (printPrints) print("${lineType.name}'s clues: $clues");
+  if (printPrints) log("${lineType.name}'s clues: $clues");
   final String initialSolution = output.solutionSteps.last.currentSolution.getSolutionLine(lineIndex, nonogram, lineType);
 
-  if (printPrints) print("${lineType.name}'s initialSolution: $initialSolution");
+  if (printPrints) log("${lineType.name}'s initialSolution: $initialSolution");
   int filledBoxes = initialSolution.sumFilledBoxes;
   bool isLineCompleted = filledBoxes == clues.sum;
 
-  if (printPrints) print("Are filled boxes ($filledBoxes) equal with clue's sum (${clues.sum})?");
+  if (printPrints) log("Are filled boxes ($filledBoxes) equal with clue's sum (${clues.sum})?");
 
   final List<int> charIndexesOfQMarks = LineSolverHelper.instance.getCharIndexesOfQuestionMarks(initialSolution);
 
   if (isLineCompleted) {
-    if (printPrints) print('It is. Shall cross out remaining empty boxes if any left.');
+    if (printPrints) log('It is. Shall cross out remaining empty boxes if any left.');
     if (initialSolution.split('').toList().contains('?')) {
       // TODO(stef): restore groupSteps
       if (!settings.groupSteps) {
@@ -131,7 +131,7 @@ IsolateOutput loopSides({
           if (initialSolution.characterAt(charIndex) == '?') {
             final int indexSol = lineType.getSolutionPosition(lineIndex, charIndex, nonogram.width);
             final String fullUpdatedSolution = output.solutionSteps.last.getUpdatedSolution(indexSol, '0');
-            if (printPrints) print('fullUpdatedSolution: $fullUpdatedSolution');
+            if (printPrints) log('fullUpdatedSolution: $fullUpdatedSolution');
 
             // List<Map<int, NonoAxis>> finalStack = output.stack;
             // var tempStack = finalStack;
@@ -169,7 +169,7 @@ IsolateOutput loopSides({
             // state.stack.updateStack([charIndex], lineType, state);
           }
         }
-        // print('newSolutionSteps: $newSolutionSteps');
+        // log('newSolutionSteps: $newSolutionSteps');
         return IsolateOutput(
           stack: tempStack,
           solutionSteps: newSolutionSteps,
@@ -186,8 +186,8 @@ IsolateOutput loopSides({
         final int charStart = initialSolution.split('').toList().indexWhere((String char) => char == '?');
         final int charEnd = initialSolution.split('').toList().lastIndexWhere((String char) => char == '?') + 1;
         if (printPrints) {
-          print('charStart: $charStart');
-          print('charEnd: $charEnd');
+          log('charStart: $charStart');
+          log('charEnd: $charEnd');
         }
 
         /// The following 3 lines use the list of indexes of "?" in the line solution to find and replace them
@@ -239,7 +239,7 @@ IsolateOutput loopSides({
 
           fullUpdatedSolution =
               output.solutionSteps.last.currentSolution.replaceAllMapped(solutionIndexesRegexp, (Match match) => '0');
-          if (printPrints) print('fullUpdatedSolution: $fullUpdatedSolution');
+          if (printPrints) log('fullUpdatedSolution: $fullUpdatedSolution');
         } else {
           for (final int charIndex in charIndexesOfQMarks) {
             final int tempPos = lineType.getSolutionPosition(lineIndex, charIndex, nonogram.width);
@@ -276,20 +276,20 @@ IsolateOutput loopSides({
     // if (activateReturnOnNotEnoughSolvedLines && filledBoxes < (clues.sum / 4) && (state.nonogram.width / 4) > clues.sum) {
     //   return;
     // }
-    if (printPrints) print('It is not. Starts to calculate all possible solutions...');
-    // print('line type: $lineType + line index: $lineIndex');
+    if (printPrints) log('It is not. Starts to calculate all possible solutions...');
+    // log('line type: $lineType + line index: $lineIndex');
     final List<List<String>> allLineSolutions = getAllLinePossibleSolutions(clues, initialSolution, output, settings);
-    if (printPrints) print('All line solutions: $allLineSolutions');
+    if (printPrints) log('All line solutions: $allLineSolutions');
 
-    if (printPrints) print('Find starting solution of $allLineSolutions with clues $clues.');
+    if (printPrints) log('Find starting solution of $allLineSolutions with clues $clues.');
     final List<String> startingMostSolution = getSideMostSolution(allLineSolutions, clues, NonoAxisAlignment.start);
 
-    if (printPrints) print('Starting most solution: $startingMostSolution');
+    if (printPrints) log('Starting most solution: $startingMostSolution');
 
-    if (printPrints) print('Find ending solution of $allLineSolutions with clues $clues.');
+    if (printPrints) log('Find ending solution of $allLineSolutions with clues $clues.');
     final List<String> endingMostSolution = getSideMostSolution(allLineSolutions, clues, NonoAxisAlignment.end);
 
-    if (printPrints) print('Ending most solution  : $endingMostSolution');
+    if (printPrints) log('Ending most solution  : $endingMostSolution');
 
     const String updatedSolution = '';
 
@@ -310,7 +310,7 @@ IsolateOutput loopSides({
       final Set<(int, String)> inputNumbersStart = startingMostSolution.indexed.toSet();
       final Set<(int, String)> inputNumbersEnd = endingMostSolution.indexed.toSet();
       final Set<(int, String)> duplicateInputNumbers = inputNumbersStart.intersection(inputNumbersEnd);
-      // print('duplicateInputNumbers: $duplicateInputNumbers');
+      // log('duplicateInputNumbers: $duplicateInputNumbers');
 
       for (final (int, String) match in duplicateInputNumbers) {
         (int, String) pair = match;
@@ -329,7 +329,7 @@ IsolateOutput loopSides({
 
       // Convert the sets to lists and print the final map
       final Map<int, List<int>> result = matchMap.map((int key, Set<int> value) => MapEntry(key, value.toList()));
-      // print('result: $result');
+      // log('result: $result');
 
       final List<Map<int, NonoAxis>> finalStack = []; //output.stack; // List.from(output.stack);
       List<int> newFilledBoxes = <int>[];
@@ -360,7 +360,7 @@ IsolateOutput loopSides({
             }
           }
 
-          if (printPrints) print('fullUpdatedSolution: $fullUpdatedSolution');
+          if (printPrints) log('fullUpdatedSolution: $fullUpdatedSolution');
 
           // TODO(stef): restore these two bellow
           if (newFilledBoxes.isNotEmpty) {
@@ -390,18 +390,18 @@ IsolateOutput loopSides({
             isLineCompleted = filledBoxes == clues.sum;
             // finalStack = finalStack.updateStack(charIndexes, lineType);
             // if (clues.elementAt(clueIndex) == 14 && clueIndex == 1 && lineIndex == 18) {
-            //   print('initialSolution2.sumFilledBoxes: ${initialSolution2.sumFilledBoxes} and clues.sum: ${clues.sum}');
-            //   print('isLineCompleted: $isLineCompleted && initialSolution2: $initialSolution2');
-            //   print(
+            //   log('initialSolution2.sumFilledBoxes: ${initialSolution2.sumFilledBoxes} and clues.sum: ${clues.sum}');
+            //   log('isLineCompleted: $isLineCompleted && initialSolution2: $initialSolution2');
+            //   log(
             //       'isLineCompleted && fullUpdatedSolution.split(\'\').contains(\'?\'): ${isLineCompleted && fullUpdatedSolution.split('').contains('?')}');
             // }
             if (isLineCompleted && fullUpdatedSolution.split('').contains('?')) {
               final List<Map<int, NonoAxis>> tempStack = finalStack;
-              // print('runs..????');
-              // print('finalStack before: ${tempStack.length} - $tempStack');
+              // log('runs..????');
+              // log('finalStack before: ${tempStack.length} - $tempStack');
               finalStack.addAll(
                   tempStack.getNewStackElements(<int>[lineIndex], lineType == NonoAxis.row ? NonoAxis.column : NonoAxis.row));
-              // print('finalStack after: ${finalStack.length} - $finalStack');
+              // log('finalStack after: ${finalStack.length} - $finalStack');
             }
 
             finalStack.addAll(finalStack.getNewStackElements(charIndexes, lineType));
@@ -433,7 +433,7 @@ IsolateOutput loopSides({
           }
         }
         // if (newSolutionSteps.isNotEmpty || finalStack != output.stack) {
-        // print('newSolutionSteps: ${newSolutionSteps.firstOrNull?.explanation} - ${newSolutionSteps.lastOrNull?.explanation}');
+        // log('newSolutionSteps: ${newSolutionSteps.firstOrNull?.explanation} - ${newSolutionSteps.lastOrNull?.explanation}');
         return IsolateOutput(
           stack: finalStack != output.stack ? finalStack : <Map<int, NonoAxis>>[],
           solutionSteps: newSolutionSteps,
@@ -464,23 +464,23 @@ IsolateOutput loopSides({
       final List<SolutionStep> newSolutionSteps = <SolutionStep>[];
 
       for (final int charIndex in charIndexesOfQMarks) {
-        if (printPrints) print('Is box unknown and should be checked?');
+        if (printPrints) log('Is box unknown and should be checked?');
         // TODOcheck if characters update works as expected
         if (initialSolution.split('').elementAt(charIndex) == '?') {
-          if (printPrints) print('Yes it is.');
+          if (printPrints) log('Yes it is.');
           if (printPrints) {
-            print(
+            log(
               'Are all possible solutions (${allLineSolutions.elementAt(charIndex)}) of box at index $charIndex only zeros (0)?',
             );
           }
 
           if (allLineSolutions.elementAt(charIndex).everyElementIsZero) {
-            if (printPrints) print('Yes. Cross out this box.');
+            if (printPrints) log('Yes. Cross out this box.');
             updatedSolution = updatedSolution.replaceRange(charIndex, charIndex + 1, '0');
 
             final int indexSol = lineType.getSolutionPosition(lineIndex, charIndex, nonogram.width);
             final String fullUpdatedSolution = output.solutionSteps.last.getUpdatedSolution(indexSol, '0');
-            if (printPrints) print('fullUpdatedSolution: $fullUpdatedSolution');
+            if (printPrints) log('fullUpdatedSolution: $fullUpdatedSolution');
             // output.solutionSteps.add(
             //   SolutionStep(
             //     currentSolution: fullUpdatedSolution,
@@ -520,20 +520,20 @@ IsolateOutput loopSides({
             //   ],
             // );
           } else {
-            if (printPrints) print('No.');
+            if (printPrints) log('No.');
             final String startingSolutionIndex = startingMostSolution.elementAt(charIndex);
             final String endingSolutionIndex = endingMostSolution.elementAt(charIndex);
-            if (printPrints) print('Do both side solutions of box at index $charIndex contain the same clue index?');
+            if (printPrints) log('Do both side solutions of box at index $charIndex contain the same clue index?');
 
-            if (printPrints) print('startingSolutionIndex: $startingSolutionIndex');
-            if (printPrints) print('endingSolutionIndex  : $endingSolutionIndex');
+            if (printPrints) log('startingSolutionIndex: $startingSolutionIndex');
+            if (printPrints) log('endingSolutionIndex  : $endingSolutionIndex');
             if (startingSolutionIndex.isSameClueIndexWith(endingSolutionIndex)) {
-              if (printPrints) print('Yes. Fill in this box.');
+              if (printPrints) log('Yes. Fill in this box.');
               updatedSolution = updatedSolution.replaceRange(charIndex, charIndex + 1, '1');
               final int indexSol = lineType.getSolutionPosition(lineIndex, charIndex, nonogram.width);
               // state.setFilled(lineType.getSolutionPosition(lineIndex, charIndex, nonogram.width));
               final String fullUpdatedSolution = output.solutionSteps.last.getUpdatedSolution(indexSol, '1');
-              if (printPrints) print('fullUpdatedSolution: $fullUpdatedSolution');
+              if (printPrints) log('fullUpdatedSolution: $fullUpdatedSolution');
               // state.addStep(SolutionStep(
               //   currentSolution: fullUpdatedSolution,
               //   axis: lineType,
@@ -573,11 +573,11 @@ IsolateOutput loopSides({
               // output.stack.addAll(output.stack.updateStack([charIndex], lineType));
               // output.stack.updateStack([charIndex], lineType);
             } else {
-              if (printPrints) print('No. It contains different indexes.');
+              if (printPrints) log('No. It contains different indexes.');
             }
           }
         }
-        if (printPrints) print('No it is not.');
+        if (printPrints) log('No it is not.');
       }
 
       return IsolateOutput(
@@ -593,7 +593,7 @@ IsolateOutput loopSides({
         // otherBoxesCheckedList: output.otherBoxesCheckedList,
       );
     }
-    if (printPrints) print('Overlapped solution: $updatedSolution');
+    if (printPrints) log('Overlapped solution: $updatedSolution');
   }
   // TODO(stef): updateLinesChecked
   // output = output.copyWith(linesChecked: output.linesChecked + 1);
@@ -604,7 +604,7 @@ IsolateOutput loopSides({
   // output.linesCheckedList.addAll({'linesChecked': output.linesCheckedList['linesChecked']! + 1});
   // if (settings.countCheckedBoxes) {
   // }
-  // print('output.linesCheckedList: ${output.linesCheckedList}');
+  // log('output.linesCheckedList: ${output.linesCheckedList}');
   return IsolateOutput(
     linesChecked: output.linesCheckedList.last,
     boxesChecked: output.boxesCheckedList.last,
@@ -626,7 +626,7 @@ List<List<String>> getAllLinePossibleSolutions(
   SolverSettings settings, [
   bool printPrints = false,
 ]) {
-  if (printPrints) print('Get all possible solutions of line $line with clues $clues');
+  if (printPrints) log('Get all possible solutions of line $line with clues $clues');
   final List<List<String>> possibleSolutions = Iterable.generate(line.length, (_) => <String>[]).toList();
   for (int clueIndex = 0; clueIndex < clues.length; clueIndex++) {
     final int minStartingPoint =
@@ -653,7 +653,7 @@ List<List<String>> getAllLinePossibleSolutions(
         }
       }
       final String solutionNumb = result ? '${clueIndex + 2}' : '0';
-      // print('can fit: $result');
+      // log('can fit: $result');
 
       final int loops = solutionNumb == '0' ? 1 : clues[clueIndex];
       for (int i = charIndex; i < charIndex + loops; i++) {
@@ -662,10 +662,10 @@ List<List<String>> getAllLinePossibleSolutions(
         }
       }
 
-      if (printPrints) print('possibleSolutions of charIndex $charIndex and clueIndex $clueIndex are: $possibleSolutions');
+      if (printPrints) log('possibleSolutions of charIndex $charIndex and clueIndex $clueIndex are: $possibleSolutions');
     }
   }
-  if (printPrints) print('Final possibleSolutions of line $line with clues $clues is: $possibleSolutions');
+  if (printPrints) log('Final possibleSolutions of line $line with clues $clues is: $possibleSolutions');
   return possibleSolutions;
 }
 
@@ -688,32 +688,32 @@ bool doOtherCluesFit(
     output.otherBoxesCheckedList.removeAt(0);
   }
 
-  if (printPrints) print('Does clue have clues ${solutionSide.name}?');
+  if (printPrints) log('Does clue have clues ${solutionSide.name}?');
   if (!solutionSide.hasOtherClues(clueIndex, clues.length)) {
-    if (printPrints) print('It does not.');
-    if (printPrints) print('Check if there are any filled boxes which match to no clue.');
+    if (printPrints) log('It does not.');
+    if (printPrints) log('Check if there are any filled boxes which match to no clue.');
     // if (solution.substring(clueIndex).characters.contains('1')) {
     //   return false;
     // }
-    // if (printPrints) print('Return `true`.');
+    // if (printPrints) log('Return `true`.');
     return solutionSide.isSolutionValid(solution, solutionIndex, clues[clueIndex]);
   }
-  if (printPrints) print('It does. Continue checking.');
+  if (printPrints) log('It does. Continue checking.');
 
   final List<int> cluesSublist = solutionSide.getCluesSublist(clueIndex, clues);
 
-  if (printPrints) print('Does clue have boxes left for clues left?');
+  if (printPrints) log('Does clue have boxes left for clues left?');
   if (!solutionSide.hasBoxesLeft(solutionIndex, clue, solution, cluesSublist)) {
-    if (printPrints) print('It does not. Return `false`.');
+    if (printPrints) log('It does not. Return `false`.');
     return false;
   }
-  if (printPrints) print('It does. Continue checking.');
+  if (printPrints) log('It does. Continue checking.');
 
   final String solutionSublist = solutionSide.getSolutionSublist(solution, solutionIndex, clue);
-  if (printPrints) print('Does solution sublist $solutionSublist fit clues $cluesSublist?');
+  if (printPrints) log('Does solution sublist $solutionSublist fit clues $cluesSublist?');
   for (int solutionSublistIndex = 0; solutionSublistIndex < solutionSublist.length; solutionSublistIndex++) {
     if (canCluesFit(cluesSublist, solutionSublist, solutionSublistIndex, 0, output, settings)) {
-      if (printPrints) print('It does fit. Return `true`.');
+      if (printPrints) log('It does fit. Return `true`.');
 
       // return solutionSide.isSolutionValid(solution, solutionIndex);
       // TODO(stef): restore cache data here
@@ -724,7 +724,7 @@ bool doOtherCluesFit(
       return true;
     }
   }
-  if (printPrints) print('It does not fit. Return `false`.');
+  if (printPrints) log('It does not fit. Return `false`.');
   return false;
 }
 
@@ -742,31 +742,31 @@ bool canCluesFit(
   final int clue = clues.elementAt(cl);
   bool canFit;
 
-  // print('clues: $clues , clue: $cl , position $s , solution $solution , line $solution');
+  // log('clues: $clues , clue: $cl , position $s , solution $solution , line $solution');
 
-  if (printPrints) print('Does clue $clue fit at $solutionList from position $s to position ${s + clue}?');
+  if (printPrints) log('Does clue $clue fit at $solutionList from position $s to position ${s + clue}?');
   if (clue > solutionList.getRange(s, solutionList.length).length) {
-    if (printPrints) print('false');
+    if (printPrints) log('false');
     return false;
   }
-  if (printPrints) print('true');
+  if (printPrints) log('true');
 
   final List<String> fit = solutionList.getRange(s, s + clue).toList();
   final String valueAfter = s + clue > solutionList.length ? '0' : solutionList.elementAtOrNull(s + clue) ?? '0';
   final String valueBefore = s - 1 < 0 ? '0' : solutionList.elementAtOrNull(s - 1) ?? '0';
   canFit = !fit.contains('0') && valueAfter != '1' && valueBefore != '1';
 
-  if (printPrints) print('Can clue $clue fit at: $valueBefore $fit $valueAfter');
+  if (printPrints) log('Can clue $clue fit at: $valueBefore $fit $valueAfter');
   if (!canFit) {
-    if (printPrints) print('false');
+    if (printPrints) log('false');
     return false;
   }
-  if (printPrints) print('true');
+  if (printPrints) log('true');
 
   final bool cluesBeforeGood = doOtherCluesFit(NonoDirection.before, clues, cl, solution, s, output, settings);
   final bool cluesAfterGood = doOtherCluesFit(NonoDirection.after, clues, cl, solution, s, output, settings);
 
-  if (printPrints) print('Do both clues before and clues after fit? Answer: ${cluesBeforeGood && cluesAfterGood}');
+  if (printPrints) log('Do both clues before and clues after fit? Answer: ${cluesBeforeGood && cluesAfterGood}');
   // if (state.countCheckedBoxes) state.updateActualBoxesChecked();
   return cluesBeforeGood && cluesAfterGood;
 }
@@ -778,11 +778,11 @@ List<String> getSideMostSolution(
   NonoAxisAlignment axis, [
   bool printPrints = false,
 ]) {
-  if (printPrints) print('Get ${axis.name}ing most solution of solution $solution with clues $clues');
+  if (printPrints) log('Get ${axis.name}ing most solution of solution $solution with clues $clues');
 
   List<int> clueIndexes = Iterable<int>.generate(clues.length, (int c) => c + 2).toList();
   if (axis == NonoAxisAlignment.end) {
-    if (printPrints) print('All values should reverse');
+    if (printPrints) log('All values should reverse');
     solution = solution.reversed.toList();
     clues = clues.reversed.toList();
     clueIndexes = clueIndexes.reversed.toList();
@@ -792,23 +792,23 @@ List<String> getSideMostSolution(
   List<List<String>> remainingSolution = solution;
 
   if (printPrints) {
-    print('Start checking clues one by one. sideMostSolution list is empty, remainingSolution is $remainingSolution');
+    log('Start checking clues one by one. sideMostSolution list is empty, remainingSolution is $remainingSolution');
   }
   for (int i = 0; i < clues.length; i++) {
     final int clue = clues[i];
     final int clueIndex = clueIndexes.elementAt(i);
     final int cluePos = remainingSolution.indexWhere((List<String> list) => list.contains('$clueIndex'));
-    if (printPrints) print('Clue $i with value $clue is found at position $cluePos of remainingSolution $remainingSolution');
+    if (printPrints) log('Clue $i with value $clue is found at position $cluePos of remainingSolution $remainingSolution');
 
-    if (printPrints) print('Is cluePos $cluePos larger than 0?');
-    if (printPrints) print(cluePos > 0 ? 'Yes, it is. Add $cluePos "0"s to sideMostSolution list' : "No, it isn't. Move on");
+    if (printPrints) log('Is cluePos $cluePos larger than 0?');
+    if (printPrints) log(cluePos > 0 ? 'Yes, it is. Add $cluePos "0"s to sideMostSolution list' : "No, it isn't. Move on");
     if (cluePos > 0) sideMostSolution.addAll(Iterable.generate(cluePos, (_) => '0').toList());
-    if (printPrints) print('Add $clue times clueIndex $clueIndex of clue $clue at sideMostSolution list');
+    if (printPrints) log('Add $clue times clueIndex $clueIndex of clue $clue at sideMostSolution list');
     sideMostSolution.addAll(Iterable.generate(clue, (_) => '$clueIndex').toList());
 
-    if (printPrints) print('Is solution completed?');
+    if (printPrints) log('Is solution completed?');
     if (printPrints) {
-      print(
+      log(
         sideMostSolution.length < solution.length
             ? 'No, not finished. Add "0" for space at sideMostSolution list and create a new sublist after clue added'
             : 'Yes it is. Move on',
@@ -819,15 +819,15 @@ List<String> getSideMostSolution(
       remainingSolution = remainingSolution.sublist(cluePos + clue + 1);
     }
 
-    if (printPrints) print('Current sideMostSolution: $sideMostSolution');
+    if (printPrints) log('Current sideMostSolution: $sideMostSolution');
   }
 
-  if (printPrints) print('Finished checking all clues. Is sideMostSolution completed?');
-  if (printPrints) print(sideMostSolution.length < solution.length ? 'No. Complete solution with "0"s' : 'Yes. Move on');
+  if (printPrints) log('Finished checking all clues. Is sideMostSolution completed?');
+  if (printPrints) log(sideMostSolution.length < solution.length ? 'No. Complete solution with "0"s' : 'Yes. Move on');
   if (sideMostSolution.length < solution.length) {
     sideMostSolution.addAll(Iterable.generate(remainingSolution.length, (_) => '0').toList());
   }
-  if (printPrints) print('Final sideMostSolution: $sideMostSolution');
+  if (printPrints) log('Final sideMostSolution: $sideMostSolution');
   return axis == NonoAxisAlignment.end ? sideMostSolution.reversed.toList() : sideMostSolution;
 }
 
