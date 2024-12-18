@@ -65,44 +65,22 @@ class LineSolverHelper {
     return result;
   }
 
-  // TODO(stef): Update documentation
-  /// The following 3 lines use the list of indexes of "?" in the line solution to find and replace them
-  /// with "0"s in the entire puzzle solution String.
+  /// Fills in the solution for a nonogram puzzle by replacing specific characters with '0' or '1'.
   ///
-  /// We use RegEx for this task because the positions of a column in the solution String are spread out,
-  /// unlike those of a row, which are contiguous.
+  /// - [currentSolution]: The current solution string of the nonogram puzzle.
+  /// - [lineIndex]: The index of the line to process.
+  /// - [lineType]: The type of the line (row or column) to process.
+  /// - [nonogramWidth]: The width of the nonogram puzzle.
+  /// - [charIndexes]: A list of character indexes to replace in the solution.
+  /// - [clueKey]: An optional parameter to determine the replacement character (default is 0).
   ///
-  /// To find the global positions of each column index in the entire puzzle solution, we convert the local
-  /// indexes from the line solution String to global indexes, taking into account the line we are searching.
+  /// This function iterates over the provided character indexes and calculates their positions
+  /// in the solution string based on the line type (row or column) and the line index. It then
+  /// replaces the characters at these positions with '0' or '1' depending on the value of [clueKey].
   ///
-  /// We create a RegEx to find and replace the specific characters in the global solution with "0".
-  ///
-  /// The RegEx searches for single character Strings with a specific number of characters before them.
-  /// We generate the required number of characters based on the list of indexes from the local solution,
-  /// and the RegEx matches Strings with exactly that many characters before them.
-  ///
-  /// The RegEx is `(?<=lookbehinds).` where [lookbehinds] is another RegEx String, generated from the local positions list.
-  /// This String consists of multiple RegEx patterns like `(?<=^.{7}).` (where "7" is any number 0 or above),
-  /// grouped and separated by "|". Let's break down the parts of the RegEx:
-  ///
-  /// Explaining `(?<=lookbehinds).`:
-  ///   (?<=lookbehinds): Matches where [lookbehinds] is true.
-  ///   .               : Matches the next character after the lookbehind condition.
-  ///
-  /// Explaining `lookbehinds`, e.g. ((?<=^.{7}).)|(?<=^.{10}).):
-  ///   (?<=^.{7}).    :
-  ///     (?<= : Lookbehind assertion to ensure what precedes the match...
-  ///     ^    : Is the start of the String...
-  ///     .    : Followed by any single character...
-  ///     {7}  : Previous case repeated exactly 7 times (where "7" is any number 0 or above)...
-  ///     .    : Matches the character immediately following this sequence.
-  ///   |    : Or (alternates between the above generated number conditions).
-  ///
-  /// e.g. RegEx `((?<=^.{7}).)|(?<=^.{10}).)` applied to a String will return the 8th and 11th
-  /// characters, as they have exactly 7 and 10 characters before them, respectively.
-  ///
-  /// We use this regex with replaceAllMapped to change the "?" characters to "0".
-  ///
+  /// Returns a map containing:
+  /// - 'fullUpdatedSolution': The updated solution string.
+  /// - 'newFilledBoxes': A list of new filled box positions.
   Map<String, dynamic> getFilledInSolution(
     String currentSolution,
     int lineIndex,
@@ -111,15 +89,23 @@ class LineSolverHelper {
     List<int> charIndexes, [
     int clueKey = 0,
   ]) {
+    // Initialize the updated solution string with the current solution.
     String fullUpdatedSolution = currentSolution;
+    // Initialize a list to keep track of the new filled box positions.
     final List<int> newFilledBoxes = <int>[];
 
+    // Iterate over each character index in the provided list.
     for (final int charIndex in charIndexes) {
+      // Calculate the position in the solution string based on the line type and index.
       final int tempPos = lineType.getSolutionPosition(lineIndex, charIndex, nonogramWidth);
+      // Add the calculated position to the list of new filled boxes.
       newFilledBoxes.add(tempPos);
+      // Update the solution string by replacing the character at the calculated position with '0' or '1'.
       fullUpdatedSolution =
           '${fullUpdatedSolution.substring(0, tempPos)}${clueKey == 0 ? '0' : '1'}${fullUpdatedSolution.substring(tempPos + 1)}';
     }
+
+    // Return a map containing the updated solution string and the list of new filled box positions.
     return <String, dynamic>{
       'fullUpdatedSolution': fullUpdatedSolution,
       'newFilledBoxes': newFilledBoxes,
