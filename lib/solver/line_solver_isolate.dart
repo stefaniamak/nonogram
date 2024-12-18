@@ -136,7 +136,7 @@ void lineSolverIsolate(dynamic params) {
 /// the number of filled boxes with the sum of the clues.
 ///
 /// If the line is completed, it crosses out any remaining empty boxes.
-/// OR
+/// ELSE
 /// If the line is not completed, it calculates all possible solutions for the line.
 /// Then, it matches the starting and ending solutions to identify sure boxes to fill or cross out.
 ///
