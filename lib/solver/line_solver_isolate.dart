@@ -261,13 +261,11 @@ List<List<String>> getAllLinePossibleSolutions(
   bool printLogs = false,
 ]) {
   if (printLogs) log('Get all possible solutions of line $line with clues $clues');
-  final List<List<String>> possibleSolutions = Iterable.generate(line.length, (_) => <String>[]).toList();
+  final List<List<String>> possibleSolutions = Iterable<List<String>>.generate(line.length, (_) => <String>[]).toList();
+
   for (int clueIndex = 0; clueIndex < clues.length; clueIndex++) {
-    final int minStartingPoint =
-        clueIndex == 0 ? 0 : clues.take(clueIndex).reduce((int value, int element) => value + element + 1);
-    final int maxStartingPoint = clueIndex == clues.length - 1
-        ? line.length
-        : line.length - clues.sublist(clueIndex + 1).reduce((int value, int element) => value + element + 1) - clues[clueIndex];
+    final int minStartingPoint = clues.minStartingPoint(clueIndex);
+    final int maxStartingPoint = clues.maxStartingPoint(clueIndex, line.length);
     for (int charIndex = minStartingPoint; charIndex < maxStartingPoint; charIndex++) {
       final bool? cache = settings.keepCacheData ? output.cachedBoxSolutions['$clues,$clueIndex,$line,$charIndex'] : null;
       final bool isInCache = cache != null;
