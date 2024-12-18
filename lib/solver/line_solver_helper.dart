@@ -60,7 +60,8 @@ class LineSolverHelper {
     // Find all matches
     final Iterable<Match> matches = charIndexesRegexp.allMatches(initialSolutionIndexed.toList().toString());
     // Extract the matched parts and join them with commas
-    List<int> result = matches.map((Match match) => match.group(0)).whereType<String>().map(int.parse).toList();
-    return result; //.isNotEmpty ? result.split(',').map((String e) => int.parse(e)).toList() : <int>[];
+    final List<int> result = matches.map((Match match) => match.group(0)).whereType<String>().map(int.parse).toList();
+
+    return result;
   }
 }
