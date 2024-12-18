@@ -134,7 +134,7 @@ IsolateOutput loopSides({
         log('charEnd: $charEnd');
       }
 
-      final Map<String, dynamic> crossedOutSolution = LineSolverHelper.instance.getCrossedOutSolution(
+      final Map<String, dynamic> crossedOutSolution = LineSolverHelper.instance.getFilledInSolution(
         output.solutionSteps.last.currentSolution,
         lineIndex,
         lineType,
@@ -191,24 +191,28 @@ IsolateOutput loopSides({
         final List<int> charIndexes = result[clueKey]!;
         final int clueIndex = clueKey == 0 ? 0 : clueKey - 2;
 
-        for (final int charIndex in charIndexes) {
-          final int tempPos = lineType.getSolutionPosition(lineIndex, charIndex, nonogram.width);
-          newFilledBoxes.add(tempPos);
-          fullUpdatedSolution =
-              fullUpdatedSolution.substring(0, tempPos) + (clueKey == 0 ? '0' : '1') + fullUpdatedSolution.substring(tempPos + 1);
-        }
+        final Map<String, dynamic> filledInSolution = LineSolverHelper.instance.getFilledInSolution(
+          fullUpdatedSolution,
+          lineIndex,
+          lineType,
+          nonogram.width,
+          charIndexes,
+          clueKey,
+        );
+        newFilledBoxes = filledInSolution['newFilledBoxes'];
+        fullUpdatedSolution = filledInSolution['fullUpdatedSolution'];
 
         if (printLogs) log('fullUpdatedSolution: $fullUpdatedSolution');
 
         if (newFilledBoxes.isNotEmpty) {
-          final String initialSolution2 = LineSolverHelper.instance.getSolutionLine(
+          final String solutionLine = LineSolverHelper.instance.getSolutionLine(
             output.solutionSteps.last.currentSolution,
             nonogram.width,
             lineIndex,
             lineType,
           );
 
-          filledBoxes = initialSolution2.sumFilledBoxes;
+          filledBoxes = solutionLine.sumFilledBoxes;
           isLineCompleted = filledBoxes == clues.sum;
 
           if (isLineCompleted && fullUpdatedSolution.split('').contains('?')) {
@@ -226,27 +230,10 @@ IsolateOutput loopSides({
                 '${clueKey == 0 ? 'Cross out' : 'Fill in'} sure boxes for clue ${clues.elementAt(clueIndex)} with index $clueIndex of ${lineType.name} with index $lineIndex.',
             newFilledBoxes: newFilledBoxes,
           );
-          // if (!newSolutionSteps.contains(solutionStep))
-          newSolutionSteps.add(solutionStep);
-          newFilledBoxes = <int>[];
 
-          // return IsolateOutput(
-          //   stack: finalStack.updateStack(charIndexes, lineType),
-          //   solutionSteps: [
-          //     SolutionStep(
-          //       currentSolution: fullUpdatedSolution,
-          //       axis: lineType,
-          //       lineIndex: lineIndex,
-          //       explanation:
-          //           '${clueKey == 0 ? 'Cross out' : 'Fill in'} sure boxes for clue ${clues.elementAt(clueIndex)} with index $clueIndex of ${lineType.name} with index $lineIndex.',
-          //       newFilledBoxes: newFilledBoxes,
-          //     ),
-          //   ],
-          // );
+          newSolutionSteps.add(solutionStep);
         }
       }
-      // if (newSolutionSteps.isNotEmpty || finalStack != output.stack) {
-      // log('newSolutionSteps: ${newSolutionSteps.firstOrNull?.explanation} - ${newSolutionSteps.lastOrNull?.explanation}');
       return IsolateOutput(
         stack: finalStack != output.stack ? finalStack : <Map<int, NonoAxis>>[],
         solutionSteps: newSolutionSteps,
@@ -254,44 +241,15 @@ IsolateOutput loopSides({
         boxesChecked: output.boxesCheckedList.last,
         otherBoxesChecked: output.otherBoxesCheckedList.last,
         totalCacheData: output.cachedBoxSolutions.length,
-        // linesCheckedList: output.linesCheckedList,
-        // cachedBoxSolutions: output.cachedBoxSolutions,
-        // boxesCheckedList: output.boxesCheckedList,
-        // otherBoxesCheckedList: output.otherBoxesCheckedList,
       );
-      // }
     }
-    // state.addStep(SolutionStep(
-    //   currentSolution: fullUpdatedSolution,
-    //   axis: lineType,
-    //   lineIndex: lineIndex,
-    //   explanation:
-    //       '${clueKey == 0 ? 'Cross out' : 'Fill in'} sure boxes for clue ${clues.elementAt(clueIndex)} with index $clueIndex of ${lineType.name} with index $lineIndex.',
-    // ));
-    // state.stack.updateStack(charIndexes, lineType, state);
-    // if (printLogs) log('Overlapped solution: $updatedSolution');
   }
-  // TODO(stef): updateLinesChecked
-  // output = output.copyWith(linesChecked: output.linesChecked + 1);
-  // output.linesCheckedList.add(output.linesChecked + 1);
-  // output.linesCheckedList['linesChecked'] = output.linesCheckedList['linesChecked']! + 1;
-  // int temp = output.linesCheckedList.values.last ?? 0;
-  // output.linesCheckedList.remove('linesChecked');
-  // output.linesCheckedList.addAll({'linesChecked': output.linesCheckedList['linesChecked']! + 1});
-  // if (settings.countCheckedBoxes) {
-  // }
-  // log('output.linesCheckedList: ${output.linesCheckedList}');
   return IsolateOutput(
     linesChecked: output.linesCheckedList.last,
     boxesChecked: output.boxesCheckedList.last,
     otherBoxesChecked: output.otherBoxesCheckedList.last,
     totalCacheData: output.cachedBoxSolutions.length,
-    // linesCheckedList: output.linesCheckedList,
-    // cachedBoxSolutions: output.cachedBoxSolutions,
-    // boxesCheckedList: output.boxesCheckedList,
-    // otherBoxesCheckedList: output.otherBoxesCheckedList,
   );
-  // return null;
 }
 
 // @isolateManagerCustomWorker

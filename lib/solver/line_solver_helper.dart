@@ -103,20 +103,22 @@ class LineSolverHelper {
   ///
   /// We use this regex with replaceAllMapped to change the "?" characters to "0".
   ///
-  Map<String, dynamic> getCrossedOutSolution(
+  Map<String, dynamic> getFilledInSolution(
     String currentSolution,
     int lineIndex,
     NonoAxis lineType,
     int nonogramWidth,
-    List<int> charIndexesOfQMarks,
-  ) {
+    List<int> charIndexes, [
+    int clueKey = 0,
+  ]) {
     String fullUpdatedSolution = currentSolution;
     final List<int> newFilledBoxes = <int>[];
 
-    for (final int charIndex in charIndexesOfQMarks) {
+    for (final int charIndex in charIndexes) {
       final int tempPos = lineType.getSolutionPosition(lineIndex, charIndex, nonogramWidth);
       newFilledBoxes.add(tempPos);
-      fullUpdatedSolution = '${fullUpdatedSolution.substring(0, tempPos)}0${fullUpdatedSolution.substring(tempPos + 1)}';
+      fullUpdatedSolution =
+          '${fullUpdatedSolution.substring(0, tempPos)}${clueKey == 0 ? '0' : '1'}${fullUpdatedSolution.substring(tempPos + 1)}';
     }
     return <String, dynamic>{
       'fullUpdatedSolution': fullUpdatedSolution,
