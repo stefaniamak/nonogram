@@ -1,3 +1,6 @@
+import 'package:isolate_manager/isolate_manager.dart';
+
+@isolateManagerCustomWorker
 class LineSolverHelper {
   // add singlenton constructor
   LineSolverHelper._();
