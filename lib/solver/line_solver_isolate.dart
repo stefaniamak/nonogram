@@ -160,11 +160,7 @@ IsolateOutput loopSides({
       );
     }
   } else {
-    // if (activateReturnOnNotEnoughSolvedLines && filledBoxes < (clues.sum / 4) && (state.nonogram.width / 4) > clues.sum) {
-    //   return;
-    // }
     if (printLogs) log('It is not. Starts to calculate all possible solutions...');
-    // log('line type: $lineType + line index: $lineIndex');
     final List<List<String>> allLineSolutions = getAllLinePossibleSolutions(clues, initialSolution, output, settings);
     if (printLogs) log('All line solutions: $allLineSolutions');
 
@@ -195,7 +191,6 @@ IsolateOutput loopSides({
     final Set<(int, String)> inputNumbersStart = startingMostSolution.indexed.toSet();
     final Set<(int, String)> inputNumbersEnd = endingMostSolution.indexed.toSet();
     final Set<(int, String)> duplicateInputNumbers = inputNumbersStart.intersection(inputNumbersEnd);
-    // log('duplicateInputNumbers: $duplicateInputNumbers');
 
     for (final (int, String) match in duplicateInputNumbers) {
       (int, String) pair = match;
@@ -221,72 +216,35 @@ IsolateOutput loopSides({
     final List<SolutionStep> newSolutionSteps = <SolutionStep>[];
     String fullUpdatedSolution = output.solutionSteps.last.currentSolution;
 
-    // here 2
     if (result.isNotEmpty) {
       for (final int clueKey in result.keys) {
         final List<int> charIndexes = result[clueKey]!;
         final int clueIndex = clueKey == 0 ? 0 : clueKey - 2;
 
-        // TODO(stef): add "useLookbehind" variable
-        if (false) {
-          final String lookbehinds =
-              charIndexes.map((int pos) => '^.{${lineType.getSolutionPosition(lineIndex, pos, nonogram.width)}}').join('|');
-          final RegExp solutionIndexesRegexp = RegExp(r'(?<=' + lookbehinds + r').');
-
-          fullUpdatedSolution = output.solutionSteps.last.currentSolution
-              .replaceAllMapped(solutionIndexesRegexp, (Match match) => clueKey == 0 ? '0' : '1');
-        } else {
-          for (final int charIndex in charIndexes) {
-            final int tempPos = lineType.getSolutionPosition(lineIndex, charIndex, nonogram.width);
-            newFilledBoxes.add(tempPos);
-            fullUpdatedSolution = fullUpdatedSolution.substring(0, tempPos) +
-                (clueKey == 0 ? '0' : '1') +
-                fullUpdatedSolution.substring(tempPos + 1);
-          }
+        for (final int charIndex in charIndexes) {
+          final int tempPos = lineType.getSolutionPosition(lineIndex, charIndex, nonogram.width);
+          newFilledBoxes.add(tempPos);
+          fullUpdatedSolution =
+              fullUpdatedSolution.substring(0, tempPos) + (clueKey == 0 ? '0' : '1') + fullUpdatedSolution.substring(tempPos + 1);
         }
 
         if (printLogs) log('fullUpdatedSolution: $fullUpdatedSolution');
 
-        // TODO(stef): restore these two bellow
         if (newFilledBoxes.isNotEmpty) {
-          String initialSolution2; // = solutionSteps.last.currentSolution.getLine(lineIndex, nonogram, lineType);
-          switch (lineType) {
-            case NonoAxis.row:
-              initialSolution2 = fullUpdatedSolution
-                  .split('')
-                  .toList()
-                  .getRange(lineIndex * nonogram.width, nonogram.width * (lineIndex + 1))
-                  .join()
-                  .replaceAll(' ', '')
-                  .replaceAll('(', '')
-                  .replaceAll(')', '')
-                  .replaceAll(',', '');
-            case NonoAxis.column:
-              String columnSol = '';
-              for (int solChar = lineIndex;
-                  solChar < output.solutionSteps.last.currentSolution.split('').toList().length;
-                  solChar = solChar + nonogram.width) {
-                columnSol = '$columnSol${output.solutionSteps.last.currentSolution.split('').toList().elementAt(solChar)}';
-              }
-              initialSolution2 = columnSol;
-          }
+          final String initialSolution2 = LineSolverHelper.instance.getSolutionLine(
+            output.solutionSteps.last.currentSolution,
+            nonogram.width,
+            lineIndex,
+            lineType,
+          );
 
           filledBoxes = initialSolution2.sumFilledBoxes;
           isLineCompleted = filledBoxes == clues.sum;
-          // finalStack = finalStack.updateStack(charIndexes, lineType);
-          // if (clues.elementAt(clueIndex) == 14 && clueIndex == 1 && lineIndex == 18) {
-          //   log('initialSolution2.sumFilledBoxes: ${initialSolution2.sumFilledBoxes} and clues.sum: ${clues.sum}');
-          //   log('isLineCompleted: $isLineCompleted && initialSolution2: $initialSolution2');
-          //   log(
-          //       'isLineCompleted && fullUpdatedSolution.split(\'\').contains(\'?\'): ${isLineCompleted && fullUpdatedSolution.split('').contains('?')}');
-          // }
+
           if (isLineCompleted && fullUpdatedSolution.split('').contains('?')) {
             final List<Map<int, NonoAxis>> tempStack = finalStack;
-            // log('runs..????');
-            // log('finalStack before: ${tempStack.length} - $tempStack');
             finalStack.addAll(
                 tempStack.getNewStackElements(<int>[lineIndex], lineType == NonoAxis.row ? NonoAxis.column : NonoAxis.row));
-            // log('finalStack after: ${finalStack.length} - $finalStack');
           }
 
           finalStack.addAll(finalStack.getNewStackElements(charIndexes, lineType));
