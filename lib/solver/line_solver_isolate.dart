@@ -108,39 +108,11 @@ IsolateOutput loopSides({
 
   if (printPrints) print('Check ${lineType.name} with index $lineIndex.');
   if (printPrints) print("${lineType.name}'s clues: $clues");
-  String initialSolution; // = solutionSteps.last.currentSolution.getLine(lineIndex, nonogram, lineType);
-  switch (lineType) {
-    case NonoAxis.row:
-      initialSolution = output.solutionSteps.last.currentSolution
-          .split('')
-          .toList()
-          .getRange(lineIndex * nonogram.width, nonogram.width * (lineIndex + 1))
-          .join()
-          .replaceAll(' ', '')
-          .replaceAll('(', '')
-          .replaceAll(')', '')
-          .replaceAll(',', '');
-    case NonoAxis.column:
-      String columnSol = '';
-      for (int solChar = lineIndex;
-          solChar < output.solutionSteps.last.currentSolution.split('').toList().length;
-          solChar = solChar + nonogram.width) {
-        columnSol = '$columnSol${output.solutionSteps.last.currentSolution.split('').toList().elementAt(solChar)}';
-      }
-      initialSolution = columnSol;
-  }
-
-  // print('solutionSteps.last.currentSolution: ${solutionSteps.last.currentSolution}');
+  final String initialSolution = output.solutionSteps.last.currentSolution.getSolutionLine(lineIndex, nonogram, lineType);
 
   if (printPrints) print("${lineType.name}'s initialSolution: $initialSolution");
-
-  // print('initialSolution: $initialSolution');
   int filledBoxes = initialSolution.sumFilledBoxes;
   bool isLineCompleted = filledBoxes == clues.sum;
-
-  // if (lineIndex == 18) {
-  //   print('filledBoxes: $filledBoxes k clues.sum: ${clues.sum}');
-  // }
 
   if (printPrints) print("Are filled boxes ($filledBoxes) equal with clue's sum (${clues.sum})?");
 

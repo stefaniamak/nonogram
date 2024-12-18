@@ -1,3 +1,6 @@
+import 'package:nonogram/backend/models/nonogram/nonogram.dart';
+import 'package:nonogram/backend/type_extensions/nono_axis_extension.dart';
+
 /// Extension on String to add utility methods for nonogram puzzles.
 extension NonoStringExtension on String {
   /// Returns the character at the specified index.
@@ -41,5 +44,25 @@ extension NonoStringExtension on String {
       columnSol += this[solChar];
     }
     return columnSol;
+  }
+
+  String getSolutionLine(int lineIndex, Nonogram nonogram, NonoAxis lineType) {
+    switch (lineType) {
+      case NonoAxis.row:
+        return split('')
+            .toList()
+            .getRange(lineIndex * nonogram.width, nonogram.width * (lineIndex + 1))
+            .join()
+            .replaceAll(' ', '')
+            .replaceAll('(', '')
+            .replaceAll(')', '')
+            .replaceAll(',', '');
+      case NonoAxis.column:
+        String columnSol = '';
+        for (int solChar = lineIndex; solChar < split('').toList().length; solChar = solChar + nonogram.width) {
+          columnSol = '$columnSol${split('').toList().elementAt(solChar)}';
+        }
+        return columnSol;
+    }
   }
 }
