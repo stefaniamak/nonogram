@@ -134,84 +134,29 @@ IsolateOutput loopSides({
         log('charEnd: $charEnd');
       }
 
-      /// The following 3 lines use the list of indexes of "?" in the line solution to find and replace them
-      /// with "0"s in the entire puzzle solution String.
-      ///
-      /// We use RegEx for this task because the positions of a column in the solution String are spread out,
-      /// unlike those of a row, which are contiguous.
-      ///
-      /// To find the global positions of each column index in the entire puzzle solution, we convert the local
-      /// indexes from the line solution String to global indexes, taking into account the line we are searching.
-      ///
-      /// We create a RegEx to find and replace the specific characters in the global solution with "0".
-      ///
-      /// The RegEx searches for single character Strings with a specific number of characters before them.
-      /// We generate the required number of characters based on the list of indexes from the local solution,
-      /// and the RegEx matches Strings with exactly that many characters before them.
-      ///
-      /// The RegEx is `(?<=lookbehinds).` where [lookbehinds] is another RegEx String, generated from the local positions list.
-      /// This String consists of multiple RegEx patterns like `(?<=^.{7}).` (where "7" is any number 0 or above),
-      /// grouped and separated by "|". Let's break down the parts of the RegEx:
-      ///
-      /// Explaining `(?<=lookbehinds).`:
-      ///   (?<=lookbehinds): Matches where [lookbehinds] is true.
-      ///   .               : Matches the next character after the lookbehind condition.
-      ///
-      /// Explaining `lookbehinds`, e.g. ((?<=^.{7}).)|(?<=^.{10}).):
-      ///   (?<=^.{7}).    :
-      ///     (?<= : Lookbehind assertion to ensure what precedes the match...
-      ///     ^    : Is the start of the String...
-      ///     .    : Followed by any single character...
-      ///     {7}  : Previous case repeated exactly 7 times (where "7" is any number 0 or above)...
-      ///     .    : Matches the character immediately following this sequence.
-      ///   |    : Or (alternates between the above generated number conditions).
-      ///
-      /// e.g. RegEx `((?<=^.{7}).)|(?<=^.{10}).)` applied to a String will return the 8th and 11th
-      /// characters, as they have exactly 7 and 10 characters before them, respectively.
-      ///
-      /// We use this regex with replaceAllMapped to change the "?" characters to "0".
-      ///
-      String fullUpdatedSolution = output.solutionSteps.last.currentSolution;
-      final List<int> newFilledBoxes = <int>[];
+      final Map<String, dynamic> crossedOutSolution = LineSolverHelper.instance.getCrossedOutSolution(
+        output.solutionSteps.last.currentSolution,
+        lineIndex,
+        lineType,
+        nonogram.width,
+        charIndexesOfQMarks,
+      );
 
-      // TODO(stef): add "useLookbehind" variable
-      if (false) {
-        final String lookbehinds =
-            charIndexesOfQMarks.map((int pos) => '^.{${lineType.getSolutionPosition(lineIndex, pos, nonogram.width)}}').join('|');
-        final RegExp solutionIndexesRegexp = RegExp(r'(?<=' + lookbehinds + r').');
-
-        fullUpdatedSolution =
-            output.solutionSteps.last.currentSolution.replaceAllMapped(solutionIndexesRegexp, (Match match) => '0');
-        if (printLogs) log('fullUpdatedSolution: $fullUpdatedSolution');
-      } else {
-        for (final int charIndex in charIndexesOfQMarks) {
-          final int tempPos = lineType.getSolutionPosition(lineIndex, charIndex, nonogram.width);
-          newFilledBoxes.add(tempPos);
-          fullUpdatedSolution = '${fullUpdatedSolution.substring(0, tempPos)}0${fullUpdatedSolution.substring(tempPos + 1)}';
-        }
-      }
-      // here
-
-      // TODO(stef): restore these two bellow
       return IsolateOutput(
         stack: output.stack.getNewStackElements(charIndexesOfQMarks, lineType),
         solutionSteps: <SolutionStep>[
           SolutionStep(
-            currentSolution: fullUpdatedSolution,
+            currentSolution: crossedOutSolution['fullUpdatedSolution'],
             axis: lineType,
             lineIndex: lineIndex,
             explanation: 'Cross out all remaining empty boxes of ${lineType.name} with index $lineIndex.',
-            newFilledBoxes: newFilledBoxes,
+            newFilledBoxes: crossedOutSolution['newFilledBoxes'],
           ),
         ],
         linesChecked: output.linesCheckedList.last,
         boxesChecked: output.boxesCheckedList.last,
         otherBoxesChecked: output.otherBoxesCheckedList.last,
         totalCacheData: output.cachedBoxSolutions.length,
-        // linesCheckedList: output.linesCheckedList,
-        // cachedBoxSolutions: output.cachedBoxSolutions,
-        // boxesCheckedList: output.boxesCheckedList,
-        // otherBoxesCheckedList: output.otherBoxesCheckedList,
       );
     }
   } else {
