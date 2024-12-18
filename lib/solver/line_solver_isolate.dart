@@ -211,7 +211,7 @@ IsolateOutput _loopSides({
   } else {
     // If the line is not completed, calculate all possible solutions for the line.
     if (printLogs) log('It is not. Starts to calculate all possible solutions...');
-    final List<List<String>> allLineSolutions = getAllLinePossibleSolutions(clues, initialSolution, output, settings);
+    final List<List<String>> allLineSolutions = _getAllLinePossibleSolutions(clues, initialSolution, output, settings);
     if (printLogs) log('All line solutions: $allLineSolutions');
 
     // Find the starting and ending most solutions for the line.
@@ -315,7 +315,26 @@ IsolateOutput _loopSides({
   );
 }
 
-List<List<String>> getAllLinePossibleSolutions(
+/// The `getAllLinePossibleSolutions` function calculates all possible solutions for a given line (row or column)
+/// of a nonogram puzzle based on the provided clues and the current state of the solution.
+///
+/// The function receives the following parameters:
+/// - [clues]: A list of integers representing the clues for the current line.
+/// - [line]: A string representing the current state of the line to be processed.
+/// - [output]: An [IsolateOutput] object containing the current state of the solution.
+/// - [settings]: A [SolverSettings] object containing the solver settings to use during processing.
+/// - [printLogs]: A boolean flag to enable or disable logging (default is false).
+///
+/// The function iterates over each clue and checks if the clue can fit in the line at that position.
+///
+/// Firstly, it checks if the solution is already in the cache. If it is, it uses the cached result.
+/// If it is not, it calculates the result and updates the cache.
+///
+/// Then, it updates the possible solutions for the characters in the line based on the clue.
+///
+/// The function returns a list of lists of strings, where each inner list represents the possible
+/// solutions for a character in the line.
+List<List<String>> _getAllLinePossibleSolutions(
   List<int> clues,
   String line,
   IsolateOutput output,
@@ -323,29 +342,39 @@ List<List<String>> getAllLinePossibleSolutions(
   bool printLogs = false,
 ]) {
   if (printLogs) log('Get all possible solutions of line $line with clues $clues');
+  // Initialize an empty list of possible solutions for each character in the line.
   final List<List<String>> possibleSolutions = Iterable<List<String>>.generate(line.length, (_) => <String>[]).toList();
 
+  // Iterate over each clue.
   for (int clueIndex = 0; clueIndex < clues.length; clueIndex++) {
+    // Calculate the minimum and maximum starting points for the clue, to minimize the number of iterations.
     final int minStartingPoint = clues.minStartingPoint(clueIndex);
     final int maxStartingPoint = clues.maxStartingPoint(clueIndex, line.length);
+    // Iterate over each starting point.
     for (int charIndex = minStartingPoint; charIndex < maxStartingPoint; charIndex++) {
+      // Check if the clue can fit in the line at the current position.
+
+      // Firstly, check if the solution is already in the cache.
       final bool? cache = settings.keepCacheData ? output.cachedBoxSolutions['$clues,$clueIndex,$line,$charIndex'] : null;
       final bool isInCache = cache != null;
       bool result;
       if (isInCache) {
+        // If it is, use the cached result.
         result = cache;
       } else {
+        // If it is not, calculate the result and update the cache.
         result = canCluesFit(clues, line, charIndex, clueIndex, output, settings);
         if (settings.keepCacheData) {
           output.cachedBoxSolutions.addAll(updateCachedBoxSolutions(clues, clueIndex, line, charIndex, result));
         }
+        // Update the count of checked boxes.
         if (settings.countCheckedBoxes) {
           output.boxesCheckedList.add(output.boxesCheckedList.last + 1);
           output.boxesCheckedList.removeAt(0);
         }
       }
+      // Update the possible solutions for the characters in the line based on the clue.
       final String solutionNumb = result ? '${clueIndex + 2}' : '0';
-
       final int loops = solutionNumb == '0' ? 1 : clues[clueIndex];
       for (int i = charIndex; i < charIndex + loops; i++) {
         if (!possibleSolutions.elementAt(i).contains(solutionNumb)) {
@@ -356,6 +385,8 @@ List<List<String>> getAllLinePossibleSolutions(
     }
   }
   if (printLogs) log('Final possibleSolutions of line $line with clues $clues is: $possibleSolutions');
+
+  // Return the list of possible solutions for the line.
   return possibleSolutions;
 }
 
