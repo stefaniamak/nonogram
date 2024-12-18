@@ -19,6 +19,9 @@ samples, guidance on mobile development, and a full API reference.
 ### generate
 `flutter packages pub run build_runner build`
 
+### isolate build
+`dart run isolate_manager:generate`
+
 ### update host
 1. `flutter build web`
 2. `firebase deploy`
