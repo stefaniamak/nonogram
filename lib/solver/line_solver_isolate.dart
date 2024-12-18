@@ -60,7 +60,7 @@ void lineSolverIsolate(dynamic params) {
             .elementAt(line.keys.first);
 
         // Call the loopSides function to process the line and update the solution.
-        progress = loopSides(
+        progress = _loopSides(
           lineIndex: line.keys.first,
           clues: clues,
           lineType: line.values.first,
@@ -118,7 +118,33 @@ void lineSolverIsolate(dynamic params) {
   );
 }
 
-IsolateOutput loopSides({
+/// The `_loopSides` function processes a single line (row or column) of a nonogram puzzle, updating the solution state.
+/// It checks if the line is already completed, and if not, it calculates all possible solutions
+/// for the line and updates the solution state accordingly.
+///
+/// The function receives the following parameters:
+/// - [lineIndex]: The index of the line to process.
+/// - [clues]: The clues for the current line.
+/// - [lineType]: The type of the line (row or column) to process.
+/// - [nonogram]: The nonogram puzzle object containing the width of the puzzle.
+/// - [output]: The current state of the solution, including the stack, solution steps, and cached box solutions.
+/// - [settings]: The solver settings to use during processing.
+/// - [printLogs]: A boolean flag to enable or disable logging (default is false).
+///
+/// The function firstly identifies the positions of question marks in the initial solution.
+/// With these positions, it checks if the line is already completed by comparing
+/// the number of filled boxes with the sum of the clues.
+///
+/// If the line is completed, it crosses out any remaining empty boxes.
+/// OR
+/// If the line is not completed, it calculates all possible solutions for the line.
+/// Then, it matches the starting and ending solutions to identify sure boxes to fill or cross out.
+///
+/// After any of the above paths, it updates the solution state with the new filled boxes
+/// and adds new stack elements for further processing - these data create the final solution state.
+///
+/// The function returns an [IsolateOutput] object containing the updated solution state.
+IsolateOutput _loopSides({
   required int lineIndex,
   required List<int> clues,
   required NonoAxis lineType,
@@ -127,11 +153,14 @@ IsolateOutput loopSides({
   required SolverSettings settings,
   bool printLogs = false,
 }) {
+  // Update the count of checked lines.
   output.linesCheckedList.add(output.linesCheckedList.last + 1);
   output.linesCheckedList.removeAt(0);
 
   if (printLogs) log('Check ${lineType.name} with index $lineIndex.');
   if (printLogs) log("${lineType.name}'s clues: $clues");
+
+  // Retrieve the initial solution for the line.
   final String initialSolution = LineSolverHelper.instance.getSolutionLine(
     output.solutionSteps.last.currentSolution,
     nonogram.width,
@@ -139,14 +168,18 @@ IsolateOutput loopSides({
     lineType,
   );
 
+  // Identify the positions of question marks in the initial solution.
   final List<int> charIndexesOfQMarks = LineSolverHelper.instance.getCharIndexesOfQuestionMarks(initialSolution);
 
   if (printLogs) log("${lineType.name}'s initialSolution: $initialSolution");
+
+  // Check if the line is already completed by comparing the number of filled boxes with the sum of the clues.
   int filledBoxes = initialSolution.sumFilledBoxes;
   bool isLineCompleted = filledBoxes == clues.sum;
 
   if (printLogs) log("Are filled boxes ($filledBoxes) equal with clue's sum (${clues.sum})?");
   if (isLineCompleted) {
+    // If the line is completed, cross out any remaining empty boxes.
     if (printLogs) log('It is. Shall cross out remaining empty boxes if any left.');
     if (initialSolution.split('').toList().contains('?')) {
       final Map<String, dynamic> crossedOutSolution = LineSolverHelper.instance.getFilledInSolution(
@@ -157,6 +190,7 @@ IsolateOutput loopSides({
         charIndexesOfQMarks,
       );
 
+      // Return the updated solution state with the crossed-out boxes.
       return IsolateOutput(
         stack: output.stack.getNewStackElements(charIndexesOfQMarks, lineType),
         solutionSteps: <SolutionStep>[
@@ -175,10 +209,12 @@ IsolateOutput loopSides({
       );
     }
   } else {
+    // If the line is not completed, calculate all possible solutions for the line.
     if (printLogs) log('It is not. Starts to calculate all possible solutions...');
     final List<List<String>> allLineSolutions = getAllLinePossibleSolutions(clues, initialSolution, output, settings);
     if (printLogs) log('All line solutions: $allLineSolutions');
 
+    // Find the starting and ending most solutions for the line.
     if (printLogs) log('Find starting solution of $allLineSolutions with clues $clues.');
     final List<String> startingMostSolution = getSideMostSolution(allLineSolutions, clues, NonoAxisAlignment.start);
     if (printLogs) log('Starting most solution: $startingMostSolution');
@@ -187,6 +223,7 @@ IsolateOutput loopSides({
     final List<String> endingMostSolution = getSideMostSolution(allLineSolutions, clues, NonoAxisAlignment.end);
     if (printLogs) log('Ending most solution  : $endingMostSolution');
 
+    // Match the starting and ending solutions to identify sure boxes to fill or cross out.
     final Map<int, List<int>> result = LineSolverHelper.instance.getSideMostSolutionsMatches(
       allLineSolutions,
       startingMostSolution,
@@ -200,10 +237,14 @@ IsolateOutput loopSides({
     String fullUpdatedSolution = output.solutionSteps.last.currentSolution;
 
     if (result.isNotEmpty) {
+      // Iterate over the matched solutions to update the solution state.
       for (final int clueKey in result.keys) {
+        // Retrieve the character indexes for the matched solutions.
         final List<int> charIndexes = result[clueKey]!;
+        // Retrieve the clue index based on the clue key.
         final int clueIndex = clueKey == 0 ? 0 : clueKey - 2;
 
+        // Fill in the solution for the line based on the matched solutions.
         final Map<String, dynamic> filledInSolution = LineSolverHelper.instance.getFilledInSolution(
           fullUpdatedSolution,
           lineIndex,
@@ -217,6 +258,7 @@ IsolateOutput loopSides({
 
         if (printLogs) log('fullUpdatedSolution: $fullUpdatedSolution');
 
+        // Check if there are any new filled boxes to update the solution state.
         if (newFilledBoxes.isNotEmpty) {
           final String solutionLine = LineSolverHelper.instance.getSolutionLine(
             output.solutionSteps.last.currentSolution,
@@ -225,16 +267,21 @@ IsolateOutput loopSides({
             lineType,
           );
 
+          // Update the count of checked boxes.
           filledBoxes = solutionLine.sumFilledBoxes;
+          // Check if the line is completed after filling in the new boxes.
           isLineCompleted = filledBoxes == clues.sum;
 
+          // If the line is completed and there are still empty boxes, cross out the remaining empty boxes.
           if (isLineCompleted && fullUpdatedSolution.split('').contains('?')) {
             finalStack.addAll(
               finalStack.getNewStackElements(<int>[lineIndex], lineType == NonoAxis.row ? NonoAxis.column : NonoAxis.row),
             );
           }
 
+          // Update the stack with the new stack elements based on influenced lines.
           finalStack.addAll(finalStack.getNewStackElements(charIndexes, lineType));
+          // Add a new solution step to the solution state.
           final SolutionStep solutionStep = SolutionStep(
             currentSolution: fullUpdatedSolution,
             axis: lineType,
@@ -244,9 +291,11 @@ IsolateOutput loopSides({
             newFilledBoxes: newFilledBoxes,
           );
 
+          // Add the new solution step to the solution steps list.
           newSolutionSteps.add(solutionStep);
         }
       }
+      // Return the updated solution state with the new filled boxes and stack elements.
       return IsolateOutput(
         stack: finalStack != output.stack ? finalStack : <Map<int, NonoAxis>>[],
         solutionSteps: newSolutionSteps,
@@ -257,6 +306,7 @@ IsolateOutput loopSides({
       );
     }
   }
+  // Return the current solution state if no changes were made, but with updated checked lines and boxes.
   return IsolateOutput(
     linesChecked: output.linesCheckedList.last,
     boxesChecked: output.boxesCheckedList.last,
