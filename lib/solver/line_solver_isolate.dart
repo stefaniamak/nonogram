@@ -45,7 +45,14 @@ void lineSolverIsolate(dynamic params) {
           clues: clues,
           lineType: line.values.first,
           nonogram: input.nonogram,
-          output: progress,
+          output: IsolateOutput(
+            stack: stack,
+            cachedBoxSolutions: cachedBoxSolutions,
+            linesCheckedList: linesCheckedList,
+            boxesCheckedList: boxesChecked,
+            solutionSteps: solutionSteps,
+            otherBoxesCheckedList: otherBoxesChecked,
+          ),
           settings: input.solverSettings,
         );
 
