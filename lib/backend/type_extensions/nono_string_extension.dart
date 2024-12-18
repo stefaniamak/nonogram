@@ -46,21 +46,26 @@ extension NonoStringExtension on String {
     return columnSol;
   }
 
+  /// Returns the solution line for a given line index and type (row or column) in a nonogram puzzle.
+  ///
+  /// - [lineIndex]: The index of the line to retrieve.
+  /// - [nonogram]: The nonogram puzzle object containing the width of the puzzle.
+  /// - [lineType]: The type of the line (row or column) to retrieve.
+  ///
+  /// Returns the solution line as a string.
   String getSolutionLine(int lineIndex, Nonogram nonogram, NonoAxis lineType) {
     switch (lineType) {
       case NonoAxis.row:
+        // Split the string into a list of characters, get the range for the specified row, join them back into a string, and remove unwanted characters.
         return split('')
-            .toList()
             .getRange(lineIndex * nonogram.width, nonogram.width * (lineIndex + 1))
             .join()
-            .replaceAll(' ', '')
-            .replaceAll('(', '')
-            .replaceAll(')', '')
-            .replaceAll(',', '');
+            .replaceAll(RegExp(r'[ (),]'), '');
       case NonoAxis.column:
         String columnSol = '';
-        for (int solChar = lineIndex; solChar < split('').toList().length; solChar = solChar + nonogram.width) {
-          columnSol = '$columnSol${split('').toList().elementAt(solChar)}';
+        // Iterate through the string to collect the characters of the specified column.
+        for (int solChar = lineIndex; solChar < length; solChar += nonogram.width) {
+          columnSol += this[solChar];
         }
         return columnSol;
     }
