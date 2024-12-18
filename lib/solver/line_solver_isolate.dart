@@ -95,7 +95,6 @@ void lineSolverIsolate(dynamic params) {
   );
 }
 
-// @isolateManagerCustomWorker
 IsolateOutput loopSides({
   required int lineIndex,
   required List<int> clues,
@@ -127,13 +126,6 @@ IsolateOutput loopSides({
   if (isLineCompleted) {
     if (printLogs) log('It is. Shall cross out remaining empty boxes if any left.');
     if (initialSolution.split('').toList().contains('?')) {
-      final int charStart = initialSolution.split('').toList().indexWhere((String char) => char == '?');
-      final int charEnd = initialSolution.split('').toList().lastIndexWhere((String char) => char == '?') + 1;
-      if (printLogs) {
-        log('charStart: $charStart');
-        log('charEnd: $charEnd');
-      }
-
       final Map<String, dynamic> crossedOutSolution = LineSolverHelper.instance.getFilledInSolution(
         output.solutionSteps.last.currentSolution,
         lineIndex,
@@ -166,12 +158,10 @@ IsolateOutput loopSides({
 
     if (printLogs) log('Find starting solution of $allLineSolutions with clues $clues.');
     final List<String> startingMostSolution = getSideMostSolution(allLineSolutions, clues, NonoAxisAlignment.start);
-
     if (printLogs) log('Starting most solution: $startingMostSolution');
 
     if (printLogs) log('Find ending solution of $allLineSolutions with clues $clues.');
     final List<String> endingMostSolution = getSideMostSolution(allLineSolutions, clues, NonoAxisAlignment.end);
-
     if (printLogs) log('Ending most solution  : $endingMostSolution');
 
     final Map<int, List<int>> result = LineSolverHelper.instance.getSideMostSolutionsMatches(
@@ -216,9 +206,9 @@ IsolateOutput loopSides({
           isLineCompleted = filledBoxes == clues.sum;
 
           if (isLineCompleted && fullUpdatedSolution.split('').contains('?')) {
-            final List<Map<int, NonoAxis>> tempStack = finalStack;
             finalStack.addAll(
-                tempStack.getNewStackElements(<int>[lineIndex], lineType == NonoAxis.row ? NonoAxis.column : NonoAxis.row));
+              finalStack.getNewStackElements(<int>[lineIndex], lineType == NonoAxis.row ? NonoAxis.column : NonoAxis.row),
+            );
           }
 
           finalStack.addAll(finalStack.getNewStackElements(charIndexes, lineType));
@@ -252,7 +242,6 @@ IsolateOutput loopSides({
   );
 }
 
-// @isolateManagerCustomWorker
 List<List<String>> getAllLinePossibleSolutions(
   List<int> clues,
   String line,
@@ -297,99 +286,6 @@ List<List<String>> getAllLinePossibleSolutions(
   return possibleSolutions;
 }
 
-// @isolateManagerCustomWorker
-bool doOtherCluesFit(
-  NonoDirection solutionSide,
-  List<int> clues,
-  int clueIndex,
-  String solution,
-  int solutionIndex,
-  IsolateOutput output,
-  SolverSettings settings, [
-  bool printLogs = false,
-]) {
-  final int clue = clues.elementAt(clueIndex);
-
-  if (settings.countCheckedBoxes) {
-    output.otherBoxesCheckedList.add(output.otherBoxesCheckedList.last + 1);
-    output.otherBoxesCheckedList.removeAt(0);
-  }
-
-  if (printLogs) log('Does clue have clues ${solutionSide.name}?');
-  if (!solutionSide.hasOtherClues(clueIndex, clues.length)) {
-    if (printLogs) log('It does not.');
-    if (printLogs) log('Check if there are any filled boxes which match to no clue.');
-    return solutionSide.isSolutionValid(solution, solutionIndex, clues[clueIndex]);
-  }
-  if (printLogs) log('It does. Continue checking.');
-
-  final List<int> cluesSublist = solutionSide.getCluesSublist(clueIndex, clues);
-
-  if (printLogs) log('Does clue have boxes left for clues left?');
-  if (!solutionSide.hasBoxesLeft(solutionIndex, clue, solution, cluesSublist)) {
-    if (printLogs) log('It does not. Return `false`.');
-    return false;
-  }
-  if (printLogs) log('It does. Continue checking.');
-
-  final String solutionSublist = solutionSide.getSolutionSublist(solution, solutionIndex, clue);
-  if (printLogs) log('Does solution sublist $solutionSublist fit clues $cluesSublist?');
-  for (int solutionSublistIndex = 0; solutionSublistIndex < solutionSublist.length; solutionSublistIndex++) {
-    if (canCluesFit(cluesSublist, solutionSublist, solutionSublistIndex, 0, output, settings)) {
-      if (printLogs) log('It does fit. Return `true`.');
-
-      if (settings.keepCacheData) {
-        output.cachedBoxSolutions.addAll(updateCachedBoxSolutions(cluesSublist, 0, solutionSublist, solutionSublistIndex, true));
-      }
-
-      return true;
-    }
-  }
-  if (printLogs) log('It does not fit. Return `false`.');
-  return false;
-}
-
-// @isolateManagerCustomWorker
-bool canCluesFit(
-  List<int> clues,
-  String solution,
-  int s,
-  int cl,
-  IsolateOutput output,
-  SolverSettings settings, [
-  bool printLogs = false,
-]) {
-  final List<String> solutionList = solution.split('');
-  final int clue = clues.elementAt(cl);
-  bool canFit;
-
-  if (printLogs) log('Does clue $clue fit at $solutionList from position $s to position ${s + clue}?');
-  if (clue > solutionList.getRange(s, solutionList.length).length) {
-    if (printLogs) log('false');
-    return false;
-  }
-  if (printLogs) log('true');
-
-  final List<String> fit = solutionList.getRange(s, s + clue).toList();
-  final String valueAfter = s + clue > solutionList.length ? '0' : solutionList.elementAtOrNull(s + clue) ?? '0';
-  final String valueBefore = s - 1 < 0 ? '0' : solutionList.elementAtOrNull(s - 1) ?? '0';
-  canFit = !fit.contains('0') && valueAfter != '1' && valueBefore != '1';
-
-  if (printLogs) log('Can clue $clue fit at: $valueBefore $fit $valueAfter');
-  if (!canFit) {
-    if (printLogs) log('false');
-    return false;
-  }
-  if (printLogs) log('true');
-
-  final bool cluesBeforeGood = doOtherCluesFit(NonoDirection.before, clues, cl, solution, s, output, settings);
-  final bool cluesAfterGood = doOtherCluesFit(NonoDirection.after, clues, cl, solution, s, output, settings);
-
-  if (printLogs) log('Do both clues before and clues after fit? Answer: ${cluesBeforeGood && cluesAfterGood}');
-  return cluesBeforeGood && cluesAfterGood;
-}
-
-// @isolateManagerCustomWorker
 List<String> getSideMostSolution(
   List<List<String>> initialSolution,
   List<int> initialClues,
@@ -449,6 +345,101 @@ List<String> getSideMostSolution(
   }
   if (printLogs) log('Final sideMostSolution: $sideMostSolution');
   return axis == NonoAxisAlignment.end ? sideMostSolution.reversed.toList() : sideMostSolution;
+}
+
+bool canCluesFit(
+  List<int> clues,
+  String solution,
+  int solutionPosition,
+  int cluePosition,
+  IsolateOutput output,
+  SolverSettings settings, [
+  bool printLogs = false,
+]) {
+  final List<String> solutionList = solution.split('');
+  final int clue = clues.elementAt(cluePosition);
+  bool canFit;
+
+  if (printLogs) {
+    log('Does clue $clue fit at $solutionList from position $solutionPosition to position ${solutionPosition + clue}?');
+  }
+  if (clue > solutionList.getRange(solutionPosition, solutionList.length).length) {
+    if (printLogs) log('false');
+    return false;
+  }
+  if (printLogs) log('true');
+
+  final List<String> fit = solutionList.getRange(solutionPosition, solutionPosition + clue).toList();
+  final String valueAfter =
+      solutionPosition + clue > solutionList.length ? '0' : solutionList.elementAtOrNull(solutionPosition + clue) ?? '0';
+  final String valueBefore = solutionPosition - 1 < 0 ? '0' : solutionList.elementAtOrNull(solutionPosition - 1) ?? '0';
+  canFit = !fit.contains('0') && valueAfter != '1' && valueBefore != '1';
+
+  if (printLogs) log('Can clue $clue fit at: $valueBefore $fit $valueAfter');
+  if (!canFit) {
+    if (printLogs) log('false');
+    return false;
+  }
+  if (printLogs) log('true');
+
+  final bool cluesBeforeGood =
+      doOtherCluesFit(NonoDirection.before, clues, cluePosition, solution, solutionPosition, output, settings);
+  final bool cluesAfterGood =
+      doOtherCluesFit(NonoDirection.after, clues, cluePosition, solution, solutionPosition, output, settings);
+
+  if (printLogs) log('Do both clues before and clues after fit? Answer: ${cluesBeforeGood && cluesAfterGood}');
+  return cluesBeforeGood && cluesAfterGood;
+}
+
+bool doOtherCluesFit(
+  NonoDirection solutionSide,
+  List<int> clues,
+  int clueIndex,
+  String solution,
+  int solutionIndex,
+  IsolateOutput output,
+  SolverSettings settings, [
+  bool printLogs = false,
+]) {
+  final int clue = clues.elementAt(clueIndex);
+
+  if (settings.countCheckedBoxes) {
+    output.otherBoxesCheckedList.add(output.otherBoxesCheckedList.last + 1);
+    output.otherBoxesCheckedList.removeAt(0);
+  }
+
+  if (printLogs) log('Does clue have clues ${solutionSide.name}?');
+  if (!solutionSide.hasOtherClues(clueIndex, clues.length)) {
+    if (printLogs) log('It does not.');
+    if (printLogs) log('Check if there are any filled boxes which match to no clue.');
+    return solutionSide.isSolutionValid(solution, solutionIndex, clues[clueIndex]);
+  }
+  if (printLogs) log('It does. Continue checking.');
+
+  final List<int> cluesSublist = solutionSide.getCluesSublist(clueIndex, clues);
+
+  if (printLogs) log('Does clue have boxes left for clues left?');
+  if (!solutionSide.hasBoxesLeft(solutionIndex, clue, solution, cluesSublist)) {
+    if (printLogs) log('It does not. Return `false`.');
+    return false;
+  }
+  if (printLogs) log('It does. Continue checking.');
+
+  final String solutionSublist = solutionSide.getSolutionSublist(solution, solutionIndex, clue);
+  if (printLogs) log('Does solution sublist $solutionSublist fit clues $cluesSublist?');
+  for (int solutionSublistIndex = 0; solutionSublistIndex < solutionSublist.length; solutionSublistIndex++) {
+    if (canCluesFit(cluesSublist, solutionSublist, solutionSublistIndex, 0, output, settings)) {
+      if (printLogs) log('It does fit. Return `true`.');
+
+      if (settings.keepCacheData) {
+        output.cachedBoxSolutions.addAll(updateCachedBoxSolutions(cluesSublist, 0, solutionSublist, solutionSublistIndex, true));
+      }
+
+      return true;
+    }
+  }
+  if (printLogs) log('It does not fit. Return `false`.');
+  return false;
 }
 
 List<Map<int, NonoAxis>> initializeStackList(Clues clues) {
