@@ -216,11 +216,11 @@ IsolateOutput _loopSides({
 
     // Find the starting and ending most solutions for the line.
     if (printLogs) log('Find starting solution of $allLineSolutions with clues $clues.');
-    final List<String> startingMostSolution = getSideMostSolution(allLineSolutions, clues, NonoAxisAlignment.start);
+    final List<String> startingMostSolution = _getSideMostSolution(allLineSolutions, clues, NonoAxisAlignment.start);
     if (printLogs) log('Starting most solution: $startingMostSolution');
 
     if (printLogs) log('Find ending solution of $allLineSolutions with clues $clues.');
-    final List<String> endingMostSolution = getSideMostSolution(allLineSolutions, clues, NonoAxisAlignment.end);
+    final List<String> endingMostSolution = _getSideMostSolution(allLineSolutions, clues, NonoAxisAlignment.end);
     if (printLogs) log('Ending most solution  : $endingMostSolution');
 
     // Match the starting and ending solutions to identify sure boxes to fill or cross out.
@@ -390,7 +390,24 @@ List<List<String>> _getAllLinePossibleSolutions(
   return possibleSolutions;
 }
 
-List<String> getSideMostSolution(
+/// The `getSideMostSolution` function calculates the most extreme solution (either starting or ending) for a given line (row or column)
+/// of a nonogram puzzle based on the provided clues and the current state of the solution.
+///
+/// The function receives the following parameters:
+/// - [initialSolution]: A list of lists of strings representing the possible solutions for each character in the line.
+/// - [initialClues]: A list of integers representing the clues for the current line.
+/// - [axis]: An enum value of type [NonoAxisAlignment] indicating whether to calculate the starting or ending most solution.
+/// - [printLogs]: A boolean flag to enable or disable logging (default is false).
+///
+/// The function iterates over each clue and finds the position where the clue can fit in the remaining solution.
+/// Adds the clue to the side most solution and updates the remaining solution.
+/// If there are any remaining characters in the solution, fills them with '0'.
+///
+/// The functions has a small modification to the original code to reverse the solution and clues
+/// if the axis is `NonoAxisAlignment.end`.
+///
+/// The function returns a list of strings representing the side most solution for the line.
+List<String> _getSideMostSolution(
   List<List<String>> initialSolution,
   List<int> initialClues,
   NonoAxisAlignment axis, [
@@ -398,6 +415,7 @@ List<String> getSideMostSolution(
 ]) {
   if (printLogs) log('Get ${axis.name}ing most solution of solution $initialSolution with clues $initialClues');
 
+  // Reverse the initial solution and clues if the axis is `NonoAxisAlignment.end`.
   List<List<String>> solution = initialSolution;
   List<int> clues = initialClues;
   List<int> clueIndexes = Iterable<int>.generate(clues.length, (int c) => c + 2).toList();
@@ -408,24 +426,31 @@ List<String> getSideMostSolution(
     clueIndexes = clueIndexes.reversed.toList();
   }
 
+  // Initialize an empty list to store the side most solution and set the remaining solution to the initial solution.
   final List<String> sideMostSolution = <String>[];
   List<List<String>> remainingSolution = solution;
 
   if (printLogs) {
     log('Start checking clues one by one. sideMostSolution list is empty, remainingSolution is $remainingSolution');
   }
+
+  // Iterate over each clue.
   for (int i = 0; i < clues.length; i++) {
     final int clue = clues[i];
     final int clueIndex = clueIndexes.elementAt(i);
     final int cluePos = remainingSolution.indexWhere((List<String> list) => list.contains('$clueIndex'));
     if (printLogs) log('Clue $i with value $clue is found at position $cluePos of remainingSolution $remainingSolution');
 
+    // Add '0's to the side most solution if there are any gaps before the clue.
     if (printLogs) log('Is cluePos $cluePos larger than 0?');
     if (printLogs) log(cluePos > 0 ? 'Yes, it is. Add $cluePos "0"s to sideMostSolution list' : "No, it isn't. Move on");
     if (cluePos > 0) sideMostSolution.addAll(Iterable<String>.generate(cluePos, (_) => '0').toList());
+
+    // Add the clue to the side most solution list.
     if (printLogs) log('Add $clue times clueIndex $clueIndex of clue $clue at sideMostSolution list');
     sideMostSolution.addAll(Iterable<String>.generate(clue, (_) => '$clueIndex').toList());
 
+    // If the solution is not completed, add a '0' for space and update the remaining solution.
     if (printLogs) log('Is solution completed?');
     if (printLogs) {
       log(
@@ -434,6 +459,8 @@ List<String> getSideMostSolution(
             : 'Yes it is. Move on',
       );
     }
+
+    // Add '0's to the side most solution if there are any gaps after the clue.
     if (sideMostSolution.length < solution.length) {
       sideMostSolution.add('0');
       remainingSolution = remainingSolution.sublist(cluePos + clue + 1);
@@ -442,12 +469,15 @@ List<String> getSideMostSolution(
     if (printLogs) log('Current sideMostSolution: $sideMostSolution');
   }
 
+  // Fill the remaining characters in the solution with '0' if the solution is not completed.
   if (printLogs) log('Finished checking all clues. Is sideMostSolution completed?');
   if (printLogs) log(sideMostSolution.length < solution.length ? 'No. Complete solution with "0"s' : 'Yes. Move on');
   if (sideMostSolution.length < solution.length) {
     sideMostSolution.addAll(Iterable<String>.generate(remainingSolution.length, (_) => '0').toList());
   }
   if (printLogs) log('Final sideMostSolution: $sideMostSolution');
+
+  // Reverse the side most solution back to the original order if the axis is `NonoAxisAlignment.end`.
   return axis == NonoAxisAlignment.end ? sideMostSolution.reversed.toList() : sideMostSolution;
 }
 
