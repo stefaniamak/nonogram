@@ -18,7 +18,7 @@ import 'package:nonogram/solver/line_solver_helper.dart';
 /// The `lineSolverIsolate` function is an entry point for an isolate that processes nonogram puzzle solving tasks.
 /// It manages a stack of rows and columns, iteratively solving each line and updating the solution state.
 ///
-/// The function receives a [params] object containing the [IsolateInput] data.
+/// The function receives a [params] object containing the [IsolateInput] data as a JSON-encoded string.
 /// It enters a loop to process each line in the stack, solving the line and updating the solution state.
 /// It then sends the updated solution state to the main isolate for further processing.
 ///
