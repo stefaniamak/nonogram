@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:isolate_manager/isolate_manager.dart';
 import 'package:nonogram/backend/models/isolate/isolate_input.dart';
@@ -12,6 +13,7 @@ import 'package:nonogram/backend/type_extensions/nono_axis_extension.dart';
 import 'package:nonogram/backend/type_extensions/nono_direction_extension.dart';
 import 'package:nonogram/backend/type_extensions/nono_list_extension.dart';
 import 'package:nonogram/backend/type_extensions/nono_string_extension.dart';
+import 'package:nonogram/solver/line_solver_helper.dart';
 
 @isolateManagerCustomWorker
 void lineSolverIsolate(dynamic params) {
@@ -106,7 +108,7 @@ IsolateOutput loopSides({
   output.linesCheckedList.add(output.linesCheckedList.last + 1);
   output.linesCheckedList.removeAt(0);
 
-  if (printPrints) print('Check ${lineType.name} with index $lineIndex.');
+  if (printPrints) log('Check ${lineType.name} with index $lineIndex.');
   if (printPrints) print("${lineType.name}'s clues: $clues");
   final String initialSolution = output.solutionSteps.last.currentSolution.getSolutionLine(lineIndex, nonogram, lineType);
 
@@ -116,46 +118,7 @@ IsolateOutput loopSides({
 
   if (printPrints) print("Are filled boxes ($filledBoxes) equal with clue's sum (${clues.sum})?");
 
-  /// In the following 4 lines, we create a List<int> with all the index positions
-  /// of question marks ("?") in a String. In our case, the String is the current line solution.
-  ///
-  /// We get the initialSolution of that line and create a list of characters with their indexes (`characters.indexed`).
-  /// This indexed list includes the original characters matched with their positions in the String.
-  /// e.g. String `0?1` has the result ((0, 0), (1, ?), (2, 1))
-  ///
-  /// We then convert this indexed list to a String using .toString() and use a RegEx search to get all
-  /// the indexes of the `?` characters in the solution.
-  ///
-  /// The RegEx [charIndexesRegexp] pattern is:
-  ///   [0-9]    -> Matches digits...
-  ///   +        -> One or more of the previous case...
-  ///   (?=, ?) -> That are followed by the String ", ?".
-  ///
-  /// After getting all the matches, we join them with commas (",") to form a single String.
-  /// Then, we split this String by "," and parse its contents to integers.
-  ///
-  /// Now, we have a List<int> of all the indexes of the "?" characters in the solution.
-  /// e.g. String "((0, 0), (1, ?), (2, 1))" results in [1].
-  ///
-  final Iterable<(int, String)> initialSolutionIndexed = initialSolution.split('').indexed;
-
-  final RegExp charIndexesRegexp = RegExp(r'[0-9]+(?=, \?)');
-  // Find all matches
-  final Iterable<Match> matches = charIndexesRegexp.allMatches(initialSolutionIndexed.toList().toString());
-  // print('matches: $matches');
-  // Extract the matched parts and join them with commas
-  final String result = matches.map((Match match) => match.group(0)).join(',');
-  // print('initialSolutionIndexed: $initialSolutionIndexed');
-  // print('result: $result');
-  final List<int> charIndexesOfQMarks = result.isNotEmpty ? result.split(',').map((String e) => int.parse(e)).toList() : <int>[];
-
-  // print('initialSolution: $initialSolution');
-  // print('initialSolutionIndexed: $initialSolutionIndexed');
-  //
-  // print('charIndexesOfQMarks2: $charIndexesOfQMarks2');
-
-  // List<int> charIndexesOfQMarks = initialSolutionIndexed.where((element) => element.$2 == '?').map((e) => e.$1).toList();
-  // print('charIndexesOfQMarks: $charIndexesOfQMarks');
+  final List<int> charIndexesOfQMarks = LineSolverHelper.instance.getCharIndexesOfQuestionMarks(initialSolution);
 
   if (isLineCompleted) {
     if (printPrints) print('It is. Shall cross out remaining empty boxes if any left.');
