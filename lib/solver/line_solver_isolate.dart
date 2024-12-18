@@ -127,7 +127,6 @@ IsolateOutput loopSides({
   if (isLineCompleted) {
     if (printLogs) log('It is. Shall cross out remaining empty boxes if any left.');
     if (initialSolution.split('').toList().contains('?')) {
-      // TODO(stef): restore groupSteps
       final int charStart = initialSolution.split('').toList().indexWhere((String char) => char == '?');
       final int charEnd = initialSolution.split('').toList().lastIndexWhere((String char) => char == '?') + 1;
       if (printLogs) {
@@ -236,7 +235,6 @@ IsolateOutput loopSides({
 
     const String updatedSolution = '';
 
-    // TODO(stef): restore groupSteps
     // Generate a regex pattern to match any number except those in the exclusion list
     final String inclusionPattern = charIndexesOfQMarks.map((int e) => e).join('|');
     // Precompile regex patterns
