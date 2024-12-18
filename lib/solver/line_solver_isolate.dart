@@ -174,44 +174,14 @@ IsolateOutput loopSides({
 
     if (printLogs) log('Ending most solution  : $endingMostSolution');
 
-    const String updatedSolution = '';
+    final Map<int, List<int>> result = LineSolverHelper.instance.getSideMostSolutionsMatches(
+      allLineSolutions,
+      startingMostSolution,
+      endingMostSolution,
+      charIndexesOfQMarks,
+    );
 
-    // Generate a regex pattern to match any number except those in the exclusion list
-    final String inclusionPattern = charIndexesOfQMarks.map((int e) => e).join('|');
-    // Precompile regex patterns
-    final RegExp regZeroFilledMatches = RegExp(r'\((' + inclusionPattern + r'), \[(0)\]\)');
-    // Convert input lists to string once
-    final String inputZeros = allLineSolutions.indexed.toList().toString();
-    // Find matches using precompiled regex patterns
-    final Iterable<RegExpMatch> matchesZeros = regZeroFilledMatches.allMatches(inputZeros);
-
-    // Use a map to store the right number as keys and a set of left numbers as values for pairs that appear twice
-    final Map<int, Set<int>> matchMap = <int, Set<int>>{};
-
-    final Set<(int, String)> inputNumbersStart = startingMostSolution.indexed.toSet();
-    final Set<(int, String)> inputNumbersEnd = endingMostSolution.indexed.toSet();
-    final Set<(int, String)> duplicateInputNumbers = inputNumbersStart.intersection(inputNumbersEnd);
-
-    for (final (int, String) match in duplicateInputNumbers) {
-      (int, String) pair = match;
-      final int leftNumber = pair.$1;
-      final int rightNumber = int.parse(pair.$2);
-      if (rightNumber != 0 && charIndexesOfQMarks.contains(leftNumber)) {
-        matchMap.putIfAbsent(rightNumber, () => <int>{});
-        matchMap[rightNumber]!.add(leftNumber);
-      }
-    }
-
-    if (matchesZeros.isNotEmpty) {
-      matchMap.putIfAbsent(0, () => <int>{});
-      matchMap[0]!.addAll(matchesZeros.map((RegExpMatch match) => int.parse(match.group(1)!)));
-    }
-
-    // Convert the sets to lists and print the final map
-    final Map<int, List<int>> result = matchMap.map((int key, Set<int> value) => MapEntry(key, value.toList()));
-    // log('result: $result');
-
-    final List<Map<int, NonoAxis>> finalStack = []; //output.stack; // List.from(output.stack);
+    final List<Map<int, NonoAxis>> finalStack = <Map<int, NonoAxis>>[];
     List<int> newFilledBoxes = <int>[];
     final List<SolutionStep> newSolutionSteps = <SolutionStep>[];
     String fullUpdatedSolution = output.solutionSteps.last.currentSolution;
@@ -299,7 +269,7 @@ IsolateOutput loopSides({
     //       '${clueKey == 0 ? 'Cross out' : 'Fill in'} sure boxes for clue ${clues.elementAt(clueIndex)} with index $clueIndex of ${lineType.name} with index $lineIndex.',
     // ));
     // state.stack.updateStack(charIndexes, lineType, state);
-    if (printLogs) log('Overlapped solution: $updatedSolution');
+    // if (printLogs) log('Overlapped solution: $updatedSolution');
   }
   // TODO(stef): updateLinesChecked
   // output = output.copyWith(linesChecked: output.linesChecked + 1);

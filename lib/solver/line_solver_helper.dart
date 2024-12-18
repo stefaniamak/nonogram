@@ -123,4 +123,45 @@ class LineSolverHelper {
       'newFilledBoxes': newFilledBoxes,
     };
   }
+
+  Map<int, List<int>> getSideMostSolutionsMatches(
+    List<List<String>> allLineSolutions,
+    List<String> startingMostSolution,
+    List<String> endingMostSolution,
+    List<int> charIndexesOfQMarks,
+  ) {
+    // Generate a regex pattern to match any number except those in the exclusion list
+    final String inclusionPattern = charIndexesOfQMarks.map((int e) => e).join('|');
+    // Precompile regex patterns
+    final RegExp regZeroFilledMatches = RegExp(r'\((' + inclusionPattern + r'), \[(0)\]\)');
+    // Convert input lists to string once
+    final String inputZeros = allLineSolutions.indexed.toList().toString();
+    // Find matches using precompiled regex patterns
+    final Iterable<RegExpMatch> matchesZeros = regZeroFilledMatches.allMatches(inputZeros);
+
+    // Use a map to store the right number as keys and a set of left numbers as values for pairs that appear twice
+    final Map<int, Set<int>> matchMap = <int, Set<int>>{};
+
+    final Set<(int, String)> inputNumbersStart = startingMostSolution.indexed.toSet();
+    final Set<(int, String)> inputNumbersEnd = endingMostSolution.indexed.toSet();
+    final Set<(int, String)> duplicateInputNumbers = inputNumbersStart.intersection(inputNumbersEnd);
+
+    for (final (int, String) match in duplicateInputNumbers) {
+      final (int, String) pair = match;
+      final int leftNumber = pair.$1;
+      final int rightNumber = int.parse(pair.$2);
+      if (rightNumber != 0 && charIndexesOfQMarks.contains(leftNumber)) {
+        matchMap.putIfAbsent(rightNumber, () => <int>{});
+        matchMap[rightNumber]!.add(leftNumber);
+      }
+    }
+
+    if (matchesZeros.isNotEmpty) {
+      matchMap.putIfAbsent(0, () => <int>{});
+      matchMap[0]!.addAll(matchesZeros.map((RegExpMatch match) => int.parse(match.group(1)!)));
+    }
+
+    // Convert the sets to lists and print the final map
+    return matchMap.map((int key, Set<int> value) => MapEntry<int, List<int>>(key, value.toList()));
+  }
 }
