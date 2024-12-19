@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'dart:developer';
 
 import 'package:isolate_manager/isolate_manager.dart';
-import 'package:nonogram/backend/models/isolate/isolate_do_other_clues_fit_input.dart';
 import 'package:nonogram/backend/models/isolate/isolate_input.dart';
 import 'package:nonogram/backend/models/isolate/isolate_output.dart';
 import 'package:nonogram/backend/models/nonogram/clues.dart';
@@ -30,7 +29,7 @@ import 'package:nonogram/solver/line_solver_helper.dart';
 void lineSolverIsolate(dynamic params) {
   IsolateManagerFunction.customFunction<String, String>(
     params,
-    onEvent: (IsolateManagerController<String, String> controller, String message) async {
+    onEvent: (IsolateManagerController<String, String> controller, String message) {
       // Decode the input parameters to an IsolateInput object.
       final IsolateInput input = IsolateInput.fromJson(jsonDecode(message));
       // Initialize the stack list with the nonogram clues.
@@ -61,7 +60,7 @@ void lineSolverIsolate(dynamic params) {
             .elementAt(line.keys.first);
 
         // Call the loopSides function to process the line and update the solution.
-        progress = await _loopSides(
+        progress = _loopSides(
           lineIndex: line.keys.first,
           clues: clues,
           lineType: line.values.first,
@@ -145,7 +144,7 @@ void lineSolverIsolate(dynamic params) {
 /// and adds new stack elements for further processing - these data create the final solution state.
 ///
 /// The function returns an [IsolateOutput] object containing the updated solution state.
-Future<IsolateOutput> _loopSides({
+IsolateOutput _loopSides({
   required int lineIndex,
   required List<int> clues,
   required NonoAxis lineType,
@@ -153,7 +152,7 @@ Future<IsolateOutput> _loopSides({
   required IsolateOutput output,
   required SolverSettings settings,
   bool printLogs = false,
-}) async {
+}) {
   // Update the count of checked lines.
   output.linesCheckedList.add(output.linesCheckedList.last + 1);
   output.linesCheckedList.removeAt(0);
@@ -212,7 +211,7 @@ Future<IsolateOutput> _loopSides({
   } else {
     // If the line is not completed, calculate all possible solutions for the line.
     if (printLogs) log('It is not. Starts to calculate all possible solutions...');
-    final List<List<String>> allLineSolutions = await _getAllLinePossibleSolutions(clues, initialSolution, output, settings);
+    final List<List<String>> allLineSolutions = _getAllLinePossibleSolutions(clues, initialSolution, output, settings);
     if (printLogs) log('All line solutions: $allLineSolutions');
 
     // Find the starting most solutions for the line.
@@ -401,13 +400,13 @@ Map<int, List<int>> _getSideMostSolutionsMatches(
 ///
 /// The function returns a list of lists of strings, where each inner list represents the possible
 /// solutions for a character in the line.
-Future<List<List<String>>> _getAllLinePossibleSolutions(
+List<List<String>> _getAllLinePossibleSolutions(
   List<int> clues,
   String line,
   IsolateOutput output,
   SolverSettings settings, [
   bool printLogs = false,
-]) async {
+]) {
   if (printLogs) log('Get all possible solutions of line $line with clues $clues');
   // Initialize an empty list of possible solutions for each character in the line.
   final List<List<String>> possibleSolutions = Iterable<List<String>>.generate(line.length, (_) => <String>[]).toList();
@@ -430,7 +429,7 @@ Future<List<List<String>>> _getAllLinePossibleSolutions(
         result = cache;
       } else {
         // If it is not, calculate the result and update the cache.
-        result = await _canCluesFit(clues, line, charIndex, clueIndex, output, settings, printLogs, true);
+        result = canCluesFit(clues, line, charIndex, clueIndex, output, settings);
         if (settings.keepCacheData) {
           output.cachedBoxSolutions.addAll(updateCachedBoxSolutions(clues, clueIndex, line, charIndex, result));
         }
@@ -548,7 +547,7 @@ List<String> _getSideMostSolution(
   return axis == NonoAxisAlignment.end ? sideMostSolution.reversed.toList() : sideMostSolution;
 }
 
-Future<bool> _canCluesFit(
+bool canCluesFit(
   List<int> clues,
   String solution,
   int solutionPosition,
@@ -556,10 +555,9 @@ Future<bool> _canCluesFit(
   IsolateOutput output,
   SolverSettings settings, [
   bool printLogs = false,
-  bool useIsolate = false,
-]) async {
+]) {
   final List<String> solutionList = solution.split('');
-  final int clue = clues[cluePosition];
+  final int clue = clues.elementAt(cluePosition);
   bool canFit;
 
   if (printLogs) {
@@ -571,9 +569,10 @@ Future<bool> _canCluesFit(
   }
   if (printLogs) log('true');
 
-  final List<String> fit = solutionList.sublist(solutionPosition, solutionPosition + clue);
-  final String valueAfter = solutionPosition + clue >= solutionList.length ? '0' : solutionList[solutionPosition + clue];
-  final String valueBefore = solutionPosition <= 0 ? '0' : solutionList[solutionPosition - 1];
+  final List<String> fit = solutionList.getRange(solutionPosition, solutionPosition + clue).toList();
+  final String valueAfter =
+      solutionPosition + clue > solutionList.length ? '0' : solutionList.elementAtOrNull(solutionPosition + clue) ?? '0';
+  final String valueBefore = solutionPosition - 1 < 0 ? '0' : solutionList.elementAtOrNull(solutionPosition - 1) ?? '0';
   canFit = !fit.contains('0') && valueAfter != '1' && valueBefore != '1';
 
   if (printLogs) log('Can clue $clue fit at: $valueBefore $fit $valueAfter');
@@ -583,102 +582,16 @@ Future<bool> _canCluesFit(
   }
   if (printLogs) log('true');
 
-  late bool cluesBeforeGood;
-  late bool cluesAfterGood;
+  final bool cluesBeforeGood =
+      doOtherCluesFit(NonoDirection.before, clues, cluePosition, solution, solutionPosition, output, settings);
+  final bool cluesAfterGood =
+      doOtherCluesFit(NonoDirection.after, clues, cluePosition, solution, solutionPosition, output, settings);
 
-  // print('isolateManager.queuesLength: ${isolateManager.queuesLength}');
-  // print('isolateManager.isStarted: ${isolateManager.isStarted}');
-  // print('useIsolate: $useIsolate');
-
-  if (useIsolate) {
-    await Future.wait<void>(<Future<void>>[
-      isolateManager.compute(
-        jsonEncode(
-          IsolateDoOtherCluesFitInput(
-            solutionSide: NonoDirection.before,
-            clues: clues,
-            clueIndex: cluePosition,
-            solution: solution,
-            solutionIndex: solutionPosition,
-            output: output,
-            settings: settings,
-            printLogs: printLogs,
-          ).toJson(),
-        ),
-        callback: (dynamic value) {
-          final Map<String, dynamic> data = jsonDecode(value);
-
-          cluesBeforeGood = data['result']!;
-          // print('result cluesBeforeGood: $cluesBeforeGood');
-          // Return `true` to mark this value is the final.
-          return true;
-        },
-      ),
-      isolateManager.compute(
-        jsonEncode(
-          IsolateDoOtherCluesFitInput(
-            solutionSide: NonoDirection.after,
-            clues: clues,
-            clueIndex: cluePosition,
-            solution: solution,
-            solutionIndex: solutionPosition,
-            output: output,
-            settings: settings,
-            printLogs: printLogs,
-          ).toJson(),
-        ),
-        callback: (dynamic value) {
-          final Map<String, dynamic> data = jsonDecode(value);
-
-          cluesAfterGood = data['result']!;
-          // Return `true` to mark this value is the final.
-          return true;
-        },
-      ),
-    ]);
-  } else {
-    cluesBeforeGood =
-        await doOtherCluesFit(NonoDirection.before, clues, cluePosition, solution, solutionPosition, output, settings, printLogs);
-
-    cluesAfterGood =
-        await doOtherCluesFit(NonoDirection.after, clues, cluePosition, solution, solutionPosition, output, settings, printLogs);
-  }
-
-  // print('cluesBeforeGood: $cluesBeforeGood');
-
+  if (printLogs) log('Do both clues before and clues after fit? Answer: ${cluesBeforeGood && cluesAfterGood}');
   return cluesBeforeGood && cluesAfterGood;
 }
 
-final IsolateManager<dynamic, dynamic> isolateManager = IsolateManager<dynamic, dynamic>.createCustom(
-  doOtherCluesFitIsolate,
-  workerName: 'doOtherCluesFitIsolate',
-);
-
-@isolateManagerCustomWorker
-Future<void> doOtherCluesFitIsolate(dynamic params) async {
-  await IsolateManagerFunction.customFunction<String, String>(
-    params,
-    onEvent: (IsolateManagerController<String, String> controller, String message) async {
-      // Decode the input parameters to an IsolateInput object.
-      final IsolateDoOtherCluesFitInput input = IsolateDoOtherCluesFitInput.fromJson(jsonDecode(message));
-
-      final bool result = await doOtherCluesFit(
-        input.solutionSide,
-        input.clues,
-        input.clueIndex,
-        input.solution,
-        input.solutionIndex,
-        input.output,
-        input.settings,
-        input.printLogs,
-      );
-
-      return jsonEncode(<String, bool>{'result': result});
-    },
-  );
-}
-
-Future<bool> doOtherCluesFit(
+bool doOtherCluesFit(
   NonoDirection solutionSide,
   List<int> clues,
   int clueIndex,
@@ -687,7 +600,7 @@ Future<bool> doOtherCluesFit(
   IsolateOutput output,
   SolverSettings settings, [
   bool printLogs = false,
-]) async {
+]) {
   final int clue = clues.elementAt(clueIndex);
 
   if (settings.countCheckedBoxes) {
@@ -715,7 +628,7 @@ Future<bool> doOtherCluesFit(
   final String solutionSublist = solutionSide.getSolutionSublist(solution, solutionIndex, clue);
   if (printLogs) log('Does solution sublist $solutionSublist fit clues $cluesSublist?');
   for (int solutionSublistIndex = 0; solutionSublistIndex < solutionSublist.length; solutionSublistIndex++) {
-    if (await _canCluesFit(cluesSublist, solutionSublist, solutionSublistIndex, 0, output, settings)) {
+    if (canCluesFit(cluesSublist, solutionSublist, solutionSublistIndex, 0, output, settings)) {
       if (printLogs) log('It does fit. Return `true`.');
 
       if (settings.keepCacheData) {
