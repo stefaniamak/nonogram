@@ -429,7 +429,7 @@ List<List<String>> _getAllLinePossibleSolutions(
         result = cache;
       } else {
         // If it is not, calculate the result and update the cache.
-        result = canCluesFit(clues, line, charIndex, clueIndex, output, settings);
+        result = _canCluesFit(clues, line, charIndex, clueIndex, output, settings);
         if (settings.keepCacheData) {
           output.cachedBoxSolutions.addAll(updateCachedBoxSolutions(clues, clueIndex, line, charIndex, result));
         }
@@ -547,7 +547,7 @@ List<String> _getSideMostSolution(
   return axis == NonoAxisAlignment.end ? sideMostSolution.reversed.toList() : sideMostSolution;
 }
 
-bool canCluesFit(
+bool _canCluesFit(
   List<int> clues,
   String solution,
   int solutionPosition,
@@ -557,8 +557,7 @@ bool canCluesFit(
   bool printLogs = false,
 ]) {
   final List<String> solutionList = solution.split('');
-  final int clue = clues.elementAt(cluePosition);
-  bool canFit;
+  final int clue = clues[cluePosition];
 
   if (printLogs) {
     log('Does clue $clue fit at $solutionList from position $solutionPosition to position ${solutionPosition + clue}?');
@@ -569,11 +568,10 @@ bool canCluesFit(
   }
   if (printLogs) log('true');
 
-  final List<String> fit = solutionList.getRange(solutionPosition, solutionPosition + clue).toList();
-  final String valueAfter =
-      solutionPosition + clue > solutionList.length ? '0' : solutionList.elementAtOrNull(solutionPosition + clue) ?? '0';
-  final String valueBefore = solutionPosition - 1 < 0 ? '0' : solutionList.elementAtOrNull(solutionPosition - 1) ?? '0';
-  canFit = !fit.contains('0') && valueAfter != '1' && valueBefore != '1';
+  final List<String> fit = solutionList.sublist(solutionPosition, solutionPosition + clue);
+  final String valueAfter = solutionPosition + clue >= solutionList.length ? '0' : solutionList[solutionPosition + clue];
+  final String valueBefore = solutionPosition <= 0 ? '0' : solutionList[solutionPosition - 1];
+  final bool canFit = !fit.contains('0') && valueAfter != '1' && valueBefore != '1';
 
   if (printLogs) log('Can clue $clue fit at: $valueBefore $fit $valueAfter');
   if (!canFit) {
@@ -628,7 +626,7 @@ bool doOtherCluesFit(
   final String solutionSublist = solutionSide.getSolutionSublist(solution, solutionIndex, clue);
   if (printLogs) log('Does solution sublist $solutionSublist fit clues $cluesSublist?');
   for (int solutionSublistIndex = 0; solutionSublistIndex < solutionSublist.length; solutionSublistIndex++) {
-    if (canCluesFit(cluesSublist, solutionSublist, solutionSublistIndex, 0, output, settings)) {
+    if (_canCluesFit(cluesSublist, solutionSublist, solutionSublistIndex, 0, output, settings)) {
       if (printLogs) log('It does fit. Return `true`.');
 
       if (settings.keepCacheData) {
