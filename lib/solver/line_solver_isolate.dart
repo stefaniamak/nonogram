@@ -547,6 +547,23 @@ List<String> _getSideMostSolution(
   return axis == NonoAxisAlignment.end ? sideMostSolution.reversed.toList() : sideMostSolution;
 }
 
+/// The `_canCluesFit` function checks if a given clue can fit into a specified position in the solution line of a nonogram puzzle.
+///
+/// The function receives the following parameters:
+/// - [clues]: A list of integers representing the clues for the current line.
+/// - [solution]: A string representing the current state of the solution line.
+/// - [solutionPosition]: An integer representing the starting position in the solution line to check the clue.
+/// - [cluePosition]: An integer representing the position of the clue in the clues list.
+/// - [output]: An [IsolateOutput] object containing the current state of the solution.
+/// - [settings]: A [SolverSettings] object containing the solver settings to use during processing.
+/// - [printLogs]: An optional boolean flag to enable or disable logging (default is false).
+///
+/// The function performs the following checks:
+/// 1. Checks if the clue can fit within the remaining length of the solution line.
+/// 2. Verifies that the clue can fit without conflicting with existing filled or empty boxes.
+/// 3. Checks if the clues before and after the current clue fit correctly.
+///
+/// The function returns a boolean value indicating whether the clue can fit at the specified position.
 bool _canCluesFit(
   List<int> clues,
   String solution,
@@ -556,9 +573,11 @@ bool _canCluesFit(
   SolverSettings settings, [
   bool printLogs = false,
 ]) {
+  // Split the solution string into a list of characters.
   final List<String> solutionList = solution.split('');
   final int clue = clues[cluePosition];
 
+  // Check if the clue can fit within the remaining length of the solution line.
   if (printLogs) {
     log('Does clue $clue fit at $solutionList from position $solutionPosition to position ${solutionPosition + clue}?');
   }
@@ -568,6 +587,7 @@ bool _canCluesFit(
   }
   if (printLogs) log('true');
 
+  // Verify that the clue can fit without conflicting with existing filled or empty boxes.
   final List<String> fit = solutionList.sublist(solutionPosition, solutionPosition + clue);
   final String valueAfter = solutionPosition + clue >= solutionList.length ? '0' : solutionList[solutionPosition + clue];
   final String valueBefore = solutionPosition <= 0 ? '0' : solutionList[solutionPosition - 1];
@@ -580,11 +600,13 @@ bool _canCluesFit(
   }
   if (printLogs) log('true');
 
+  // Check if the clues before and after the current clue fit correctly.
   final bool cluesBeforeGood =
       doOtherCluesFit(NonoDirection.before, clues, cluePosition, solution, solutionPosition, output, settings);
   final bool cluesAfterGood =
       doOtherCluesFit(NonoDirection.after, clues, cluePosition, solution, solutionPosition, output, settings);
 
+  // Return true if both the clues before and after fit correctly.
   if (printLogs) log('Do both clues before and clues after fit? Answer: ${cluesBeforeGood && cluesAfterGood}');
   return cluesBeforeGood && cluesAfterGood;
 }
