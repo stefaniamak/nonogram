@@ -4,7 +4,6 @@ import 'dart:developer';
 import 'package:isolate_manager/isolate_manager.dart';
 import 'package:nonogram/backend/models/isolate/isolate_input.dart';
 import 'package:nonogram/backend/models/isolate/isolate_output.dart';
-import 'package:nonogram/backend/models/nonogram/clues.dart';
 import 'package:nonogram/backend/models/nonogram/nonogram.dart';
 import 'package:nonogram/backend/models/solution_step.dart';
 import 'package:nonogram/backend/models/solver_settings.dart';
@@ -33,7 +32,7 @@ void lineSolverIsolate(dynamic params) {
       // Decode the input parameters to an IsolateInput object.
       final IsolateInput input = IsolateInput.fromJson(jsonDecode(message));
       // Initialize the stack list with the nonogram clues.
-      final List<Map<int, NonoAxis>> stack = initializeStackList(input.nonogram.clues);
+      final List<Map<int, NonoAxis>> stack = LineSolverHelper.instance.initializeStackList(input.nonogram.clues);
       // Set up initial values for solution steps, cached box solutions, and lists to track checked lines and boxes.
       List<SolutionStep> solutionSteps = input.solutionSteps;
       final Map<String, bool> cachedBoxSolutions = <String, bool>{};
@@ -431,7 +430,8 @@ List<List<String>> _getAllLinePossibleSolutions(
         // If it is not, calculate the result and update the cache.
         result = _canCluesFit(clues, line, charIndex, clueIndex, output, settings);
         if (settings.keepCacheData) {
-          output.cachedBoxSolutions.addAll(updateCachedBoxSolutions(clues, clueIndex, line, charIndex, result));
+          output.cachedBoxSolutions
+              .addAll(LineSolverHelper.instance.updateCachedBoxSolutions(clues, clueIndex, line, charIndex, result));
         }
         // Update the count of checked boxes.
         if (settings.countCheckedBoxes) {
@@ -680,7 +680,8 @@ bool _doOtherCluesFit(
       if (printLogs) log('It does fit. Return `true`.');
 
       if (settings.keepCacheData) {
-        output.cachedBoxSolutions.addAll(updateCachedBoxSolutions(cluesSublist, 0, solutionSublist, solutionSublistIndex, true));
+        output.cachedBoxSolutions.addAll(
+            LineSolverHelper.instance.updateCachedBoxSolutions(cluesSublist, 0, solutionSublist, solutionSublistIndex, true));
       }
 
       // Return true if the solution sublist fits the clues sublist.
@@ -690,22 +691,4 @@ bool _doOtherCluesFit(
   if (printLogs) log('It does not fit. Return `false`.');
   // Return false if the solution sublist does not fit the clues sublist.
   return false;
-}
-
-List<Map<int, NonoAxis>> initializeStackList(Clues clues) {
-  final List<Map<int, NonoAxis>> lineStack = <Map<int, NonoAxis>>[];
-
-  for (int i = 0; i < clues.rows.length; i++) {
-    lineStack.add(<int, NonoAxis>{i: NonoAxis.row});
-  }
-
-  for (int i = 0; i < clues.columns.length; i++) {
-    lineStack.add(<int, NonoAxis>{i: NonoAxis.column});
-  }
-
-  return lineStack;
-}
-
-Map<String, bool> updateCachedBoxSolutions(List<int> clues, int clueIndex, String solution, int solutionIndex, bool value) {
-  return <String, bool>{'$clues,$clueIndex,$solution,$solutionIndex': value};
 }

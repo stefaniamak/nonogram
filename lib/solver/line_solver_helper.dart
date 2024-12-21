@@ -1,10 +1,26 @@
 import 'package:isolate_manager/isolate_manager.dart';
+import 'package:nonogram/backend/models/nonogram/clues.dart';
 import 'package:nonogram/backend/type_extensions/nono_axis_extension.dart';
 
 @isolateManagerCustomWorker
 class LineSolverHelper {
   LineSolverHelper._();
   static final LineSolverHelper instance = LineSolverHelper._();
+
+  /// Initializes a stack list with the nonogram lines, meant for looping through them and applying the solver logic.
+  /// This initial list includes maps for each row and column in the nonogram puzzle.
+  ///
+  /// The function receives the following parameter:
+  /// - [clues]: A [Clues] object containing the clues for the nonogram puzzle.
+  ///
+  /// The function returns a list of maps, where each map contains an index and a [NonoAxis] value.
+  /// The list includes maps for each row and column in the nonogram puzzle.
+  List<Map<int, NonoAxis>> initializeStackList(Clues clues) {
+    return <Map<int, NonoAxis>>[
+      for (int i = 0; i < clues.rows.length; i++) <int, NonoAxis>{i: NonoAxis.row},
+      for (int i = 0; i < clues.columns.length; i++) <int, NonoAxis>{i: NonoAxis.column},
+    ];
+  }
 
   /// Returns the solution line for a given line index and type (row or column) in a nonogram puzzle.
   ///
@@ -110,5 +126,20 @@ class LineSolverHelper {
       'fullUpdatedSolution': fullUpdatedSolution,
       'newFilledBoxes': newFilledBoxes,
     };
+  }
+
+  /// Updates the cached box solutions with a new entry.
+  ///
+  /// The function receives the following parameters:
+  /// - [clues]: A list of integers representing the clues for the current line.
+  /// - [clueIndex]: An integer representing the position of the current clue in the clues list.
+  /// - [solution]: A string representing the current state of the solution line.
+  /// - [solutionIndex]: An integer representing the starting position in the solution line to check the clue.
+  /// - [value]: A boolean value indicating whether the clue can fit at the specified position.
+  ///
+  /// The function returns a map where the key is a string combining the clues, clue index, solution, and solution index,
+  /// and the value is the provided boolean value.
+  Map<String, bool> updateCachedBoxSolutions(List<int> clues, int clueIndex, String solution, int solutionIndex, bool value) {
+    return <String, bool>{'$clues,$clueIndex,$solution,$solutionIndex': value};
   }
 }
