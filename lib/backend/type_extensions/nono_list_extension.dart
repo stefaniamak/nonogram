@@ -10,6 +10,25 @@ extension NonoStringListExtension on List<String> {
 extension NonoIntListExtension on List<int> {
   /// Calculates the sum of all elements in the list.
   int get sum => fold<int>(0, (int previousValue, int element) => previousValue + element);
+
+  /// Calculates the minimum starting point for a given index.
+  /// To find the minimum starting point, the sum of all elements up to the index is calculated.
+  ///
+  /// - [index]: The index to calculate the minimum starting point for.
+  ///
+  /// Returns the minimum starting point as an integer.
+  int minStartingPoint(int index) => index == 0 ? 0 : take(index).reduce((int value, int element) => value + element + 1);
+
+  /// Calculates the maximum starting point for a given index and total length.
+  /// To find the maximum starting point, the sum of all elements after the index is calculated.
+  ///
+  /// - [index]: The index to calculate the maximum starting point for.
+  /// - [totalLength]: The total length to consider for the calculation.
+  ///
+  /// Returns the maximum starting point as an integer.
+  int maxStartingPoint(int index, int totalLength) => index == length - 1
+      ? totalLength
+      : totalLength - sublist(index + 1).reduce((int value, int element) => value + element + 1) - this[index];
 }
 
 /// Extension on List<Map<int, NonoAxis>> to add utility methods.

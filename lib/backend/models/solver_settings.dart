@@ -7,7 +7,6 @@ part 'solver_settings.g.dart';
 class SolverSettings {
   /// Creates a new [SolverSettings].
   const SolverSettings({
-    this.groupSteps = true,
     this.keepCacheData = true,
     this.countCheckedBoxes = true,
     this.isolateConcurrent = 1,
@@ -15,9 +14,6 @@ class SolverSettings {
   });
 
   factory SolverSettings.fromJson(final Map<String, dynamic> json) => _$SolverSettingsFromJson(json);
-
-  /// Whether to group steps in the solver.
-  final bool groupSteps;
 
   /// Whether to keep cache data.
   final bool keepCacheData;
@@ -44,7 +40,6 @@ class SolverSettings {
     final bool? highlightNewFilledBoxes,
   }) {
     return SolverSettings(
-      groupSteps: groupSteps ?? this.groupSteps,
       keepCacheData: keepCacheData ?? this.keepCacheData,
       countCheckedBoxes: countCheckedBoxes ?? this.countCheckedBoxes,
       isolateConcurrent: isolateConcurrent ?? this.isolateConcurrent,

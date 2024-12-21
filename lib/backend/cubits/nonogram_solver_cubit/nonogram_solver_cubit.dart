@@ -68,10 +68,12 @@ class NonogramSolverCubit extends Cubit<NonogramSolverState> {
   /// This method emits a new state indicating the solver is in progress,
   /// initializes an isolate manager, and processes the solution steps.
   Future<void> solvePuzzle() async {
-    emit(state.copyWith(
-      solverStatus: SolverStatus.solving,
-      startDateTime: Nullable<DateTime>(DateTime.now()),
-    ));
+    emit(
+      state.copyWith(
+        solverStatus: SolverStatus.solving,
+        startDateTime: Nullable<DateTime>(DateTime.now()),
+      ),
+    );
 
     final IsolateManager<dynamic, dynamic> isolateManager = IsolateManager<dynamic, dynamic>.createCustom(
       lineSolverIsolate,
@@ -80,11 +82,13 @@ class NonogramSolverCubit extends Cubit<NonogramSolverState> {
     );
 
     await isolateManager.compute(
-      jsonEncode(IsolateInput(
-        solutionSteps: state.output.solutionSteps,
-        nonogram: state.nonogram!,
-        solverSettings: state.solverSettings,
-      ).toJson()),
+      jsonEncode(
+        IsolateInput(
+          solutionSteps: state.output.solutionSteps,
+          nonogram: state.nonogram!,
+          solverSettings: state.solverSettings,
+        ).toJson(),
+      ),
       callback: (dynamic value) {
         final Map<String, dynamic> data = jsonDecode(value);
 
@@ -150,11 +154,6 @@ class NonogramSolverCubit extends Cubit<NonogramSolverState> {
   /// [index]: The new concurrency setting to be updated.
   void updateIsolateConcurrent(int index) {
     emit(state.copyWith(solverSettings: state.solverSettings.copyWith(isolateConcurrent: index)));
-  }
-
-  /// Toggles the group steps setting.
-  void updateGroupSteps() {
-    emit(state.copyWith(solverSettings: state.solverSettings.copyWith(groupSteps: !state.solverSettings.groupSteps)));
   }
 
   /// Toggles the highlight new filled boxes setting.
