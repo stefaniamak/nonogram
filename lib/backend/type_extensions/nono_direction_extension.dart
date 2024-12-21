@@ -25,8 +25,10 @@ extension NonoDirectionExtension on NonoDirection {
     }
   }
 
-  /// Validates partly completed solutions if they have all their clues filled in,
-  /// based on the direction, character index, and clue.
+  /// Validates if there are any filled boxes which match to no clue.
+  ///
+  /// This function run only on first and last clues of the list. It checks if there are any filled boxes
+  /// either before of after the final possible filled in position of that clue.
   ///
   /// Parameters:
   /// - [solution]: The whole current solution string.

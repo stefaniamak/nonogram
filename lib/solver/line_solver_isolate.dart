@@ -602,16 +602,35 @@ bool _canCluesFit(
 
   // Check if the clues before and after the current clue fit correctly.
   final bool cluesBeforeGood =
-      doOtherCluesFit(NonoDirection.before, clues, cluePosition, solution, solutionPosition, output, settings);
+      _doOtherCluesFit(NonoDirection.before, clues, cluePosition, solution, solutionPosition, output, settings);
   final bool cluesAfterGood =
-      doOtherCluesFit(NonoDirection.after, clues, cluePosition, solution, solutionPosition, output, settings);
+      _doOtherCluesFit(NonoDirection.after, clues, cluePosition, solution, solutionPosition, output, settings);
 
   // Return true if both the clues before and after fit correctly.
   if (printLogs) log('Do both clues before and clues after fit? Answer: ${cluesBeforeGood && cluesAfterGood}');
   return cluesBeforeGood && cluesAfterGood;
 }
 
-bool doOtherCluesFit(
+/// The `doOtherCluesFit` function checks if the clues before or after the current clue fit correctly in the solution line of a nonogram puzzle.
+///
+/// The function receives the following parameters:
+/// - [solutionSide]: A [NonoDirection] enum value indicating whether to check the clues before or after the current clue.
+/// - [clues]: A list of integers representing the clues for the current line.
+/// - [clueIndex]: An integer representing the position of the current clue in the clues list.
+/// - [solution]: A string representing the current state of the solution line.
+/// - [solutionIndex]: An integer representing the starting position in the solution line to check the clue.
+/// - [output]: An [IsolateOutput] object containing the current state of the solution.
+/// - [settings]: A [SolverSettings] object containing the solver settings to use during processing.
+/// - [printLogs]: An optional boolean flag to enable or disable logging (default is false).
+///
+/// The function performs the following steps:
+/// 1. Checks if there are any other clues left before or after the current clue (based on the [NonoDirection]).
+/// 2. If there are no other clues, it validates the solution for the current clue by checking that there are no filled boxes which match to no clue.
+/// 3. If there are other clues, it checks if there are enough boxes left for the clues.
+/// 4. If there are more clues in the list, it iterates over the solution sublist to check if these clues fit correctly.
+///
+/// The function returns a boolean value indicating whether the clues before or after the current clue fit correctly.
+bool _doOtherCluesFit(
   NonoDirection solutionSide,
   List<int> clues,
   int clueIndex,
@@ -621,23 +640,29 @@ bool doOtherCluesFit(
   SolverSettings settings, [
   bool printLogs = false,
 ]) {
-  final int clue = clues.elementAt(clueIndex);
+  final int clue = clues[clueIndex];
 
+  // Update the count of checked boxes if the setting is enabled.
   if (settings.countCheckedBoxes) {
-    output.otherBoxesCheckedList.add(output.otherBoxesCheckedList.last + 1);
-    output.otherBoxesCheckedList.removeAt(0);
+    output.otherBoxesCheckedList
+      ..add(output.otherBoxesCheckedList.last + 1)
+      ..removeAt(0);
   }
 
+  // Check if the current clue has other clues before or after it.
   if (printLogs) log('Does clue have clues ${solutionSide.name}?');
   if (!solutionSide.hasOtherClues(clueIndex, clues.length)) {
+    // If not, check if there are any filled boxes which match to no clue.
     if (printLogs) log('It does not.');
     if (printLogs) log('Check if there are any filled boxes which match to no clue.');
     return solutionSide.isSolutionValid(solution, solutionIndex, clues[clueIndex]);
   }
   if (printLogs) log('It does. Continue checking.');
 
+  // Get the sublist of clues either before or after the main clue, based on the given direction.
   final List<int> cluesSublist = solutionSide.getCluesSublist(clueIndex, clues);
 
+  // Check if there are enough boxes left for the clues.
   if (printLogs) log('Does clue have boxes left for clues left?');
   if (!solutionSide.hasBoxesLeft(solutionIndex, clue, solution, cluesSublist)) {
     if (printLogs) log('It does not. Return `false`.');
@@ -645,6 +670,9 @@ bool doOtherCluesFit(
   }
   if (printLogs) log('It does. Continue checking.');
 
+  // Check if the solution sublist fits the clues sublist by calling the again `canCluesFit` function,
+  // creating a recursive loop. The function keeps calling itself until it reaches the end of the clues list.
+  // If every other clue fits, that means that the main clue fits.
   final String solutionSublist = solutionSide.getSolutionSublist(solution, solutionIndex, clue);
   if (printLogs) log('Does solution sublist $solutionSublist fit clues $cluesSublist?');
   for (int solutionSublistIndex = 0; solutionSublistIndex < solutionSublist.length; solutionSublistIndex++) {
@@ -655,10 +683,12 @@ bool doOtherCluesFit(
         output.cachedBoxSolutions.addAll(updateCachedBoxSolutions(cluesSublist, 0, solutionSublist, solutionSublistIndex, true));
       }
 
+      // Return true if the solution sublist fits the clues sublist.
       return true;
     }
   }
   if (printLogs) log('It does not fit. Return `false`.');
+  // Return false if the solution sublist does not fit the clues sublist.
   return false;
 }
 
