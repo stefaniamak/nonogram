@@ -1,3 +1,0 @@
-class LineSolverRegexies {
-  // static final
-}
