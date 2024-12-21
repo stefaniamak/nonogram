@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:developer';
+import 'dart:math' as math;
 
 import 'package:isolate_manager/isolate_manager.dart';
 import 'package:nonogram/backend/models/isolate/isolate_input.dart';
@@ -675,7 +676,9 @@ bool _doOtherCluesFit(
   // If every other clue fits, that means that the main clue fits.
   final String solutionSublist = solutionSide.getSolutionSublist(solution, solutionIndex, clue);
   if (printLogs) log('Does solution sublist $solutionSublist fit clues $cluesSublist?');
-  for (int solutionSublistIndex = 0; solutionSublistIndex < solutionSublist.length; solutionSublistIndex++) {
+  final int firstNonZeroIndex = math.max(0, solutionSublist.split('').indexWhere((String e) => e != '0'));
+  // if (firstNonZeroIndex > 0) print('firstNonZeroIndex: $firstNonZeroIndex');
+  for (int solutionSublistIndex = firstNonZeroIndex; solutionSublistIndex < solutionSublist.length; solutionSublistIndex++) {
     if (_canCluesFit(cluesSublist, solutionSublist, solutionSublistIndex, 0, output, settings)) {
       if (printLogs) log('It does fit. Return `true`.');
 
