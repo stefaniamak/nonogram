@@ -16,21 +16,28 @@ class LineSolverHelper {
   ///
   /// The function returns a list of maps, where each map contains an index and a [NonoAxis] value.
   /// The list includes maps for each row and column in the nonogram puzzle.
-  List<Map<int, NonoAxis>> initializeStackList(Clues clues) {
-    var map = <Map<String, NonoAxis>>[
+  List<Map<int, NonoAxis>> initializeStackList(Clues clues, [bool sortInitialLinesStackViaClues = true]) {
+    if (!sortInitialLinesStackViaClues) {
+      return <Map<int, NonoAxis>>[
+        for (int i = 0; i < clues.rows.length; i++) <int, NonoAxis>{i: NonoAxis.row},
+        for (int i = 0; i < clues.columns.length; i++) <int, NonoAxis>{i: NonoAxis.column},
+      ];
+    }
+
+    final List<Map<String, NonoAxis>> map = <Map<String, NonoAxis>>[
       for (int i = 0; i < clues.rows.length; i++) <String, NonoAxis>{'$i,${clues.rows[i].sum}': NonoAxis.row},
       for (int i = 0; i < clues.columns.length; i++) <String, NonoAxis>{'$i,${clues.columns[i].sum}': NonoAxis.column},
     ];
 
     map.sort(
-      (a, b) {
+      (Map<String, NonoAxis> a, Map<String, NonoAxis> b) {
         final int aIndex = int.parse(a.keys.first.split(',')[1]);
         final int bIndex = int.parse(b.keys.first.split(',')[1]);
         return aIndex.compareTo(bIndex);
       },
     );
 
-    return map.map((e) => <int, NonoAxis>{int.parse(e.keys.first.split(',')[0]): e.values.first}).toList();
+    return map.map((Map<String, NonoAxis> e) => <int, NonoAxis>{int.parse(e.keys.first.split(',')[0]): e.values.first}).toList();
   }
 
   /// Returns the solution line for a given line index and type (row or column) in a nonogram puzzle.

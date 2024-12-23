@@ -168,6 +168,15 @@ class NonogramPage extends StatelessWidget {
           Row(
             children: <Widget>[
               Switch(
+                value: state.solverSettings.sortInitialLinesStackViaClues,
+                onChanged: state.solverStatus.canEdit ? (_) => nonogramSolverCubit.updateSortInitialLinesStackViaClues() : null,
+              ),
+              const Text("Sort initial lines' stack via clues' sum"),
+            ],
+          ),
+          Row(
+            children: <Widget>[
+              Switch(
                 value: state.solverSettings.countCheckedBoxes,
                 onChanged: state.solverStatus.canEdit ? (_) => nonogramSolverCubit.updateCountCheckedBoxes() : null,
               ),

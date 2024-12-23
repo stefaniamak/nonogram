@@ -170,6 +170,16 @@ class NonogramSolverCubit extends Cubit<NonogramSolverState> {
     emit(state.copyWith(solverSettings: state.solverSettings.copyWith(keepCacheData: !state.solverSettings.keepCacheData)));
   }
 
+  void updateSortInitialLinesStackViaClues() {
+    emit(
+      state.copyWith(
+        solverSettings: state.solverSettings.copyWith(
+          sortInitialLinesStackViaClues: !state.solverSettings.sortInitialLinesStackViaClues,
+        ),
+      ),
+    );
+  }
+
   /// Toggles the count checked boxes setting.
   void updateCountCheckedBoxes() {
     emit(
