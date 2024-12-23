@@ -20,7 +20,7 @@ class LineSolverHelper {
   /// The list includes maps for each row and column in the nonogram puzzle.
   ///
   /// If [sortInitialLinesStackViaClues] is set to true, the function firstly sums each row and column clues,
-  /// and sorts them in ascending order. It then creates the list of maps and returns it.
+  /// and sorts them in descending order. It then creates the list of maps and returns it.
   List<Map<int, NonoAxis>> initializeStackList(Clues clues, [bool sortInitialLinesStackViaClues = true]) {
     // Check if the initial lines stack should be sorted via clues.
     if (!sortInitialLinesStackViaClues) {
@@ -41,7 +41,7 @@ class LineSolverHelper {
       for (int i = 0; i < clues.columns.length; i++) <String, NonoAxis>{'$i,${clues.columns[i].sum}': NonoAxis.column},
     ];
 
-    // Sort the list of maps by the clues sums in ascending order.
+    // Sort the list of maps by the clues sums in descending order.
     map.sort(
       (Map<String, NonoAxis> a, Map<String, NonoAxis> b) {
         // Sort the list of maps by the clues sums in ascending order.
