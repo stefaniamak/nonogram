@@ -9,6 +9,7 @@ class SolverSettings {
   const SolverSettings({
     this.keepCacheData = true,
     this.countCheckedBoxes = true,
+    this.sortInitialLinesStackViaClues = true,
     this.isolateConcurrent = 1,
     this.highlightNewFilledBoxes = true,
   });
@@ -17,6 +18,9 @@ class SolverSettings {
 
   /// Whether to keep cache data.
   final bool keepCacheData;
+
+  /// Whether to sort the initial lines stack via clues' lines' sum.
+  final bool sortInitialLinesStackViaClues;
 
   /// Whether to count checked boxes.
   final bool countCheckedBoxes;
@@ -35,6 +39,7 @@ class SolverSettings {
   SolverSettings copyWith({
     final bool? groupSteps,
     final bool? keepCacheData,
+    final bool? sortInitialLinesStackViaClues,
     final bool? countCheckedBoxes,
     final int? isolateConcurrent,
     final bool? highlightNewFilledBoxes,
@@ -42,6 +47,7 @@ class SolverSettings {
     return SolverSettings(
       keepCacheData: keepCacheData ?? this.keepCacheData,
       countCheckedBoxes: countCheckedBoxes ?? this.countCheckedBoxes,
+      sortInitialLinesStackViaClues: sortInitialLinesStackViaClues ?? this.sortInitialLinesStackViaClues,
       isolateConcurrent: isolateConcurrent ?? this.isolateConcurrent,
       highlightNewFilledBoxes: highlightNewFilledBoxes ?? this.highlightNewFilledBoxes,
     );

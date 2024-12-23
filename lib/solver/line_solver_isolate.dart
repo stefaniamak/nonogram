@@ -32,7 +32,10 @@ void lineSolverIsolate(dynamic params) {
       // Decode the input parameters to an IsolateInput object.
       final IsolateInput input = IsolateInput.fromJson(jsonDecode(message));
       // Initialize the stack list with the nonogram clues.
-      final List<Map<int, NonoAxis>> stack = LineSolverHelper.instance.initializeStackList(input.nonogram.clues);
+      final List<Map<int, NonoAxis>> stack = LineSolverHelper.instance.initializeStackList(
+        input.nonogram.clues,
+        input.solverSettings.sortInitialLinesStackViaClues,
+      );
       // Set up initial values for solution steps, cached box solutions, and lists to track checked lines and boxes.
       List<SolutionStep> solutionSteps = input.solutionSteps;
       final Map<String, bool> cachedBoxSolutions = <String, bool>{};
