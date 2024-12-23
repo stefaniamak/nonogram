@@ -13,30 +13,45 @@ class LineSolverHelper {
   ///
   /// The function receives the following parameter:
   /// - [clues]: A [Clues] object containing the clues for the nonogram puzzle.
+  /// - [sortInitialLinesStackViaClues]: An optional boolean parameter to determine if the initial lines stack should
+  ///   be sorted via Clues sum per Clues line.
   ///
   /// The function returns a list of maps, where each map contains an index and a [NonoAxis] value.
   /// The list includes maps for each row and column in the nonogram puzzle.
+  ///
+  /// If [sortInitialLinesStackViaClues] is set to true, the function firstly sums each row and column clues,
+  /// and sorts them in ascending order. It then creates the list of maps and returns it.
   List<Map<int, NonoAxis>> initializeStackList(Clues clues, [bool sortInitialLinesStackViaClues = true]) {
+    // Check if the initial lines stack should be sorted via clues.
     if (!sortInitialLinesStackViaClues) {
+      // If not sorting, create a list of
       return <Map<int, NonoAxis>>[
+        // Add each row to the list.
         for (int i = 0; i < clues.rows.length; i++) <int, NonoAxis>{i: NonoAxis.row},
+        // Add each column to the list.
         for (int i = 0; i < clues.columns.length; i++) <int, NonoAxis>{i: NonoAxis.column},
       ];
     }
 
+    // Create a list of maps with clues sums for sorting.
     final List<Map<String, NonoAxis>> map = <Map<String, NonoAxis>>[
+      // Add each row with its sum to the list.
       for (int i = 0; i < clues.rows.length; i++) <String, NonoAxis>{'$i,${clues.rows[i].sum}': NonoAxis.row},
+      // Add each column with its sum to the list.
       for (int i = 0; i < clues.columns.length; i++) <String, NonoAxis>{'$i,${clues.columns[i].sum}': NonoAxis.column},
     ];
 
+    // Sort the list of maps by the clues sums in ascending order.
     map.sort(
       (Map<String, NonoAxis> a, Map<String, NonoAxis> b) {
-        final int aIndex = int.parse(a.keys.first.split(',')[1]);
-        final int bIndex = int.parse(b.keys.first.split(',')[1]);
-        return aIndex.compareTo(bIndex);
+        // Sort the list of maps by the clues sums in ascending order.
+        final int aClueSum = int.parse(a.keys.first.split(',')[1]);
+        final int bClueSum = int.parse(b.keys.first.split(',')[1]);
+        return bClueSum.compareTo(aClueSum);
       },
     );
 
+    // Convert the sorted list of maps to the final format and return it.
     return map.map((Map<String, NonoAxis> e) => <int, NonoAxis>{int.parse(e.keys.first.split(',')[0]): e.values.first}).toList();
   }
 
