@@ -138,22 +138,22 @@ class NonogramPage extends StatelessWidget {
           const Text('--Stats--'),
           const SizedBox(height: 8),
           Text('Puzzle duration: ${state.dateTimeDifference}'),
-          Text('Total steps: ${state.output.solutionSteps.length.commasFormatted}'),
-          Text('Lines checked: ${state.output.linesChecked.commasFormatted}'),
+          Text('Total steps: ${state.output.solutionSteps.length.dotsFormatted}'),
+          Text('Lines checked: ${state.output.linesChecked.dotsFormatted}'),
           AnimatedOpacity(
             duration: const Duration(milliseconds: 200),
             opacity: state.solverSettings.countCheckedBoxes ? 1 : 0.4,
             child: Column(
               children: <Widget>[
-                Text('Boxes checked: ${state.output.boxesChecked.commasFormatted}'),
-                Text('Other boxes checked: ${state.output.otherBoxesChecked.commasFormatted}'),
+                Text('Boxes checked: ${state.output.boxesChecked.dotsFormatted}'),
+                Text('Other boxes checked: ${state.output.otherBoxesChecked.dotsFormatted}'),
               ],
             ),
           ),
           AnimatedOpacity(
             duration: const Duration(milliseconds: 200),
             opacity: state.solverSettings.keepCacheData ? 1 : 0.4,
-            child: Text('Total cache data: ${state.output.totalCacheData.commasFormatted}'),
+            child: Text('Total cache data: ${state.output.totalCacheData.dotsFormatted}'),
           ),
           const SizedBox(height: 24),
           const Text('--Settings--'),
