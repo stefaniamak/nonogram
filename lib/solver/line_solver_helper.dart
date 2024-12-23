@@ -1,6 +1,7 @@
 import 'package:isolate_manager/isolate_manager.dart';
 import 'package:nonogram/backend/models/nonogram/clues.dart';
 import 'package:nonogram/backend/type_extensions/nono_axis_extension.dart';
+import 'package:nonogram/backend/type_extensions/nono_list_extension.dart';
 
 @isolateManagerCustomWorker
 class LineSolverHelper {
@@ -16,10 +17,20 @@ class LineSolverHelper {
   /// The function returns a list of maps, where each map contains an index and a [NonoAxis] value.
   /// The list includes maps for each row and column in the nonogram puzzle.
   List<Map<int, NonoAxis>> initializeStackList(Clues clues) {
-    return <Map<int, NonoAxis>>[
-      for (int i = 0; i < clues.rows.length; i++) <int, NonoAxis>{i: NonoAxis.row},
-      for (int i = 0; i < clues.columns.length; i++) <int, NonoAxis>{i: NonoAxis.column},
+    var map = <Map<String, NonoAxis>>[
+      for (int i = 0; i < clues.rows.length; i++) <String, NonoAxis>{'$i,${clues.rows[i].sum}': NonoAxis.row},
+      for (int i = 0; i < clues.columns.length; i++) <String, NonoAxis>{'$i,${clues.columns[i].sum}': NonoAxis.column},
     ];
+
+    map.sort(
+      (a, b) {
+        final int aIndex = int.parse(a.keys.first.split(',')[1]);
+        final int bIndex = int.parse(b.keys.first.split(',')[1]);
+        return aIndex.compareTo(bIndex);
+      },
+    );
+
+    return map.map((e) => <int, NonoAxis>{int.parse(e.keys.first.split(',')[0]): e.values.first}).toList();
   }
 
   /// Returns the solution line for a given line index and type (row or column) in a nonogram puzzle.
