@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nonogram/backend/cubits/nonogram_solver_cubit/nonogram_solver_cubit.dart';
 import 'package:nonogram/backend/models/nonogram/nonogram.dart';
+import 'package:nonogram/backend/type_extensions/nono_int_extension.dart';
 import 'package:nonogram/config/app_theme.dart';
 import 'package:nonogram/config/enums/solver_status.dart';
 import 'package:nonogram/pages/app_page.dart';
@@ -137,22 +138,22 @@ class NonogramPage extends StatelessWidget {
           const Text('--Stats--'),
           const SizedBox(height: 8),
           Text('Puzzle duration: ${state.dateTimeDifference}'),
-          Text('Total steps: ${state.output.solutionSteps.length}'),
-          Text('Lines checked: ${state.output.linesChecked}'),
+          Text('Total steps: ${state.output.solutionSteps.length.commasFormatted}'),
+          Text('Lines checked: ${state.output.linesChecked.commasFormatted}'),
           AnimatedOpacity(
             duration: const Duration(milliseconds: 200),
             opacity: state.solverSettings.countCheckedBoxes ? 1 : 0.4,
             child: Column(
               children: <Widget>[
-                Text('Boxes checked: ${state.output.boxesChecked}'),
-                Text('Other boxes checked: ${state.output.otherBoxesChecked}'),
+                Text('Boxes checked: ${state.output.boxesChecked.commasFormatted}'),
+                Text('Other boxes checked: ${state.output.otherBoxesChecked.commasFormatted}'),
               ],
             ),
           ),
           AnimatedOpacity(
             duration: const Duration(milliseconds: 200),
             opacity: state.solverSettings.keepCacheData ? 1 : 0.4,
-            child: Text('Total cache data: ${state.output.totalCacheData}'),
+            child: Text('Total cache data: ${state.output.totalCacheData.commasFormatted}'),
           ),
           const SizedBox(height: 24),
           const Text('--Settings--'),
