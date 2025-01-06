@@ -66,11 +66,7 @@ class LineSolverHelper {
     switch (lineType) {
       case NonoAxis.row:
         // Split the string into a list of characters, get the range for the specified row, join them back into a string, and remove unwanted characters.
-        return solution
-            .split('')
-            .getRange(lineIndex * nonogramWidth, nonogramWidth * (lineIndex + 1))
-            .join()
-            .replaceAll(RegExp(r'[ (),]'), '');
+        return solution.split('').getRange(lineIndex * nonogramWidth, nonogramWidth * (lineIndex + 1)).join();
       case NonoAxis.column:
         String columnSol = '';
         // Iterate through the string to collect the characters of the specified column.
