@@ -276,7 +276,8 @@ IsolateOutput _loopSides({
           // Check if the line is completed after filling in the new boxes.
           isLineCompleted = filledBoxes == clues.sum;
 
-          // If the line is completed and there are still empty boxes, cross out the remaining empty boxes.
+          // If the line is completed and there are still empty boxes, add current line to stack,
+          // so it can be checked again to cross out the remaining empty boxes.
           if (isLineCompleted && fullUpdatedSolution.split('').contains('?')) {
             finalStack.addAll(
               finalStack.getNewStackElements(<int>[lineIndex], lineType == NonoAxis.row ? NonoAxis.column : NonoAxis.row),
