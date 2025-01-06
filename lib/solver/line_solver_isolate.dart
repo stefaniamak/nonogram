@@ -235,12 +235,12 @@ IsolateOutput _loopSides({
       charIndexesOfQMarks,
     );
 
-    final List<Map<int, NonoAxis>> finalStack = <Map<int, NonoAxis>>[];
-    List<int> newFilledBoxes = <int>[];
-    final List<SolutionStep> newSolutionSteps = <SolutionStep>[];
-    String fullUpdatedSolution = output.solutionSteps.last.currentSolution;
-
     if (result.isNotEmpty) {
+      final List<Map<int, NonoAxis>> finalStack = <Map<int, NonoAxis>>[];
+      List<int> newFilledBoxes = <int>[];
+      final List<SolutionStep> newSolutionSteps = <SolutionStep>[];
+      String fullUpdatedSolution = output.solutionSteps.last.currentSolution;
+
       // Iterate over the matched solutions to update the solution state.
       for (final int clueKey in result.keys) {
         // Retrieve the character indexes for the matched solutions.
