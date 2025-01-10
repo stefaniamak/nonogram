@@ -685,7 +685,8 @@ bool _doOtherCluesFit(
 
       if (settings.keepCacheData) {
         output.cachedBoxSolutions.addAll(
-            LineSolverHelper.instance.updateCachedBoxSolutions(cluesSublist, 0, solutionSublist, solutionSublistIndex, true));
+          LineSolverHelper.instance.updateCachedBoxSolutions(cluesSublist, 0, solutionSublist, solutionSublistIndex, true),
+        );
       }
 
       // Return true if the solution sublist fits the clues sublist.
