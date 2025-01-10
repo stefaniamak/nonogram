@@ -9,4 +9,4 @@ extension NonoIntExtension on int {
 }
 
 /// A NumberFormat object to format integers with a thousand separator.
-final NumberFormat _thousandsFormatter = NumberFormat("###,###.###", "tr_TR");
+final NumberFormat _thousandsFormatter = NumberFormat("###,###.###", "en_EN");
