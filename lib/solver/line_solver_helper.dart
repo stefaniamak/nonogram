@@ -164,11 +164,11 @@ class LineSolverHelper {
   /// - [clueIndex]: An integer representing the position of the current clue in the clues list.
   /// - [solution]: A string representing the current state of the solution line.
   /// - [solutionIndex]: An integer representing the starting position in the solution line to check the clue.
-  /// - [value]: A boolean value indicating whether the clue can fit at the specified position.
+  /// - [canFit]: A boolean value indicating whether the clue can fit at the specified position.
   ///
   /// The function returns a map where the key is a string combining the clues, clue index, solution, and solution index,
   /// and the value is the provided boolean value.
-  Map<String, bool> updateCachedBoxSolutions(List<int> clues, int clueIndex, String solution, int solutionIndex, bool value) {
-    return <String, bool>{'$clues,$clueIndex,$solution,$solutionIndex': value};
+  Map<String, bool> updateCachedBoxSolutions(List<int> clues, int clueIndex, String solution, int solutionIndex, bool canFit) {
+    return <String, bool>{'$clues,$clueIndex,$solution,$solutionIndex': canFit};
   }
 }
