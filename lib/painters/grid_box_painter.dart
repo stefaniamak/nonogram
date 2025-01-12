@@ -4,9 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:nonogram/config/enums/point_state.dart';
 
 /// Custom painter for drawing grid boxes in a nonogram puzzle.
-class GridBox extends CustomPainter {
-  /// Creates a GridBox painter.
-  GridBox({
+class GridBoxPainter extends CustomPainter {
+  /// Creates a GridBoxPainter painter.
+  GridBoxPainter({
     required this.pointState,
     required this.point,
     super.repaint,

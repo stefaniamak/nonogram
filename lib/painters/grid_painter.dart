@@ -2,7 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:nonogram/config/enums/point_state.dart';
-import 'package:nonogram/painters/grid_box.dart';
+import 'package:nonogram/painters/grid_box_painter.dart';
 
 /// A custom painter for drawing a Nonogram grid.
 class GridPainter extends CustomPainter {
@@ -40,7 +40,7 @@ class GridPainter extends CustomPainter {
     for (int x = 0; x < gridViewParams.boxItems.width; x += 1) {
       for (int y = 0; y < gridViewParams.boxItems.height; y += 1) {
         final int index = (y * gridViewParams.boxItems.width).ceil() + x;
-        GridBox(
+        GridBoxPainter(
           point: Point<double>(x * gridViewParams.side, y * gridViewParams.side),
           pointState: getGridBoxState(index),
           side: gridViewParams.side,
