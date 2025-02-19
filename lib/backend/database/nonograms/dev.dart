@@ -4,7 +4,7 @@ import 'package:nonogram/backend/models/nonogram/nonogram_info.dart';
 
 /// A constant representing a nonogram puzzle of a cat.
 const Nonogram kDev = Nonogram(
-  id: "2",
+  id: "0",
   info: NonogramInfo(
     title: "The Dev",
     copyright: "(c) Copyright 2025 Stefania Makrygiannaki",
@@ -68,7 +68,7 @@ const Nonogram kDev = Nonogram(
       <int>[5, 5, 45],
       <int>[60],
       <int>[5, 8, 1, 38],
-      <int>[6, 5, 2, 2],
+      <int>[6, 5, 2, 2, 38],
       <int>[9, 3, 2, 2, 38],
       <int>[11, 3, 1, 38],
       <int>[8, 48],
@@ -106,7 +106,7 @@ const Nonogram kDev = Nonogram(
       <int>[6, 4, 2, 5, 4, 4, 16],
       <int>[6, 5, 2, 5, 16],
       <int>[6, 6, 1, 3, 7, 16],
-      <int>[6, 1, 1, 3, 1, 3, 5, 16],
+      <int>[6, 1, 1, 3, 1, 3, 1, 5, 16],
       <int>[6, 5, 1, 1, 4, 5, 16],
       <int>[6, 7, 1, 1, 6, 16],
       <int>[6, 7, 3, 1, 6, 16],
