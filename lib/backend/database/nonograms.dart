@@ -4,6 +4,8 @@ import 'package:nonogram/backend/database/nonograms/knot.dart';
 import 'package:nonogram/backend/database/nonograms/swing.dart';
 import 'package:nonogram/backend/models/nonogram/nonogram.dart';
 
+import 'nonograms/dev.dart';
+
 /// A class that provides access to all nonograms.
 class Nonograms {
   /// A list of all nonogram.
@@ -12,6 +14,7 @@ class Nonograms {
     cat,
     knot,
     swing,
+    dev,
   ];
 
   /// Gets the dancer nonogram.
@@ -25,4 +28,7 @@ class Nonograms {
 
   /// Gets the swing nonogram.
   static Nonogram get swing => kSwing;
+
+  /// Gets the swing nonogram.
+  static Nonogram get dev => kDev;
 }
