@@ -44,11 +44,29 @@ class AppPage extends StatelessWidget {
         // backgroundColor: Colors.white.withOpacity(0.8),
       ),
       extendBody: true,
-      bottomNavigationBar: const BlurContainer(
+      bottomNavigationBar: BlurContainer(
         child: Padding(
-          padding: EdgeInsets.all(16),
+          padding: const EdgeInsets.all(16),
           child: Row(
-            children: <Widget>[Expanded(child: Text('Designed and Developed by Stefania Mak | v0.8.1'))],
+            children: <Widget>[
+              Expanded(
+                child: Row(
+                  children: [
+                    const Text('Designed and Developed by '),
+                    TextButton(
+                      style: TextButton.styleFrom(
+                        padding: EdgeInsets.zero,
+                        minimumSize: Size.zero,
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                      ),
+                      onPressed: () {},
+                      child: const Text('Stefania Mak', style: TextStyle(color: Colors.black)),
+                    ),
+                    const Text(' | v0.8.1'),
+                  ],
+                ),
+              ),
+            ],
           ),
         ),
       ),
