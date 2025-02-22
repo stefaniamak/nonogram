@@ -6,7 +6,7 @@ import 'package:nonogram/backend/models/nonogram/nonogram_info.dart';
 const Nonogram kDev = Nonogram(
   id: "0",
   info: NonogramInfo(
-    title: "The Dev",
+    title: "???",
     copyright: "(c) Copyright 2025 Stefania Makrygiannaki",
     author: "Stefania Makrygiannaki",
     authorId: "stefaniamak",
