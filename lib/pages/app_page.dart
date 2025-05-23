@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:nonogram/config/app_theme.dart';
 import 'package:nonogram/pages/widgets/blur_container.dart';
+import 'package:nonogram/pages/widgets/stefania_mak_button.dart';
 import 'package:sliver_tools/sliver_tools.dart';
 
 /// A stateless widget wrapper for every app page.
@@ -48,7 +49,17 @@ class AppPage extends StatelessWidget {
         child: Padding(
           padding: EdgeInsets.all(16),
           child: Row(
-            children: <Widget>[Expanded(child: Text('Designed and Developed by Stefania Mak | v0.8.1'))],
+            children: <Widget>[
+              Expanded(
+                child: Row(
+                  children: [
+                    Text('Designed and Developed by '),
+                    StefaniaMakButton(),
+                    Text(' | v1.0.0'),
+                  ],
+                ),
+              ),
+            ],
           ),
         ),
       ),
