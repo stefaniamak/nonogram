@@ -55,7 +55,7 @@ class AppPage extends StatelessWidget {
                   children: [
                     Text('Designed and Developed by '),
                     StefaniaMakButton(),
-                    Text(' | v0.8.1'),
+                    Text(' | v1.0.0'),
                   ],
                 ),
               ),

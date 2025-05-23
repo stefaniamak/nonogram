@@ -66,15 +66,19 @@ class _StefaniaMakButtonState extends State<StefaniaMakButton> {
     }
   }
 
-  void onTenClicks() => Navigator.push(
-        context,
-        MaterialPageRoute<void>(
-          builder: (_) => BlocProvider<NonogramSolverCubit>(
-            create: (_) => NonogramSolverCubit()..initialize(nonogram: Nonograms.dev),
-            child: NonogramPage(nonogram: Nonograms.dev),
-          ),
+  /// Function to be called when the button is clicked 10 times
+  void onTenClicks() {
+    // Opens the NonogramPage with the dev nonogram (me!)
+    Navigator.push(
+      context,
+      MaterialPageRoute<void>(
+        builder: (_) => BlocProvider<NonogramSolverCubit>(
+          create: (_) => NonogramSolverCubit()..initialize(nonogram: Nonograms.dev),
+          child: NonogramPage(nonogram: Nonograms.dev),
         ),
-      );
+      ),
+    );
+  }
 
   @override
   void dispose() {
