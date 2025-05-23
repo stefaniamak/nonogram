@@ -10,7 +10,6 @@ import 'nonograms/dev.dart';
 class Nonograms {
   /// A list of all nonogram.
   static final List<Nonogram> all = <Nonogram>[
-    dev,
     dancer,
     cat,
     knot,
